@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.milkms.db.dao.PurchaseDetailedMapper">
+	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Purchase_detailed">
+		<id column="ID" property="ID" jdbcType="VARCHAR"/>
+		<result column="purchase_ID" property="purchase_ID" jdbcType="VARCHAR"/>
+		<result column="milk_ID" property="milk_ID"  jdbcType="VARCHAR"/>
+		<result column="number" property="number"  jdbcType="INTEGER"/>
+		<result column="purchase_price" property="purchase_price" jdbcType="DOUBLE"/>
+		<result column="total_amount" property="total_amount" jdbcType="DOUBLE"/>
+	</resultMap>
+	
+	
+</mapper>
