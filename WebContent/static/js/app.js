@@ -403,14 +403,14 @@ var App = function () {
                 }
         });
 
-        jQuery('body').on('click', '.portlet .tools a.reload', function (e) {
-            e.preventDefault();
-                var el = jQuery(this).parents(".portlet");
-                App.blockUI(el);
-                window.setTimeout(function () {
-                        App.unblockUI(el);
-                    }, 1000);
-        });
+//        jQuery('body').on('click', '.portlet .tools a.reload', function (e) {
+//            e.preventDefault();
+//                var el = jQuery(this).parents(".portlet");
+//                App.blockUI(el);
+//                window.setTimeout(function () {
+//                        App.unblockUI(el);
+//                    }, 1000);
+//        });
 
         jQuery('body').on('click', '.portlet .tools .collapse, .portlet .tools .expand', function (e) {
             e.preventDefault();

@@ -2,14 +2,31 @@ package com.cy.milkms.db.entity;
 import java.util.UUID;
 public class Milk {
 	private String ID;
+	private String number;
 	private String milk_name;
 	private String specifications;
 	private double purchase_price;
 	private double selling_price;
+	private int status;
 	
-	public Milk(){
-		ID = UUID.randomUUID().toString().replaceAll("-", "");
+	
+	public int getStatus() {
+		return status;
 	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public Milk(){
+		ID = UUID.randomUUID().toString();
+	}
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
 	public String getID() {
 		return ID;
 	}

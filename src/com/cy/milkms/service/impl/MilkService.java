@@ -27,6 +27,34 @@ public class MilkService implements IMilkService{
 		// TODO Auto-generated method stub
 		return mapper.get_milk_condition_count(milkName);
 	}
+
+	@Override
+	public int add_milk(Milk milk) {
+		// TODO Auto-generated method stub
+		Milk milk2 = this.get_milk_by_name_or_number(milk.getMilk_name(),  milk.getNumber());
+		if(milk2 != null){
+			return -1;
+		}
+		return mapper.add_milk(milk);
+	}
+
+	@Override
+	public Milk get_milk_by_name_or_number(String milk_name, String number) {
+		// TODO Auto-generated method stub
+		return mapper.get_milk_by_name_or_number(milk_name, number);
+	}
+
+	@Override
+	public int edit_milk(double purchase_price, double selling_price, String number) {
+		// TODO Auto-generated method stub
+		return mapper.edit_milk(purchase_price, selling_price, number);
+	}
+
+	@Override
+	public int delete_milk(String number) {
+		// TODO Auto-generated method stub
+		return mapper.delete_milk(number);
+	}
 	
 	
 	

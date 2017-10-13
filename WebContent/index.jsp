@@ -68,7 +68,7 @@
 
 							<img alt="" src="media/image/avatar1_small.jpg" />
 	
-							<span class="username">Bob Nilson</span>
+							<span class="username">杨定万</span>
 
 						</a>
 
@@ -112,7 +112,7 @@
 
 				</li>
 				
-				<li v-for="(item, i) in menu_list" :class="{active: 'milk.jsp' == item.href, last:i == menu_list.length}" :key="item.href">
+				<li v-for="(item, i) in menu_list" :class="{active: 'index.jsp' == item.href, last:i == menu_list.length}" :key="item.href">
 
 					<a :href="item.href">
 
@@ -122,7 +122,7 @@
 						
 						<span class="arrow"></span>
 	
-						<span class="selected" v-if="'milk.jsp' == item.href"></span>
+						<span class="selected" v-if="'index.jsp' == item.href"></span>
 
 					</a>
 
@@ -270,7 +270,7 @@
 
 							<li>
 
-								<i class="icon-home"></i>
+								<i class="fa fa-home"></i>
 
 								<a href="index.jsp">Home</a> 
 
@@ -2674,12 +2674,13 @@
 	</div>
 
 	<!-- END CONTAINER -->
-
+	
+	<script src="static/js/common.js" type="text/javascript"></script>
 	<script>
 
 		jQuery(document).ready(function() {    
 
-		   App.init(); // initlayout and core plugins
+		    // initlayout and core plugins
 
 		   Index.init();
 
@@ -2706,5 +2707,4 @@
 </body>
 
 <!-- END BODY -->
-	<script src="static/js/common.js" type="text/javascript"></script>
 </html>

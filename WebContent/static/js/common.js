@@ -21,16 +21,10 @@ var menu_vue = new Vue({
 
 $(function(){
 	
+	App.init();
+	
 	set_center_height();
 	
-	$('.paginate ul li').bind('click', function(){
-		if($(this)[0].className == 'start' || $(this)[0].className == 'end');
-		else{
-			$('.paginate ul li').removeAttr('class', 'active');
-			$(this).attr('class', 'active');
-			console.info(this);
-		}
-	});
 });
 
 

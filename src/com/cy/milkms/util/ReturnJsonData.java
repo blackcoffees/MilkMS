@@ -15,33 +15,38 @@ import net.sf.json.JSONArray;
 
 public class ReturnJsonData {
 	public static String currentJsonData(int total, List<?> list){
-		List result = new ArrayList();
-		Map<String, String> map = new HashMap<String, String>();
-		Field[] fields = list.get(0).getClass().getDeclaredFields();
-		PropertyDescriptor pd = null;
-		for(int i=0;i<fields.length;i++){
-			String name = fields[i].getName();
-			try {
-				pd = new PropertyDescriptor(name, list.get(0).getClass());
-				Method method = pd.getReadMethod();
-				String value = String.valueOf(method.invoke(list.get(0)));
-				map.put(name, value);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		if(total == 0 || list.size() == 0){
+			Map map2 = new HashMap();
+			map2.put("total", total);
+			map2.put("data", list);
+			return JSONArray.fromObject(map2).toString();
 		}
-		result.add(map);
+		List result = new ArrayList();
+		for(int j=0;j<list.size();j++){
+			Map<String, String> map = new HashMap<String, String>();
+			Field[] fields = list.get(j).getClass().getDeclaredFields();
+			PropertyDescriptor pd = null;
+			for(int i=0;i<fields.length;i++){
+				String name = fields[i].getName();
+				try {
+					pd = new PropertyDescriptor(name, list.get(j).getClass());
+					Method method = pd.getReadMethod();
+					String value = String.valueOf(method.invoke(list.get(j)));
+					map.put(name, value);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			result.add(map);
+		}
+		
 		Map map2 = new HashMap();
 		map2.put("total", total);
 		map2.put("data", result);
 		return JSONArray.fromObject(map2).toString();
 	}
-	private static String getMethodName(String fildeName){
-		String firstLetter = fildeName.substring(0, 1).toUpperCase();
-		return "get"+firstLetter+fildeName.substring(1, fildeName.length());
-		
-	}	
+	
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, Exception {
 		List<Milk> list = new ArrayList<Milk>();
 		list.add(new Milk());

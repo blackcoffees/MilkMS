@@ -13,8 +13,7 @@
 
 	<meta charset="utf-8" />
 
-	<!-- <title>重庆派派食品有限公司</title> -->
-	<title>test</title>
+	<title>重庆派派食品有限公司</title>
 
 	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
@@ -43,7 +42,7 @@
 
 				<!-- BEGIN LOGO -->
 
-				<!--<a class="brand" href="index.jsp"><span>重庆派派食品有限公司</span></a> -->
+				<a class="brand" href="index.jsp"><span>重庆派派食品有限公司</span></a>
 
 				<!-- END LOGO -->
 
@@ -207,9 +206,31 @@
 									
 									</tbody>
 								</table>
-								<div class="bottom-tool">
-									<paginate-tool v-on:change_rows="change_rows" v-on:change_page="change_page" :rows="rows" :show_page="show_page" :rows_list="rows_list"></paginate-tool>
+								<div class="paginate-tool row">
+									<div class="pageSelect col-md-6 left">
+										<div class="dropdown">
+											<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+												((rows))
+										    	<span class="caret"></span>
+											</button>
+										  	<ul class="dropdown-menu">
+											    <li><a href="javascript:;" @click="change_rows(10)">10</a></li>
+											    <li><a href="javascript:;" @click="change_rows(20)">20</a></li>
+											    <li><a href="javascript:;" @click="change_rows(30)">30</a></li>
+											</ul>
+										</div>
+									</div>
+									<div class="paginate col-md-6 right">
+										<ul>
+											<li class="start" @click="pre_page"><i class="fa fa-angle-left"></i></li>
+											<template v-for="i in showPage">
+												<li v-text="i" :key="i" :class="{active: i == 1}" @click="change_page(i, $event)"></li>
+											</template>
+											<li class="end" @click="next_page"><i class="fa fa-angle-right"></i></li>
+										</ul>
+									</div>
 								</div>
+								<paginate_tool></paginate_tool>
 							</div>
 						</div>
 						<!-- END PAGE MAIN -->
@@ -289,19 +310,53 @@
 	<!-- END Layer -->
 	
 	<!-- END CONTAINER -->
-	<script src="static/js/paginate_tool.js" type="text/javascript"></script>
 	<script src="static/js/common.js" type="text/javascript"></script>
-	
 	<script>
-	
 		var vue = new Vue({
 			delimiters:['((', '))'],
-			el:'#sample_1',
+			el:'.page-content',
 			data:{
+				rows: 10,
+				page: 1,
+				pageTotal: 1,
+				showPage:[],
 				milkName: '',
 				data: []
 			},
 			methods:{
+				change_rows:function(number){
+					this.rows = number;					
+				},
+				change_page:function(i, event){
+					if(event.target.className == 'start' ||event.target.className == 'end'){
+						;
+					}
+					else{
+						$('.paginate ul li').removeAttr('class');
+						$('.paginate ul li:first-child').attr('class', 'start');
+						$('.paginate ul li:last-child').attr('class', 'end');
+						$(event.target).attr('class', 'active');
+						this.page = event.target.innerText;
+					}
+				},
+				pre_page:function(){
+					if(this.page == 1);
+					else{
+						this.page = this.page-1;
+						var active = $('.paginate li.active');
+						active.removeAttr('class');
+						active.prev().attr('class', 'active');
+					}
+				},
+				next_page:function(){
+					if(this.page == this.pageTotal);
+					else{
+						this.page = this.page+1;
+						var active = $('.paginate li.active');
+						active.removeAttr('class');
+						active.next().attr('class', 'active');
+					}
+				},
 				edit: function(milk){
 					edit_vue.edit_data = milk;
 					layer.open({
@@ -328,6 +383,47 @@
 						}
 					})
 				},
+				showPaged:function(){
+					this.showPage = [];
+					if(this.pageTotal > 10){
+						if(this.page >= 5){
+							var page_end = parseInt(this.page) + 5;
+							this.showPage.push(1);
+							this.showPage.push("···");
+							for(i=this.page;i<page_end;i++){
+								this.showPage.push(i);
+							}
+							this.showPage.push("···");
+							this.showPage.push(this.pageTotal);
+						}
+						else{
+							for(i=1;i<6;i++){
+								this.showPage.push(i);
+							}
+							this.showPage.push("···");
+							this.showPage.push(this.pageTotal);
+						}
+					}
+					else{
+						for(i=1;i<this.pageTotal;i++){
+							this.showPage.push(i);					
+						}
+					}
+				}
+			},
+			watch:{
+				rows:function(){
+					init_table();
+				},
+				page:function(){
+					init_table();
+					showPaged();
+				},
+				pageTotal:function(){
+					init_table();
+					this.showPaged();
+				}
+				
 			}
 		})
 	
@@ -377,6 +473,7 @@
 							data:$('.layer-form').serialize(),
 							success:function(data){
 								data = eval("("+data+")");
+								console.info(data);
 								if(data[0].succ){
 									layer.closeAll();
 									init_table();
@@ -411,7 +508,7 @@
 		})
 		$(function(){
 			init_table();
-
+			
 			$('.btn-add').on('click', function(){
 				edit_vue.edit_data = null;
 				layer.open({
@@ -444,15 +541,14 @@
 				},
 				success:function(data){
 					data = eval("("+data+")");
-					
-					//一共生成多少页
 					var shang = Math.floor(data[0].total/vue.rows);
 					var yushu = data[0].total%vue.rows;
 					if(yushu > 0)
 						shang += 1;
+					vue.pageTotal = shang;
 					
-					//paginate_tool.init("init_table", shang, []);
-					paginate_tool.init("init_table", 15, []);
+					vue.pageTotal = 100;
+					vue.showPaged();
 					
 					vue.data = data[0].data;
 					layer.closeAll();

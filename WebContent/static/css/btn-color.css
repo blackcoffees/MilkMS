@@ -1,0 +1,42 @@
+@CHARSET "UTF-8";
+.btn-red, .btn-red:visited{
+	background:#f3565d;
+	border-color:#f13e46;
+	color:white;
+}
+.btn-red:hover, .btn-red:focus, .btn-red:active {
+    color: white;
+    background-color: #f03038 !important;
+    border-color: #ec111b;
+}
+.btn-primary {
+    color: white;
+    background-color: #428bca;
+    border-color: #357ebd;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active{
+	color: #fff;
+    background-color: #286090 !important;
+    border-color: #204d74;
+}
+.btn-light-blue{
+	background: #89c4f4;
+}
+.btn-light-blue:hover, .btn-light-blue:focus, .btn-light-blue:active{
+	color: #fff;
+    background-color: #31b0d5 !important;
+    border-color: #269abc;
+}
+.btn-gray{
+	color:#fff;
+	background:#95a5a6;
+}
+.btn-gray:hover, .btn-gray:focus, .btn-gray:active{
+	background-color: #7f9293 !important;
+    border-color: #adadad;
+    color:#fff;	
+}
+
+.red{
+	color:#f3565d;
+}
