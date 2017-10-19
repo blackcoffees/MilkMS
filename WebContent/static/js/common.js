@@ -10,7 +10,8 @@ var menu_vue = new Vue({
 			span_icon:'icon-drop',
 			title:'牛奶管理',
 			href:'milk.jsp'
-		}]
+		}],
+		now_href: window.location.href.split("MilkMS/")[1]
 	},
 	methods:{
 		to_page:function(name){
@@ -23,13 +24,5 @@ $(function(){
 	
 	App.init();
 	
-	set_center_height();
 	
 });
-
-
-function set_center_height(){
-	var all_height = $(document).height();
-	$('.center').css('height', all_height - $('.top').css('height'));
-}
-

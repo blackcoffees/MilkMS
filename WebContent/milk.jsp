@@ -207,8 +207,8 @@
 									
 									</tbody>
 								</table>
-								<div class="bottom-tool">
-									<paginate-tool v-on:change_rows="change_rows" v-on:change_page="change_page" :rows="rows" :show_page="show_page" :rows_list="rows_list"></paginate-tool>
+								<div class="bottom-tool container-fluid">
+									<wear-paginate></wear-paginate>
 								</div>
 							</div>
 						</div>
