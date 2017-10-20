@@ -137,6 +137,8 @@ public class MilkController {
 			message = "删除成功";
 			succ = true;
 		}
+		map.put("succ", succ);
+		map.put("message", message);
 		return JSONArray.fromObject(map).toString();
 	}
 }

@@ -254,12 +254,13 @@
 						url:"milk/delete_milk.action",
 						data:{"number": number},
 						success:function(data){
+							data = eval("("+data+")");
 							if(data.succ){
-								layer.msg("删除成功");
+								layer.msg(data[0].message);
 								init_table();
 							}
 							else{
-								layer.msg("删除失败");								
+								layer.msg(data[0].message);								
 							}
 						}
 					})
@@ -333,7 +334,7 @@
 								data = eval("("+data+")");
 								if(data[0].succ){
 									layer.msg('新增成功');
-									init_table();
+									init_table('', '');
 									layer.closeAll();
 								}						
 								else{
