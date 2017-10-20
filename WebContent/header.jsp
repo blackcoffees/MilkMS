@@ -70,18 +70,13 @@
         <!-- END THEME LAYOUT SCRIPTS -->
         
         
-        
-        
-        
-        
-        
     <link href="static/css/common.css" rel="stylesheet" type="text/css"/>
 	
-	<link href="static/css/btn-color.css" rel="stylesheet" type="text/css"/>
+	<!-- <link href="static/css/btn-color.css" rel="stylesheet" type="text/css"/> -->
+	
+	<link href="static/css/paginate_tool.css" rel="stylesheet" type="text/css"/>
 	
 	<link href="static/css/line-icons.css" rel="stylesheet" type="text/css"/>
-	
-	<link href="static/css/error.css" rel="stylesheet" type="text/css"/>
 	
 	<script src="static/js/layer.js" type="text/javascript"></script>
 	

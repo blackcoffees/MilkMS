@@ -17,15 +17,15 @@ public class MilkService implements IMilkService{
 	private MilkMapper mapper;
 	
 	@Override
-	public List<Milk> get_milk_condition(Pager pager, String milkName) {
+	public List<Milk> get_milk_condition(Pager pager, String milkInfo) {
 		// TODO Auto-generated method stub
-		return mapper.get_milk_condition(pager, milkName);
+		return mapper.get_milk_condition(pager, milkInfo);
 	}
 
 	@Override
-	public int get_milk_condition_count(String milkName) {
+	public int get_milk_condition_count(String milkInfo) {
 		// TODO Auto-generated method stub
-		return mapper.get_milk_condition_count(milkName);
+		return mapper.get_milk_condition_count(milkInfo);
 	}
 
 	@Override

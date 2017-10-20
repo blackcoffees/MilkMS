@@ -5,9 +5,6 @@ public class Pager {
 	private int rows;
 	private int start;
 	
-	public Pager(){
-	}
-	
 	public int getPage() {
 		return page;
 	}

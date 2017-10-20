@@ -12,17 +12,18 @@ var menu_vue = new Vue({
 			href:'milk.jsp'
 		}],
 		now_href: window.location.href.split("MilkMS/")[1]
-	},
-	methods:{
-		to_page:function(name){
-			window.location.href=name+".jsp";
-		}
 	}
 });
 
+
+function get_page_total(total, rows){
+	var shang = Math.floor(total/rows);
+	var yushu = total%rows;
+	if(yushu > 0)
+		shang += 1;
+	return shang;
+}
+
 $(function(){
-	
-	App.init();
-	
 	
 });

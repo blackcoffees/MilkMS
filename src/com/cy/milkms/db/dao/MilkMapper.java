@@ -10,9 +10,9 @@ import com.cy.milkms.util.Pager;
 
 public interface MilkMapper {
 	
-	public List<Milk> get_milk_condition(@Param("pager")Pager pager, @Param("milkName")String milkName);
+	public List<Milk> get_milk_condition(@Param("pager")Pager pager, @Param("milkInfo")String milkInfo);
 	
-	public int get_milk_condition_count(@Param("milkName")String milkName);
+	public int get_milk_condition_count(@Param("milkInfo")String milkInfo);
 	
 	public int add_milk(@Param("milk")Milk milk);
 	

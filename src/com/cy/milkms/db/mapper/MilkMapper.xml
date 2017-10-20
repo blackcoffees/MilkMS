@@ -15,19 +15,19 @@
 		select * from milk 
 		<where>
 			status = 1
-			<if test="milkName != '' and milkName != null">
-				and milk_name like '%${milkName}%' 
+			<if test="milkInfo != '' and milkInfo != null">
+				and ( milk_name like '%${milkInfo}%' or number like '%${milkInfo}%' )
 			</if>
 		</where>
 		limit #{pager.start}, #{pager.rows}
 	</select>
 	
 	<select id="get_milk_condition_count" resultType="int">
-		select count(number) from milk 
+		select count(ID) from milk 
 		<where>
 			status = 1
-			<if test="milkName != '' and milkName != null">
-				and milk_name like '%${milkName}%' 
+			<if test="milkInfo != '' and milkInfo != null">
+				and ( milk_name like '%${milkInfo}%' or number like '%${milkInfo}%' )
 			</if>
 		</where>
 	</select>

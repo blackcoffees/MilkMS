@@ -28,9 +28,9 @@ public class MilkController {
 	
 	@RequestMapping("get_milk_condition")
 	@ResponseBody
-	public String get_milk_condition(Pager pager, String milkName){
-		int total = service.get_milk_condition_count(milkName);
-		List list = service.get_milk_condition(pager, milkName);
+	public String get_milk_condition(Pager pager, String milkInfo){
+		int total = service.get_milk_condition_count(milkInfo);
+		List list = service.get_milk_condition(pager, milkInfo);
 		return ReturnJsonData.currentJsonData(total, list);
 	}
 	

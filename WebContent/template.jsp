@@ -19,8 +19,8 @@
                     
                     <!-- BEGIN LOGO -->
                     <div class="page-logo">
-                        <a href="index.html">
-                        	xxxx
+                        <a href="index.jsp">
+                        	<label class="logo-default">xxxx</label>
 						</a>
                         <div class="menu-toggler sidebar-toggler">
                             <span></span>
@@ -50,7 +50,7 @@
                         <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
                         	<template v-for="(menu, i) in menu_list">
                         		<li class="nav-item" :class="{start: i == 1, active: menu.href==now_href, open: menu.href==now_href}">
-	                                <a href="javascript:;" class="nav-link nav-toggle">
+	                                <a :href="menu.href" class="nav-link nav-toggle">
 	                                    <i :class="menu.span_icon"></i>
 	                                    <span class="title" v-text="menu.title"></span>
 	                                    <span class="selected"></span>
@@ -73,8 +73,8 @@
                         <div class="page-bar">
                             <ul class="page-breadcrumb">
                                 <li>
-                                    <a href="index.html">Home</a>
-                                    <i class="fa fa-circle"></i>
+                                    <a href="index.jsp">Home</a>
+                                    <i class="fa fa-angle-right"></i>
                                 </li>
                                 <li>
                                     <span>Dashboard</span>
@@ -96,6 +96,8 @@
                         </h1>
                         <!-- END PAGE TITLE-->
                         
+                        <!-- BEGIN PAGE MAIN-->
+                        <!-- END PAGE MAIN-->
                         
                     </div>
                 </div>
