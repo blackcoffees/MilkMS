@@ -159,7 +159,7 @@
 
 							</li>
 
-							<li><a href="milk.jsp">Milk</a></li>
+							<li><a href="milk.jsp">牛奶管理</a></li>
 
 						</ul>
 
@@ -176,7 +176,7 @@
 								</div>
 							</div>
 							<div class="portlet-body">
-								<div class="col-md-6 col-sm-12">
+								<div class="col-md-11 col-sm-12">
 									牛奶名称 <input type="search" class="form-control input-small input-inline" v-model.lazy="milkName">
 									<button type="button" class="btn btn-primary search-btn">搜索</button>
 									<button type="button" class="btn right btn-red btn-add">新增</button>
@@ -207,8 +207,8 @@
 									
 									</tbody>
 								</table>
-								<div class="bottom-tool">
-									<paginate-tool v-on:change_rows="change_rows" v-on:change_page="change_page" :rows="rows" :show_page="show_page" :rows_list="rows_list"></paginate-tool>
+								<div class="bottom-tool container-fluid">
+									<wear-paginate></wear-paginate>
 								</div>
 							</div>
 						</div>
@@ -289,9 +289,8 @@
 	<!-- END Layer -->
 	
 	<!-- END CONTAINER -->
-	<script src="static/js/paginate_tool.js" type="text/javascript"></script>
 	<script src="static/js/common.js" type="text/javascript"></script>
-	
+	<script src="static/js/paginate_tool.js" type="text/javascript"></script>
 	<script>
 	
 		var vue = new Vue({
@@ -411,6 +410,8 @@
 		})
 		$(function(){
 			init_table();
+			
+			paginate_tool.init("init_table", 20, []);
 
 			$('.btn-add').on('click', function(){
 				edit_vue.edit_data = null;
@@ -469,6 +470,7 @@
 			})
 		}
 	</script>
+	
 	<!-- END JAVASCRIPTS -->
 	
 </body>

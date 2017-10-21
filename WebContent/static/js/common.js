@@ -10,6 +10,10 @@ var menu_vue = new Vue({
 			span_icon:'icon-drop',
 			title:'牛奶管理',
 			href:'milk.jsp'
+		},{
+			span_icon:'icon-basket',
+			title:'采购管理',
+			href:'purchase.jsp'
 		}]
 	},
 	methods:{

@@ -1,7 +1,7 @@
 <!-- BEGIN GLOBAL MANDATORY STYLES -->
 
 	<link href="static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-
+	
 	<!-- 不同设备相应式布局 -->
 	<link href="static/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css"/>
 	
@@ -137,7 +137,8 @@
 	
 	<link href="static/css/error.css" rel="stylesheet" type="text/css"/>
 	
+	<link href="static/css/paginate_tool.css" rel="stylesheet" type="text/css"/>
+	
 	<script src="static/js/layer.js" type="text/javascript"></script>
 	
 	<script src="static/js/vue.js" type="text/javascript"></script>
-	
