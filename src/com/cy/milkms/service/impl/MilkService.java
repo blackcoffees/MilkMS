@@ -1,5 +1,6 @@
 package com.cy.milkms.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.cy.milkms.db.dao.MilkMapper;
 import com.cy.milkms.db.entity.Milk;
 import com.cy.milkms.service.IMilkService;
+import com.cy.milkms.util.DateTool;
 import com.cy.milkms.util.Pager;
 
 @Service("milkService")
@@ -35,6 +37,8 @@ public class MilkService implements IMilkService{
 		if(milk2 != null){
 			return -1;
 		}
+		milk.setCreated(DateTool.getNowTime());
+		milk.setUpdated(DateTool.getNowTime());
 		return mapper.add_milk(milk);
 	}
 
@@ -47,13 +51,13 @@ public class MilkService implements IMilkService{
 	@Override
 	public int edit_milk(double purchase_price, double selling_price, String number) {
 		// TODO Auto-generated method stub
-		return mapper.edit_milk(purchase_price, selling_price, number);
+		return mapper.edit_milk(purchase_price, selling_price, number, DateTool.getNowTime());
 	}
 
 	@Override
 	public int delete_milk(String number) {
 		// TODO Auto-generated method stub
-		return mapper.delete_milk(number);
+		return mapper.delete_milk(number, DateTool.getNowTime());
 	}
 	
 	

@@ -77,7 +77,7 @@
                                     <i class="fa fa-angle-right"></i>
                                 </li>
                                 <li>
-                                    <span>牛奶管理</span>
+                                    <span>商品管理</span>
                                 </li>
                             </ul>
                             <div class="page-toolbar">
@@ -91,8 +91,8 @@
                         <!-- END PAGE BAR -->
                         
                         <!-- BEGIN PAGE TITLE-->
-                        <h1 class="page-title"> MILK
-                            <small>牛奶管理</small>
+                        <h1 class="page-title"> GOODS
+                            <small>商品管理</small>
                         </h1>
                         
                         <!-- BEGIN PAGE MAIN-->
@@ -103,7 +103,7 @@
                         		<div class="portlet box green">
                         			<div class="portlet-title">
                         				<div class="caption">
-                        					<i class="fa fa-globe"></i>牛奶列表
+                        					<i class="fa fa-globe"></i>商品列表
                         				</div>
                         				<div class="tools">
                                             <span class="btn-refresh"><i class="fa fa-refresh"></i></span>
@@ -112,7 +112,7 @@
                         			<div class="portlet-body flip-scroll">
                         				<div class="row table-tool">
 											<div class="col-md-12">
-												<input type="search" placeholder="牛奶名称 " class="form-control input-small input-inline" v-model.lazy="milkName" onkeyup="if(event==13){init_table()}">
+												<input type="search" placeholder="牛奶名称 /商品编号" class="form-control input-small input-inline" v-model.lazy="milkName" onkeyup="if(event==13){init_table()}">
 												<button type="button" class="btn btn-success btn-search">搜索</button>
 												<button type="button" class="btn btn-danger btn-add">新增</button>
 											</div>
@@ -120,7 +120,8 @@
                         				<table class="table table-bordered table-striped table-condensed flip-content" id="table">
                         					<thead class="flip-content">
                         						<tr>
-													<th>编号</th>
+                        							<th></th>
+													<th>商品编号</th>
 													<th>牛奶名称</th>
 													<th>规格</th>
 													<th>进货价</th>
@@ -130,6 +131,7 @@
                         					</thead>
                         					<tbody>
                         						<tr v-for="(item, index) in data" :key="item.id">
+                        							<td v-text="index+1"></td>
 													<td v-text="item.number"></td>
 													<td v-text="item.milk_name"></td>
 													<td v-text="item.specifications"></td>
@@ -171,11 +173,11 @@
 		<!-- BEGIN Layer -->
 		<div id="layer-window" style="display:none">
 			<div class="col-mid-6">
-				<form onsubmit="return false" class="layer-form">
+				<form class="layer-form" data-parsley-validate onsubmit="return false">
 					<table>
 						<template v-if="edit_data != null">
 							<tr>
-								<td width="70">编号</td>
+								<td width="70">商品编号</td>
 								<td><input name="number" id="number" v-model="edit_data.number" data-validat="false" readonly /><span class="red"> *</span></td>
 							</tr>
 							<tr>
@@ -188,41 +190,65 @@
 							</tr>
 							<tr>
 								<td width="70">进货价</td>
-								<td><input name="purchase_price" id="purchase_price" v-model="edit_data.purchase_price" @blur="check_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
+								<td><input name="purchase_price" id="purchase_price" :value="edit_data.purchase_price" @blur="check_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
 							</tr>
 							<tr>
 								<td width="70">销售价</td>
-								<td><input name="selling_price" id="selling_price" v-model="edit_data.selling_price" @blur="check_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
+								<td><input name="selling_price" id="selling_price" :value="edit_data.selling_price" @blur="check_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
 							</tr>
 						</template>
 						<template v-else>
 							<tr>
-								<td width="70">编号</td>
-								<td><input name="number" id="number" onkeyup="value=value.replace(/[^0-9]/g, '')" onblur="if(this.value.length!=4){layer.tips('编号长度只能是4位', this);$(this).css('color','red');$(this).attr('data-validat', 'false');}else{$(this).attr('data-validat', 'true');$(this).css('color', 'black')}" data-validat="false"/><span class="red"> *</span></td>
+								<td width="70">商品编号</td>
+								<td>
+									<input name="number" type="number" id="number" data-parsley-type="integer" data-parsley-required="true" data-parsley-length="[4,4]"
+										data-parsley-error-message="商品编号只能是4位数字" data-parsley-required-message="商品编号必须填写" data-parsley-trigger="change" />
+									<span class="red"> *</span>
+								</td>
 							</tr>
 							<tr>
 								<td width="70">牛奶名称</td>
-								<td><input name="milk_name" id="milk_name" data-validat="true"/><span class="red"> *</span></td>
+								<td>
+									<input name="milk_name" id="milk_name" data-parsley-required="true"
+										data-parsley-required-message="牛奶名称必填" data-parsley-trigger="change"/>
+									<span class="red"> *</span>
+								</td>
 							</tr>
 							<tr>
 								<td width="70">规格</td>
-								<td><input name="specifications" id="specifications" value="件" readonly data-validat="true"/><span class="red"> *</span></td>
+								<td>
+									<select name="specifications" id="specifications" data-parsley-required="true" data-parsley-required-message="规格必填">
+										<option></option>
+										<option>件</option>
+										<option>提</option>
+										<option>个</option>
+									</select>
+									<span class="red"> *</span>
+								</td>
 							</tr>
 							<tr>
 								<td width="70">进货价</td>
-								<td><input name="purchase_price" id="purchase_price" @blur="check_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
+								<td>
+									<input name="purchase_price" id="purchase_price" @blur="check_price" @keyup="check_price_format" data-parsley-required="true"
+										data-parsley-required-message="进货价必填"/> 元
+									<span class="red"> *</span>
+								</td>
 							</tr>
 							<tr>
 								<td width="70">销售价</td>
-								<td><input name="selling_price" id="selling_price" @blur="check_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
+								<td>
+									<input name="selling_price" id="selling_price" @blur="check_price" @keyup="check_price_format" data-parsley-required="true"
+										data-parsley-required-message="销售价必填"/> 元
+									<span class="red"> *</span>
+								</td>
 							</tr>
 						</template>
 					</table>
+					<div class="layer-button">
+						<input type="submit" class="btn btn-danger btn-submit" @click="current" value="确定"/>
+						<button type="button" class="btn grey-cascade btn-cancle" >取消</button>
+					</div>
 				</form>
-				<div class="layer-button">
-					<button type="button" class="btn btn-danger" @click="current">确定</button>
-					<button type="button" class="btn grey-cascade btn-cancle" >取消</button>
-				</div>
 			</div>
 		</div>
 		<!-- END Layer -->
@@ -244,7 +270,7 @@
 						type: '1',
 						skin: 'layui-layer-molv',
 						title: '编辑牛奶',
-						area: ['362px', '339px'],
+						area: ['362px', '368px'],
 						content: $('#layer-window')
 					})
 				},
@@ -255,12 +281,9 @@
 						data:{"number": number},
 						success:function(data){
 							data = eval("("+data+")");
-							if(data.succ){
-								layer.msg(data[0].message);
+							layer.msg(data[0].message);
+							if(data[0].succ){
 								init_table();
-							}
-							else{
-								layer.msg(data[0].message);								
 							}
 						}
 					})
@@ -297,50 +320,38 @@
 					}
 				},
 				current:function(){
-					var inputs = $('.layer-form input');
-					var is_validat = true;
-					inputs.each(function(){
-						if(!$(this).attr('data-validat')){
-							layer.msg('输入错误，请检查并重新输入');
-							is_validat = false;
-							return;
-						}
-					});
-					if(!is_validat) return;
 					if(this.edit_data != null){
-						$.ajax({
-							type:'post',
-							url:'milk/edit_milk.action',
-							data:$('.layer-form').serialize(),
-							success:function(data){
-								data = eval("("+data+")");
-								if(data[0].succ){
-									layer.closeAll();
-									init_table();
-									layer.msg('编辑成功');
-								}						
-								else{
+						$("form").parsley().on("form:success", function(){
+							$.ajax({
+								type:'post',
+								url:'milk/edit_milk.action',
+								data:$('.layer-form').serialize(),
+								success:function(data){
+									data = eval("("+data+")");
 									layer.msg(data[0].message);
+									if(data[0].succ){
+										layer.closeAll("page");
+										init_table();
+									}						
 								}
-							}
+							});
 						});
 					}
 					else{
-						$.ajax({
-							type:'post',
-							url:'milk/add_milk.action',
-							data:$('.layer-form').serialize(),
-							success:function(data){
-								data = eval("("+data+")");
-								if(data[0].succ){
-									layer.msg('新增成功');
-									init_table('', '');
-									layer.closeAll();
-								}						
-								else{
+						$("form").parsley().on("form:success", function(){
+							$.ajax({
+								type:'post',
+								url:'milk/add_milk.action',
+								data:$('.layer-form').serialize(),
+								success:function(data){
+									data = eval("("+data+")");
 									layer.msg(data[0].message);
+									if(data[0].succ){
+										layer.closeAll("page");
+										init_table();
+									}						
 								}
-							}
+							});
 						});
 					}
 				}
@@ -351,11 +362,12 @@
 			
 			$('.btn-add').on('click', function(){
 				edit_vue.edit_data = null;
+				
 				layer.open({
 					type: '1',
 					skin: 'layui-layer-molv',
 					title: '新增牛奶',
-					area: ['362px', '339px'],
+					area: ['362px', '368px'],
 					content: $('#layer-window')
 				})
 			})
@@ -376,6 +388,13 @@
 		
 		var g_rows = 10;
         var g_page = 1;
+        
+		function init_add_layer(){
+			$("#number").val("");
+			$("#milk_name").val("");
+			$("#purchase_price").val("");
+			$("#selling_price").val("");
+		}        
 		
 		function init_table(rows, page){
 			if(rows != '' && rows > 0)
@@ -398,12 +417,13 @@
 				},
 				success:function(data){
 					data = eval("("+data+")");
+					
 					//一共生成多少页
 					page_total = get_page_total(data[0].total, g_rows);
-					paginate_tool.init("init_table", page_total, []);
+					paginate_tool.init("init_table", page_total, data[0].total, []);
 					
 					vue.data = data[0].data;
-					layer.closeAll();
+					layer.closeAll('loading');
 				},
 				beforeSend:function(){
 					layer.load(1, {
@@ -411,7 +431,7 @@
 					});
 				},
 				error: function(){
-					layer.closeAll();
+					layer.closeAll("loading");
 				}
 				
 			})

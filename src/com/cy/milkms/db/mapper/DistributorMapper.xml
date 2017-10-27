@@ -9,7 +9,45 @@
 		<result column="phone" property="phone"  jdbcType="VARCHAR"/>
 		<result column="total_amount" property="total_amount"  jdbcType="DOUBLE"/>
 		<result column="unpaid_amount" property="unpaid_amount"  jdbcType="DOUBLE"/>
+		<result column="paid_amount" property="paid_amount" jdbcType="DOUBLE" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
+		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 	</resultMap>
 	
+	<select id="getDistributorByCondition" resultMap="baseResultMap">
+		select * from distributor
+		where
+			status = 1
+			<if test="distributorInfo != '' and distributorInfo != null">
+				and (name like '%${distributorInfo}%' or people like '%${distributorInfo}%')
+			</if>
+		limit #{pager.start}, #{pager.rows}
+	</select>
 	
+	<select id="getDistributorByConditionCount" resultType="int">
+		select count(ID) from distributor
+		where status = 1
+			<if test="distributorInfo != '' and distributorInfo != null">
+				and (name like '%${distributorInfo}%' or people like '%${distributorInfo}%')
+			</if>
+	</select>
+	
+	<select id="getDistributorByNameCount" resultType="int">
+		select count(ID) from distributor where name = #{name}
+	</select>
+	
+	<insert id="addDistributor">
+		insert into distributor(ID, name, address, people, phone, total_amount, paid_amount, unpaid_amount, status, created, updated)
+		values(#{distributor.ID}, #{distributor.name}, #{distributor.address}, #{distributor.people}, #{distributor.phone},
+		#{distributor.total_amount}, #{distributor.paid_amount}, #{distributor.unpaid_amount}, #{distributor.status}, #{distributor.created}, #{distributor.updated})
+	</insert>
+	
+	<update id="deleteDistributor">
+		update distributor set status = 2, updated=#{updated} where ID=#{distributorID}
+	</update>
+		
+	<updated id="updatedDistributor">
+		update distributor set address=#{address}, people=#{people}, phone=#{phone}, updated=#{updated} where ID=#{ID}
+	</updated>
 </mapper>

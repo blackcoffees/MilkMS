@@ -1,5 +1,8 @@
 package com.cy.milkms.db.entity;
 
+import java.sql.Timestamp;
+import java.util.UUID;
+
 public class Distributor {
 	private String ID;
 	private String name;
@@ -8,6 +11,40 @@ public class Distributor {
 	private String phone;
 	private double total_amount;
 	private double unpaid_amount;
+	private double paid_amount;
+	private int status;
+	private Timestamp created;
+	private Timestamp updated;
+	
+	
+	public Distributor(){
+		ID = UUID.randomUUID().toString();
+	}
+	
+	public double getPaid_amount() {
+		return paid_amount;
+	}
+	public void setPaid_amount(double paid_amount) {
+		this.paid_amount = paid_amount;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public Timestamp getCreated() {
+		return created;
+	}
+	public void setCreated(Timestamp created) {
+		this.created = created;
+	}
+	public Timestamp getUpdated() {
+		return updated;
+	}
+	public void setUpdated(Timestamp updated) {
+		this.updated = updated;
+	}
 	public String getID() {
 		return ID;
 	}

@@ -7,9 +7,13 @@ var menu_vue = new Vue({
 			title:'HOME',
 			href:'index.jsp'
 		},{
-			span_icon:'icon-drop',
-			title:'牛奶管理',
+			span_icon:'icon-diamond',
+			title:'商品管理',
 			href:'milk.jsp'
+		},{
+			span_icon: 'icon-basket',
+			title:'商家管理',
+			href:'distributor.jsp'
 		}],
 		now_href: window.location.href.split("MilkMS/")[1]
 	}
@@ -25,5 +29,6 @@ function get_page_total(total, rows){
 }
 
 $(function(){
-	
+	$('form').parsley();//调用parsley表单验证插件(提交时才会验证 是否必填和输入格式)
+	//$('form').parsley().validate();//调用parsley表单验证插件(页面加载时就验证 是否必填和输入格式)
 });

@@ -77,7 +77,7 @@
                                     <i class="fa fa-angle-right"></i>
                                 </li>
                                 <li>
-                                    <span>Dashboard</span>
+                                    <span>商家管理</span>
                                 </li>
                             </ul>
                             <div class="page-toolbar">
@@ -91,8 +91,8 @@
                         <!-- END PAGE BAR -->
                         
                         <!-- BEGIN PAGE TITLE-->
-                        <h1 class="page-title"> Admin Dashboard
-                            <small>statistics, charts, recent events and reports</small>
+                        <h1 class="page-title"> DISTRIBUTOR
+                            <small>商家管理</small>
                         </h1>
                         <!-- END PAGE TITLE-->
                         
@@ -104,7 +104,7 @@
                         		<div class="portlet box green">
                         			<div class="portlet-title">
                         				<div class="caption">
-                        					<i class="fa fa-globe"></i>商品列表
+                        					<i class="fa fa-globe"></i>商家列表
                         				</div>
                         				<div class="tools">
                                             <span class="btn-refresh"><i class="fa fa-refresh"></i></span>
@@ -113,7 +113,7 @@
                         			<div class="portlet-body flip-scroll">
                         				<div class="row table-tool">
 											<div class="col-md-12">
-												<input type="search" placeholder="牛奶名称 " class="form-control input-small input-inline" v-model.lazy="milkName" onkeyup="if(event==13){init_table()}">
+												<input type="search" placeholder="商家名称/联系人 " class="form-control input-small input-inline" v-model.lazy="milkName" onkeyup="if(event==13){init_table()}">
 												<button type="button" class="btn btn-success btn-search">搜索</button>
 												<button type="button" class="btn btn-danger btn-add">新增</button>
 											</div>
@@ -121,24 +121,30 @@
                         				<table class="table table-bordered table-striped table-condensed flip-content" id="table">
                         					<thead class="flip-content">
                         						<tr>
-													<th>编号</th>
-													<th>牛奶名称</th>
-													<th>规格</th>
-													<th>进货价</th>
-													<th>销售价</th>
+                        							<th></th>
+													<th>商家名称</th>
+													<th>地址</th>
+													<th>联系人</th>
+													<th>联系电话</th>
+													<th>销售总额</th>
+													<th>已付总额</th>
+													<th>未付总额</th>
 													<th>操作</th>
 												</tr>
                         					</thead>
                         					<tbody>
-                        						<tr v-for="(item, index) in data" :key="item.id">
-													<td v-text="item.number"></td>
-													<td v-text="item.milk_name"></td>
-													<td v-text="item.specifications"></td>
-													<td v-text="item.purchase_price"></td>
-													<td v-text="item.selling_price"></td>
+                        						<tr v-for="(item, index) in data_list" :key="item.id">
+                        							<td v-text="index+1"></td>
+													<td v-text="item.name"></td>
+													<td v-text="item.address"></td>
+													<td v-text="item.people"></td>
+													<td v-text="item.phone"></td>
+													<td v-text="item.total_amount"></td>
+													<td v-text="item.paid_amount"></td>
+													<td v-text="item.unpaid_amount"></td>
 													<td>
 														<button class="btn btn-sm green btn-outline filter-submit margin-bottom" @click="edit(item)">编辑</button>
-														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.number)">删除</button>
+														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.ID)">删除</button>
 													</td>
 												</tr>
                         					</tbody>
@@ -152,107 +158,6 @@
                         		
                         	</div>
                         </div>
-                        
-                        <div class="row">
-                        	<form data-validate-parsley id="form">
-                        		<div>
-      <label for="userName">姓名：</label>
-	  <input type="text" id="userName" name="userName" data-parsley-required="true"/>
-	</div>
-	
-	<div>
-      <label for="email">邮箱：</label>
-	  <input type="text" id="email" name="email" data-parsley-required="true" data-parsley-type="email"/>
-	</div>
-	
-	<div>
-      <label for="age">年龄：</label>
-	  <input type="text" id="age" name="age" data-parsley-type="integer" />
-	</div>
-	
-	<div>
-      <label for="age1">测试trigger：</label>
-	  <input type="text" id="age1" name="age1" data-parsley-type="integer" data-parsley-trigger="change"/>
-	</div>
-	
-	<div>
-      <label for="salary">薪资：</label>
-	  <input type="text" id="salary" name="salary" data-parsley-type="digits"/>
-	</div>
-	
-	<div>
-      <label for="deposit">存款：</label>
-	  <input type="text" id="deposit" name="deposit" data-parsley-type="number"/>
-	</div>
-	
-	<div>
-      <label for="extractedCode">提取码</label>
-	  <input type="text" id="extractedCode" name="extractedCode" data-parsley-type="alphanum"/>
-	</div>
-	
-	<div>
-      <label for="personWebSite">个人网站：</label>
-	  <input type="text" id="personWebSite" name="personWebSite" data-parsley-type="url"/>
-	</div>
-	
-	<div>
-      <label for="hobby">特长：</label>
-	  <input type="text" id="hobby" name="hobby" data-parsley-length="[6, 10]"/>
-	</div>
-	
-	<div>
-      <label for="minValue">最小值：</label>
-	  <input type="text" id="minValue" name="minValue" data-parsley-min="5"/>
-	</div>
-	
-	<div>
-      <label for="maxValue">最大值：</label>
-	  <input type="text" id="maxValue" name="maxValue" data-parsley-max="6"/>
-	</div>
-	
-	<div>
-      <label for="rangeValue">数值范围：</label>
-	  <input type="text" id="rangeValue" name="rangeValue" data-parsley-range="[6, 10]"/>
-	</div>
-	
-	<div>
-      <label for="regularExpression">正则表达式：</label>
-	  <input type="text" id="regularExpression" name="regularExpression" data-parsley-pattern="\d{2}"/>
-	</div>
-	
-	<div>
-      <label>最少选中几项复选：</label>
-	  <input type="checkbox" name="xCheckbox" data-parsley-required="true"/>
-	  <input type="checkbox" name="xCheckbox" data-parsley-mincheck="2"/>
-	  <input type="checkbox" name="xCheckbox"/>
-	</div>
-	
-	<div>
-      <label>最多选中几项复选：</label>
-	  <input type="checkbox" name="yCheckbox" data-parsley-required="true"/>
-	  <input type="checkbox" name="yCheckbox" data-parsley-maxcheck="2"/>
-	  <input type="checkbox" name="yCheckbox"/>
-	</div>
-	
-	<div>
-      <label>选中几项复选（范围）：</label>
-	  <input type="checkbox" name="zCheckbox" data-parsley-required="true"/>
-	  <input type="checkbox" name="zCheckbox" data-parsley-check="[1,2]"/>
-	  <input type="checkbox" name="zCheckbox"/>
-	</div>
-	
-	<div>
-      <label>密码：</label>
-	  <input type="password" id="password1"/>
-	  <input type="password" data-parsley-equalto="#password1"/>
-	</div>
-	
-	<div>
-	  <input type="submit" value="提交"/>
-	</div>
-                        	</form>
-                        </div>
-                        
                         <!-- END PAGE MAIN-->
                         
                     </div>
@@ -271,69 +176,45 @@
         <!-- BEGIN Layer -->
 		<div id="layer-window" style="display:none">
 			<div class="col-mid-6">
-				<form class="layer-form" data-parsley-validate onsubmit="return false">
+				<form onsubmit="return false" class="layer-form" data-parsley-validate>
 					<table>
 						<template v-if="edit_data != null">
 							<tr>
-								<td width="70">商品编号</td>
-								<td><input name="number" id="number" v-model="edit_data.number" data-validat="false" readonly /><span class="red"> *</span></td>
+								<td width="70">商家名称</td>
+								<td><input name="name" id="name" :value="edit_data.name" readonly /><span class="red"> *</span></td>
 							</tr>
 							<tr>
-								<td width="70">牛奶名称</td>
-								<td><input name="milk_name" id="milk_name" v-model="edit_data.milk_name" data-validat="true" readonly/><span class="red"> *</span></td>
+								<td width="70">地址</td>
+								<td><input name="address" id="address" :value="edit_data.address"/></td>
 							</tr>
 							<tr>
-								<td width="70">规格</td>
-								<td><input name="specifications" id="specifications" value="件" readonly data-validat="true"/><span class="red"> *</span></td>
+								<td width="70">联系人</td>
+								<td><input name="people" id="people" :value="edit_data.people"/></td>
 							</tr>
 							<tr>
-								<td width="70">进货价</td>
-								<td><input name="purchase_price" id="purchase_price" v-model="edit_data.purchase_price" @blur="check_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
-							</tr>
-							<tr>
-								<td width="70">销售价</td>
-								<td><input name="selling_price" id="selling_price" v-model="edit_data.selling_price" @blur="check_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
+								<td width="70">联系电话</td>
+								<td><input name="phone" id="phone" data-parsley-type="integer"  :value="edit_data.phone"/></td>
 							</tr>
 						</template>
 						<template v-else>
 							<tr>
-								<td width="70">商品编号</td>
+								<td width="70">商家名称</td>
 								<td>
-									<input name="number" type="text" id="number" data-parsley-required="true" data-parsley-length="[4,4]"
-										data-parsley-error-message="商品编号长度只能是4位" data-parsley-required-message="商品编号必须填写" data-parsley-trigger="change" />
+									<input name="name" id="name" data-parsley-required="true" data-parsley-error-message="商家名称必填"/>
 									<span class="red"> *</span>
 								</td>
 							</tr>
 							<tr>
-								<td width="70">牛奶名称</td>
-								<td>
-									<input name="milk_name" id="milk_name" data-validat="true" data-parsley-required="true"
-										data-parsley-required-message="牛奶名称必填" data-parsley-trigger="change"/>
-									<span class="red"> *</span>
-								</td>
+								<td width="70">地址</td>
+								<td><input name="address" id="address" /></td>
 							</tr>
 							<tr>
-								<td width="70">规格</td>
-								<td>
-									<input name="specifications" id="specifications" value="件" readonly/>
-									<span class="red"> *</span>
-								</td>
+								<td width="70">联系人</td>
+								<td><input name="people" id="people"/></td>
 							</tr>
 							<tr>
-								<td width="70">进货价</td>
-								<td>
-									<input name="purchase_price" id="purchase_price" @blur="check_price" @keyup="check_price_format" data-parsley-required="true"
-										data-parsley-required-message="进货价必填"/> 元
-									<span class="red"> *</span>
-								</td>
-							</tr>
-							<tr>
-								<td width="70">销售价</td>
-								<td>
-									<input name="selling_price" id="selling_price" @blur="check_price" @keyup="check_price_format" data-parsley-required="true"
-										data-parsley-required-message="销售价必填"/> 元
-									<span class="red"> *</span>
-								</td>
+								<td width="70">联系电话</td>
+								<td><input name="phone" id="phone" data-parsley-type="integer"/></td>
 							</tr>
 						</template>
 					</table>
@@ -349,7 +230,151 @@
         <script src="static/js/common.js" type="text/javascript"></script>
         <script src="static/js/paginate_tool.js" type="text/javascript"></script>
         <script>
-        
+        	var g_rows = 10;
+        	var g_page = 1;
+        	
+        	
+        	$(function(){
+        		init_table();
+        		
+        		$(".btn-cancle").on("click", function(){
+        			layer.closeAll();
+        		})
+        		
+        		$(".btn-refresh").on("click", function(){
+        			init_table();
+        		})
+        		
+        		$(".btn-add").on("click", function(){
+       				edit_vue.edit_data = null;
+       				layer.open({
+       					type: '1',
+						skin: 'layui-layer-molv',
+						title: '新增商家',
+						area: ['362px', '323px'],
+						content: $('#layer-window')
+       				});
+        		})
+        	})
+        	
+        	var edit_vue = new Vue({
+        		delimeters:["(("+"))"],
+        		el: "#layer-window",
+        		data:{
+        			edit_data: null
+        		},
+				methods:{
+					current: function(){
+        				if(edit_vue.edit_dat == null){
+        					$("form").parsley().on("form:success", function(){
+        						$.ajax({
+            						type: 'post',
+            						url: 'distributor/addDistributor.action',
+            						data: $('.layer-form').serialize(),
+            						success:function(data){
+            							data = eval("("+data+")");
+            							layer.msg(data[0].message);
+            							if(data[0].succ){
+            								layer.closeAll("page");
+            								init_table();
+            							}
+            						}
+            					});
+        					});
+        				}
+        				else{
+							$("form").parsley().on("form:success", function(){
+								$.ajax({
+	        						type: 'post',
+	        						url: 'distributor/updateDistributor.action',
+	        						data: $('.layer-form').serialize(),
+	        						success:function(data){
+	        							data = eval("("+data+")");
+	        							layer.msg(data[0].message);
+	        							if(data[0].succ){
+	        								layer.closeAll("page");
+	        								init_table();
+	        							}
+	        						}
+	        					});
+							});        					
+        				}
+        			}
+				}        		
+        	})
+        	
+        	
+        	var table_vue = new Vue({
+        		delimeters:["(("+"))"],
+        		el:"#table",
+        		data:{
+        			distributorInfo: '',
+        			data_list: []
+        		},
+        		methods:{
+        			edit: function(item){
+        				edit_vue.edit_data = item;
+        				layer.open({
+           					type: '1',
+    						skin: 'layui-layer-molv',
+    						title: '编辑商家',
+    						area: ['362px', '323px'],
+    						content: $('#layer-window')
+           				});
+        			},
+        			deleted:function(id){
+        				$.ajax({
+        					type: 'post',
+        					url: 'distributor/deleteDistributor.action',
+        					data: {'distributorID': id},
+        					success:function(data){
+        						data = eval("("+data+")");
+        						layer.msg(data[0].message);
+        						if(data[0].succ){
+        							layer.closeAll("page");
+        							init_table();
+        						}
+        					}
+        					
+        				})
+        			}
+        		}
+        	})
+        	
+        	
+       		function init_table(rows, page){
+       			if(rows == null || rows == 0 || rows == '') rows = g_rows;
+       			else g_rows = rows;
+       			
+       			if(page == null || page == 0 || page == '') page = g_page;
+       			else g_page = page;
+       			
+       			$.ajax({
+       				type:'post',
+       				url:'distributor/getDistributorByCondition.action',
+       				data:{
+       					rows: rows,
+       					page: page,
+       					distributorInfo: table_vue.distributorInfo
+       				},
+       				beforeSend:function(){
+						layer.load(1, {
+							shade:[0.1, "#fff"]
+						})	
+       				},
+       				success:function(data){
+       					data = eval("("+data+")");
+       					var pageTotal = get_page_total(data[0].total, rows);
+       					paginate_tool.init("init_table", pageTotal, data[0].total, []);
+       					table_vue.data_list = data[0].data;
+       					layer.closeAll("loading");
+       				},
+       				error:function(){
+       					layer.closeAll("loading");
+       				}
+       				
+       			})
+       		} 
         </script>
     </body>
 

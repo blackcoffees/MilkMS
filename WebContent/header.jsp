@@ -78,7 +78,13 @@
 	
 	<link href="static/css/line-icons.css" rel="stylesheet" type="text/css"/>
 	
+	<link href="static/css/parsley.css" rel="stylesheet" type="text/css"/>
+	
 	<script src="static/js/layer.js" type="text/javascript"></script>
 	
 	<script src="static/js/vue.js" type="text/javascript"></script>
+	
+	<script src="static/js/parsley.js" type="text/javascript"></script>
+	
+	<script src="static/js/zh_cn.js" type="text/javascript"></script> <!-- parsley 提示语言 -->
         

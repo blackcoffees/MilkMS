@@ -9,32 +9,32 @@
 		<result column="purchase_price" property="purchase_price"  jdbcType="DOUBLE"/>
 		<result column="selling_price" property="selling_price" jdbcType="DOUBLE"/>
 		<result column="status" property="status" jdbcType="INTEGER"/>
+		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 	</resultMap>
 	
 	<select id="get_milk_condition" resultMap="baseResultMap">
 		select * from milk 
-		<where>
+		where
 			status = 1
 			<if test="milkInfo != '' and milkInfo != null">
 				and ( milk_name like '%${milkInfo}%' or number like '%${milkInfo}%' )
 			</if>
-		</where>
 		limit #{pager.start}, #{pager.rows}
 	</select>
 	
 	<select id="get_milk_condition_count" resultType="int">
 		select count(ID) from milk 
-		<where>
+		where
 			status = 1
 			<if test="milkInfo != '' and milkInfo != null">
 				and ( milk_name like '%${milkInfo}%' or number like '%${milkInfo}%' )
 			</if>
-		</where>
 	</select>
 	
 	<insert id="add_milk">
-		insert into milk(ID, number, milk_name, specifications, purchase_price, selling_price, status)
-		values(#{milk.ID}, #{milk.number}, #{milk.milk_name}, #{milk.specifications}, #{milk.purchase_price}, #{milk.selling_price}, #{milk.status})
+		insert into milk(ID, number, milk_name, specifications, purchase_price, selling_price, status, created, updated)
+		values(#{milk.ID}, #{milk.number}, #{milk.milk_name}, #{milk.specifications}, #{milk.purchase_price}, #{milk.selling_price}, #{milk.status}, #{milk.created}, #{milk.updated})
 	</insert>
 	
 	<select id="get_milk_by_name_or_number" resultType="com.cy.milkms.db.entity.Milk">
@@ -56,12 +56,12 @@
 	</select>
 	
 	<update id="edit_milk">
-		update milk set purchase_price = #{purchase_price}, selling_price = #{selling_price}
+		update milk set purchase_price = #{purchase_price}, selling_price = #{selling_price}, updated=#{updated}
 		where number = #{number} and status = 1
 	</update>
 	
 	<update id="delete_milk">
-		update milk set status = 2 where number = #{number} and status =  1
+		update milk set status = 2, updated=#{updated} where number = #{number} and status =  1
 	</update>
 </mapper>
 

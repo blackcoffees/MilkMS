@@ -1,4 +1,5 @@
 package com.cy.milkms.db.entity;
+import java.sql.Timestamp;
 import java.util.UUID;
 public class Milk {
 	private String ID;
@@ -8,8 +9,22 @@ public class Milk {
 	private double purchase_price;
 	private double selling_price;
 	private int status;
+	private Timestamp created;
+	private Timestamp updated;
 	
 	
+	public Timestamp getCreated() {
+		return created;
+	}
+	public void setCreated(Timestamp created) {
+		this.created = created;
+	}
+	public Timestamp getUpdated() {
+		return updated;
+	}
+	public void setUpdated(Timestamp updated) {
+		this.updated = updated;
+	}
 	public int getStatus() {
 		return status;
 	}

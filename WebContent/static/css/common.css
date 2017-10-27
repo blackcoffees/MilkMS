@@ -20,7 +20,7 @@ li{
 }
 
 .layer-form table tr{
-	height:42px;
+	height:50px;
 }
 
 .layer-button{
@@ -32,4 +32,15 @@ li{
 }
 .layer-button button:last-child{
 	margin-left:67px;
+}
+span.red{
+	color:red;
+}
+
+.btn-submit{
+	width:87px;
+}
+.layer-form select{
+	width:181px; 
+	height: 30px; 
 }
