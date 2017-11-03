@@ -8,6 +8,8 @@
 		<result column="number" property="number"  jdbcType="INTEGER"/>
 		<result column="purchase_price" property="purchase_price" jdbcType="DOUBLE"/>
 		<result column="total_amount" property="total_amount" jdbcType="DOUBLE"/>
+		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
+		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 	</resultMap>
 	
 	

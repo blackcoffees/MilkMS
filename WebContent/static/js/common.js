@@ -11,9 +11,13 @@ var menu_vue = new Vue({
 			title:'商品管理',
 			href:'milk.jsp'
 		},{
-			span_icon: 'icon-basket',
+			span_icon: 'icon-user',
 			title:'商家管理',
 			href:'distributor.jsp'
+		},{
+			span_icon: 'icon-basket',
+			title: '采购管理',
+			href: 'purchase.jsp'
 		}],
 		now_href: window.location.href.split("MilkMS/")[1]
 	}

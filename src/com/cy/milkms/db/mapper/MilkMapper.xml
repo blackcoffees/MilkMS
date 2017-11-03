@@ -63,5 +63,9 @@
 	<update id="delete_milk">
 		update milk set status = 2, updated=#{updated} where number = #{number} and status =  1
 	</update>
+	
+	<select id="getMilkByName" resultMap="baseResultMap">
+		select * from milk where (milk_name like '%${name}%' or number like '%{name}%') 
+	</select>
 </mapper>
 

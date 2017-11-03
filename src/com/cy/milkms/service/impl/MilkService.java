@@ -59,6 +59,12 @@ public class MilkService implements IMilkService{
 		// TODO Auto-generated method stub
 		return mapper.delete_milk(number, DateTool.getNowTime());
 	}
+
+	@Override
+	public List<Milk> getMilkByName(String name) {
+		// TODO Auto-generated method stub
+		return mapper.getMilkByName(name);
+	}
 	
 	
 	

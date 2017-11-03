@@ -1,5 +1,6 @@
 package com.cy.milkms.db.entity;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Purchase_detailed {
@@ -9,9 +10,28 @@ public class Purchase_detailed {
 	private int number;
 	private double purchase_price;
 	private double total_amount;
+	private Timestamp created;
+	private Timestamp updated;
 	
+	
+	public Timestamp getCreated() {
+		return created;
+	}
+
+	public void setCreated(Timestamp created) {
+		this.created = created;
+	}
+
+	public Timestamp getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(Timestamp updated) {
+		this.updated = updated;
+	}
+
 	public Purchase_detailed(){
-		this.ID = UUID.randomUUID().toString().replaceAll("-", "");
+		this.ID = UUID.randomUUID().toString();
 	}
 
 	public String getID() {

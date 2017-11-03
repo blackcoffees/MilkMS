@@ -47,7 +47,7 @@
 		update distributor set status = 2, updated=#{updated} where ID=#{distributorID}
 	</update>
 		
-	<updated id="updatedDistributor">
-		update distributor set address=#{address}, people=#{people}, phone=#{phone}, updated=#{updated} where ID=#{ID}
-	</updated>
+	<update id="updateDistributor">
+		update distributor set address=#{address}, people=#{people}, phone=#{phone}, updated=#{updated} where name=#{name}
+	</update>
 </mapper>

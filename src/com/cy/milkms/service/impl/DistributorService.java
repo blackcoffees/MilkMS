@@ -59,10 +59,10 @@ public class DistributorService implements IDistributorService{
 	}
 
 	@Override
-	public int updateDistributor(String address, String people, String phone, String ID) {
+	public int updateDistributor(String address, String people, String phone, String name) {
 		// TODO Auto-generated method stub
 		Timestamp updated = DateTool.getNowTime(); 
-		return mapper.updateDistributor(address, people, phone, updated, ID);
+		return mapper.updateDistributor(address, people, phone, updated, name);
 	}
 
 

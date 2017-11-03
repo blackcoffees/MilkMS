@@ -44,3 +44,29 @@ span.red{
 	width:181px; 
 	height: 30px; 
 }
+.edit-input{
+	border:0px;
+	border-color:white;
+	background:white;
+	height:28px;
+}
+.edit-table tr{
+	background: #fbfcfd;
+}
+.goods-list{
+	position:absolute;
+	width: 193px;
+	display: none;
+}
+.goods-list tr{
+	height: 24px;
+	cursor:pointer;
+}
+
+.goods-list th{
+	padding: 3px;
+}
+.goods-list{
+	max-height: 200px;
+	overflow-y: scroll;
+}

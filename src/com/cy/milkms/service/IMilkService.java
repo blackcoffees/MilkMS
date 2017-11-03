@@ -17,4 +17,6 @@ public interface IMilkService {
  	public int edit_milk(double purchase_price, double selling_price, String number);
  	
  	public int delete_milk(String number);
+ 	
+ 	public List<Milk> getMilkByName(String name);
 }

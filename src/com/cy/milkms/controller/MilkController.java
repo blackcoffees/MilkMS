@@ -134,4 +134,11 @@ public class MilkController {
 		map.put("message", message);
 		return JSONArray.fromObject(map).toString();
 	}
+	
+	@ResponseBody
+	@RequestMapping("getMilkByName")
+	public String getMilkByName(String name){
+		List<Milk> list = service.getMilkByName(name);
+		return ReturnJsonData.currentJsonData(list.size(), list);
+	}
 }

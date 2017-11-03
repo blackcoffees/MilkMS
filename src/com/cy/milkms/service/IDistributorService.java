@@ -17,5 +17,5 @@ public interface IDistributorService {
 	
 	public int deleteDistributor(String distributorID);
 	
-	public int updateDistributor(String address, String people, String phone, String ID);
+	public int updateDistributor(String address, String people, String phone, String name);
 }

@@ -73,14 +73,14 @@ public class DistributorController {
 		return JSONArray.fromObject(result).toString();
 	}
 	
-	@RequestMapping("updatedDistributor")
+	@RequestMapping("updateDistributor")
 	@ResponseBody
-	public String updatedDistributor(String address, String people, String phone, String ID){
+	public String updateDistributor(String address, String people, String phone, String name){
 		Map result = new HashMap();
 		boolean succ = false;
 		String message = "系统繁忙，请稍后再试";
 		
-		int update_res = service.updateDistributor(address, people, phone, ID);
+		int update_res = service.updateDistributor(address, people, phone, name);
 		if(update_res > 0){
 			succ = true;
 			message = "编辑成功";

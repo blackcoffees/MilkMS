@@ -22,4 +22,6 @@ public interface MilkMapper {
 	public int edit_milk(@Param("purchase_price")double purchase_price, @Param("selling_price")double selling_price, @Param("number")String number, @Param("updated")Timestamp updated);
 	
 	public int delete_milk(@Param("number")String number, @Param("updated")Timestamp updated);
+	
+	public List<Milk> getMilkByName(@Param("name")String name);
 }

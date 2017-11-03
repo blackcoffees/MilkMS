@@ -309,8 +309,8 @@
 				},
 				check_price:function(event){
 					var obj = event.target;
-					if(obj.value > 2000){
-						layer.tips('金额不能超过2000且只能保留两位小数', obj);
+					if(obj.value > 20000){
+						layer.tips('金额不能超过20000且只能保留两位小数', obj);
 						$(obj).css('color', 'red');
 						$(obj).attr('data-validat', 'false');
 					}

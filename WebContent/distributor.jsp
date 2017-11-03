@@ -265,7 +265,7 @@
         		},
 				methods:{
 					current: function(){
-        				if(edit_vue.edit_dat == null){
+        				if(edit_vue.edit_data == null){
         					$("form").parsley().on("form:success", function(){
         						$.ajax({
             						type: 'post',
