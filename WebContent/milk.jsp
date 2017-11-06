@@ -359,7 +359,6 @@
 		})
 		$(function(){
 			init_table();
-			
 			$('.btn-add').on('click', function(){
 				edit_vue.edit_data = null;
 				

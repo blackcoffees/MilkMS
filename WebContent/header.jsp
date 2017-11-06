@@ -80,6 +80,8 @@
 	
 	<link href="static/css/parsley.css" rel="stylesheet" type="text/css"/>
 	
+	<link href="static/css/paginate_tool.css" rel="stylesheet" type="text/css"/>
+	
 	<script src="static/js/layer.js" type="text/javascript"></script>
 	
 	<script src="static/js/vue.js" type="text/javascript"></script>
