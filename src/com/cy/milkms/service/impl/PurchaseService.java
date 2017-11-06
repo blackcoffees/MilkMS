@@ -35,6 +35,9 @@ public class PurchaseService implements IPurchaseService{
 	
 	@Autowired
 	private IMilkService milkService;
+	
+	@Autowired
+	private PurchaseDetailedService detailedService;
 
 	@Override
 	public List<ResultTotalPurchaseQuery> getPurchaseByConditon(Pager pager) {
@@ -130,9 +133,19 @@ public class PurchaseService implements IPurchaseService{
 			}
 			
 			Purchase_detailed detailed = new Purchase_detailed();
+			detailed.setMilk_ID(milk.getID());
+			detailed.setCreated(DateTool.getNowTime());
+			detailed.setNumber(Integer.getInteger(number));
+			detailed.setPurchase_ID(purchase.getID());
+			detailed.setPurchase_price(Double.parseDouble(price));
+			detailed.setTotal_amount(Double.parseDouble(totalPrice));
+			detailed.setUpdated(DateTool.getNowTime());
 			
+			detailedService.addPurchaseDetailed(detailed);
 		}
-			
+		
+		result.put("succ", true);
+		result.put("message", "新增采购单成功");
 		return result;
 	}
 	

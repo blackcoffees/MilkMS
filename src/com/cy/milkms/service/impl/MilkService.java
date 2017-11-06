@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cy.milkms.db.dao.MilkMapper;
 import com.cy.milkms.db.entity.Milk;
@@ -31,6 +32,7 @@ public class MilkService implements IMilkService{
 	}
 
 	@Override
+	@Transactional
 	public int add_milk(Milk milk) {
 		// TODO Auto-generated method stub
 		Milk milk2 = this.get_milk_by_name_or_number(milk.getMilk_name(),  milk.getNumber());
@@ -49,12 +51,14 @@ public class MilkService implements IMilkService{
 	}
 
 	@Override
+	@Transactional
 	public int edit_milk(double purchase_price, double selling_price, String number) {
 		// TODO Auto-generated method stub
 		return mapper.edit_milk(purchase_price, selling_price, number, DateTool.getNowTime());
 	}
 
 	@Override
+	@Transactional
 	public int delete_milk(String number) {
 		// TODO Auto-generated method stub
 		return mapper.delete_milk(number, DateTool.getNowTime());

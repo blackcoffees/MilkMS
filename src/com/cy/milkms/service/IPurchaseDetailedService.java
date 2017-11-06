@@ -1,5 +1,7 @@
 package com.cy.milkms.service;
 
-public interface IPurchaseDetailedService {
+import com.cy.milkms.db.entity.Purchase_detailed;
 
+public interface IPurchaseDetailedService {
+	public int addPurchaseDetailed(Purchase_detailed detailed) throws Exception;
 }

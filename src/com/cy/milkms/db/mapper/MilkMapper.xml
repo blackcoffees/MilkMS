@@ -45,7 +45,7 @@
 				and ( milk_name = #{milk_name} or number = #{number} )
 			</when>
 			<when test="milk_name != null and milk_name != '' ">
-				and milk_name = {milk_name}
+				and milk_name = #{milk_name}
 			</when>
 			<otherwise>
 				<if test="number != null and number != ''">

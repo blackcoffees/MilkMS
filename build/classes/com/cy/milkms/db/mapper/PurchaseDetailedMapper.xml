@@ -12,5 +12,9 @@
 		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 	</resultMap>
 	
-	
+	<insert id="addPurchaseDetailed">
+		insert into purchase_detailed(ID, purchase_ID, milk_ID, number, purchase_price, total_amount, created, updated)
+		values(#{detailed.ID},#{detailed.purchase_ID}, #{detailed.milk_ID}, , #{detailed.number}, #{detailed.purchase_price}
+		, #{detailed.total_aomunt}, #{detailed.created}, #{detailed.updated})
+	</insert>
 </mapper>

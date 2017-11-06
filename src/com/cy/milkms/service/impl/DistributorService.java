@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cy.milkms.db.dao.DistributorMapper;
 import com.cy.milkms.db.entity.Distributor;
@@ -32,6 +33,7 @@ public class DistributorService implements IDistributorService{
 	}
 
 	@Override
+	@Transactional
 	public int addDistributor(Distributor distributor) {
 		// TODO Auto-generated method stub
 		int exit = this.getDistributorNameCount(distributor.getName());
@@ -59,6 +61,7 @@ public class DistributorService implements IDistributorService{
 	}
 
 	@Override
+	@Transactional
 	public int updateDistributor(String address, String people, String phone, String name) {
 		// TODO Auto-generated method stub
 		Timestamp updated = DateTool.getNowTime(); 
