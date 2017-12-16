@@ -2,12 +2,14 @@ package com.cy.milkms.service.impl;
 
 import org.springframework.aop.ThrowsAdvice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cy.milkms.db.dao.PurchaseDetailedMapper;
 import com.cy.milkms.db.entity.Purchase_detailed;
 import com.cy.milkms.service.IPurchaseDetailedService;
 
+@Service("purchaseDetailedService")
 public class PurchaseDetailedService implements IPurchaseDetailedService{
 
 	@Autowired

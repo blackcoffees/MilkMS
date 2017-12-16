@@ -20,6 +20,7 @@ import com.cy.milkms.db.entity.Purchase_detailed;
 import com.cy.milkms.db.query.ResultTotalPurchaseQuery;
 import com.cy.milkms.db.query.TotalPurchaseQuery;
 import com.cy.milkms.service.IMilkService;
+import com.cy.milkms.service.IPurchaseDetailedService;
 import com.cy.milkms.service.IPurchaseService;
 import com.cy.milkms.util.DateTool;
 import com.cy.milkms.util.Pager;
@@ -37,7 +38,7 @@ public class PurchaseService implements IPurchaseService{
 	private IMilkService milkService;
 	
 	@Autowired
-	private PurchaseDetailedService detailedService;
+	private IPurchaseDetailedService detailedService;
 
 	@Override
 	public List<ResultTotalPurchaseQuery> getPurchaseByConditon(Pager pager) {
