@@ -120,7 +120,7 @@
                         				<table class="table table-bordered table-striped table-condensed flip-content" id="table">
                         					<thead class="flip-content">
                         						<tr>
-                        							<th></th>
+                        							<th>商品号</th>
 													<th>商品编号</th>
 													<th>牛奶名称</th>
 													<th>规格</th>
@@ -131,7 +131,7 @@
                         					</thead>
                         					<tbody>
                         						<tr v-for="(item, index) in data" :key="item.id">
-                        							<td v-text="index+1"></td>
+                        							<td v-text="item.id"></td>
 													<td v-text="item.number"></td>
 													<td v-text="item.milk_name"></td>
 													<td v-text="item.specifications"></td>

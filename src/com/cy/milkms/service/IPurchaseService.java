@@ -7,7 +7,7 @@ import com.cy.milkms.db.query.ResultTotalPurchaseQuery;
 import com.cy.milkms.util.Pager;
 
 public interface IPurchaseService {
-	public List<ResultTotalPurchaseQuery> getPurchaseByConditon(Pager pager);
+	public List<ResultTotalPurchaseQuery> getPurchaseByConditon(int pucharseID, String startTime, String endTime, Pager pager);
 	
 	public int getPurchaseByConditonCount();
 	

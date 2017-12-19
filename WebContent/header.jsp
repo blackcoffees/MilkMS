@@ -35,5 +35,9 @@
 <!-- parsley 提示语言 -->
 <script src="static/js/parsley.js" type="text/javascript"></script>
 <link href="static/css/parsley.css" rel="stylesheet" type="text/css"/>
-<script src="static/js/zh_cn.js" type="text/javascript"></script> 
-       
+<script src="static/js/zh_cn.js" type="text/javascript"></script>
+
+<!-- 日历插件 -->
+<link href="static/css/daterangepicker.min.css" rel="stylesheet" type="text/css" />
+<script src="static/js/moment.min.js" type="text/javascript"></script>
+<script src="static/js/daterangepicker.min.js" type="text/javascript"></script> 

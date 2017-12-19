@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Distributor {
-	private String ID;
+	private String id;
 	private String name;
 	private String address;
 	private String people;
@@ -18,9 +18,13 @@ public class Distributor {
 	
 	
 	public Distributor(){
-		ID = UUID.randomUUID().toString();
 	}
-	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public double getPaid_amount() {
 		return paid_amount;
 	}
@@ -44,12 +48,6 @@ public class Distributor {
 	}
 	public void setUpdated(Timestamp updated) {
 		this.updated = updated;
-	}
-	public String getID() {
-		return ID;
-	}
-	public void setID(String iD) {
-		ID = iD;
 	}
 	public String getName() {
 		return name;

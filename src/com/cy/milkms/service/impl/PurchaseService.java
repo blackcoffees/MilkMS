@@ -41,9 +41,9 @@ public class PurchaseService implements IPurchaseService{
 	private IPurchaseDetailedService detailedService;
 
 	@Override
-	public List<ResultTotalPurchaseQuery> getPurchaseByConditon(Pager pager) {
+	public List<ResultTotalPurchaseQuery> getPurchaseByConditon(int pucharseID, String startTime, String endTime, Pager pager) {
 		// TODO Auto-generated method stub
-		List<TotalPurchaseQuery> rows = mapper.getPurchaseByConditon(pager);
+		List<TotalPurchaseQuery> rows = mapper.getPurchaseByConditon(pucharseID, startTime, endTime, pager);
 		Map<String, List<TotalPurchaseQuery>> map =new HashMap<String, List<TotalPurchaseQuery>>();
 		for(int i=0;i<rows.size();i++){
 			if(map.containsKey(rows.get(i).getID())){

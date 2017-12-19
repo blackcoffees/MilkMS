@@ -9,12 +9,6 @@
         <meta content="" name="author" />
         <%@include file="header.jsp"%>
         <link rel="shortcut icon" href="favicon.ico" />
-
-        <!-- 日历 -->
-        <script type="text/javascript" src="/MilkMS/static/js/bootstrap-datepicker.js"></script>
-        <script type="text/javascript" src="/MilkMS/static/js/bootstrap-datepicker.zh-CN.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="/MilkMS/static/css/bootstrap-datepicker3.css"/>
-        
 	</head>
 
     <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
@@ -122,7 +116,7 @@
 													<h3 class="control-label col-md-4">采购时间</h3>
 													<div class="col-md-4">
 														<div class="input-group date btn-datepicker" data-provide="datepicker">
-		                                                	<input type="text" class="form-control" readonly name="datepicker" style="width:200px"/>
+		                                                	<input type="text" class="form-control" id="purchase_time" readonly name="datepicker" style="width:200px"/>
 		                                                    <span class="input-group-btn">
 																<button class="btn default" type="button">
 																	<i class="fa fa-calendar"></i>
@@ -399,11 +393,32 @@
         	}
         	
 			$(function(){
-				$('.btn-datepicker').datepicker({
-				    format: 'yyyy-mm-dd',
-				    language: 'zh-CN',
-				    autoclose: true
-				});
+				$('.btn-datepicker').daterangepicker({
+	                singleDatePicker: true,
+	                showDropdowns: true,
+	                autoUpdateInput: false,
+	                timePicker24Hour : true,
+	                timePicker : true,
+	                drops: "down",
+	                "locale": {
+	                    format: 'YYYY-MM-DD HH:mm:ss',
+	                    applyLabel: "应用",
+	                    cancelLabel: "取消",
+	                    daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ], 
+	                    monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',  
+                                       '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+	                }
+	            }, 
+	            function(start, end, label) {
+	                beginTimeTake = start;
+	                console.info(!this.startDate);
+	                if(!this.startDate){
+	                	$("#purchase_time").val('阿斯顿发送到发顺丰');
+	                }else{
+	                    $("#purchase_time").val(this.startDate.format(this.locale.format));
+	                }
+	                console.info(this.startDate.format(this.locale.format));
+	            });
 				
 				$(document).bind("click", function(){
 					$(".goods-list").hide('slow');

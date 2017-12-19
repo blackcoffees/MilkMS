@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.milkms.db.dao.DistributorMapper">
 	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Distributor">
-		<id column="ID" property="ID" jdbcType="VARCHAR"/>
+		<id column="id" property="id" jdbcType="VARCHAR"/>
 		<result column="name" property="name"  jdbcType="VARCHAR"/>
 		<result column="address" property="address"  jdbcType="VARCHAR"/>
 		<result column="people" property="people"  jdbcType="VARCHAR"/>
@@ -26,7 +26,7 @@
 	</select>
 	
 	<select id="getDistributorByConditionCount" resultType="int">
-		select count(ID) from distributor
+		select count(id) from distributor
 		where status = 1
 			<if test="distributorInfo != '' and distributorInfo != null">
 				and (name like '%${distributorInfo}%' or people like '%${distributorInfo}%')
@@ -34,17 +34,17 @@
 	</select>
 	
 	<select id="getDistributorByNameCount" resultType="int">
-		select count(ID) from distributor where name = #{name}
+		select count(id) from distributor where name = #{name}
 	</select>
 	
-	<insert id="addDistributor">
-		insert into distributor(ID, name, address, people, phone, total_amount, paid_amount, unpaid_amount, status, created, updated)
-		values(#{distributor.ID}, #{distributor.name}, #{distributor.address}, #{distributor.people}, #{distributor.phone},
+	<insert id="addDistributor" useGeneratedKeys="true">
+		insert into distributor(name, address, people, phone, total_amount, paid_amount, unpaid_amount, status, created, updated)
+		values(#{distributor.name}, #{distributor.address}, #{distributor.people}, #{distributor.phone},
 		#{distributor.total_amount}, #{distributor.paid_amount}, #{distributor.unpaid_amount}, #{distributor.status}, #{distributor.created}, #{distributor.updated})
 	</insert>
 	
 	<update id="deleteDistributor">
-		update distributor set status = 2, updated=#{updated} where ID=#{distributorID}
+		update distributor set status = 2, updated=#{updated} where id=#{distributorid}
 	</update>
 		
 	<update id="updateDistributor">

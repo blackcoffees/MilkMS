@@ -17,8 +17,6 @@
 <script src="static/js/bootstrap-switch.min.js" type="text/javascript"></script>
  -->
 
-<!--  -->
-
 <!-- 日历插件 -->
 <!--
 <link href="static/css/daterangepicker.min.css" rel="stylesheet" type="text/css" />
@@ -34,6 +32,7 @@
 <!-- 日历 -->
 <!--
 <link href="static/css/fullcalendar.min.css" rel="stylesheet" type="text/css" />
+<script src="static/js/moment.min.js" type="text/javascript"></script>
 <script src="static/js/fullcalendar.min.js" type="text/javascript"></script>
 -->
 
@@ -103,7 +102,6 @@
 <!-- 
 <link href="static/css/plugins.min.css" rel="stylesheet" type="text/css" />
 <link href="static/css/custom.min.css" rel="stylesheet" type="text/css" />
-<script src="static/js/moment.min.js" type="text/javascript"></script>
 
 <script src="static/js/serial.js" type="text/javascript"></script>
 -->

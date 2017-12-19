@@ -2,7 +2,7 @@ package com.cy.milkms.db.entity;
 import java.sql.Timestamp;
 import java.util.UUID;
 public class Milk {
-	private String ID;
+	private String id;
 	private String number;
 	private String milk_name;
 	private String specifications;
@@ -11,42 +11,20 @@ public class Milk {
 	private int status;
 	private Timestamp created;
 	private Timestamp updated;
-	
-	
-	public Timestamp getCreated() {
-		return created;
-	}
-	public void setCreated(Timestamp created) {
-		this.created = created;
-	}
-	public Timestamp getUpdated() {
-		return updated;
-	}
-	public void setUpdated(Timestamp updated) {
-		this.updated = updated;
-	}
-	public int getStatus() {
-		return status;
-	}
-	public void setStatus(int status) {
-		this.status = status;
-	}
 	public Milk(){
-		ID = UUID.randomUUID().toString();
+		;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getNumber() {
 		return number;
 	}
-
 	public void setNumber(String number) {
 		this.number = number;
-	}
-
-	public String getID() {
-		return ID;
-	}
-	public void setID(String ID) {
-		this.ID = ID;
 	}
 	public String getMilk_name() {
 		return milk_name;
@@ -72,6 +50,23 @@ public class Milk {
 	public void setSelling_price(double selling_price) {
 		this.selling_price = selling_price;
 	}
-	
+	public Timestamp getCreated() {
+		return created;
+	}
+	public void setCreated(Timestamp created) {
+		this.created = created;
+	}
+	public Timestamp getUpdated() {
+		return updated;
+	}
+	public void setUpdated(Timestamp updated) {
+		this.updated = updated;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}	
 	
 }

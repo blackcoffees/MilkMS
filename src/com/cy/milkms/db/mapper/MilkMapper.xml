@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.milkms.db.dao.MilkMapper">
 	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Milk">
-		<id column="ID" property="ID" jdbcType="VARCHAR"/>
+		<id column="id" property="id" jdbcType="INTEGER"/>
 		<result column="number" property="number" jdbcType="VARCHAR"/>
 		<result column="milk_name" property="milk_name" jdbcType="VARCHAR"/>
 		<result column="specifications" property="specifications"  jdbcType="VARCHAR"/>
@@ -24,7 +24,7 @@
 	</select>
 	
 	<select id="get_milk_condition_count" resultType="int">
-		select count(ID) from milk 
+		select count(id) from milk 
 		where
 			status = 1
 			<if test="milkInfo != '' and milkInfo != null">
@@ -32,9 +32,9 @@
 			</if>
 	</select>
 	
-	<insert id="add_milk">
-		insert into milk(ID, number, milk_name, specifications, purchase_price, selling_price, status, created, updated)
-		values(#{milk.ID}, #{milk.number}, #{milk.milk_name}, #{milk.specifications}, #{milk.purchase_price}, #{milk.selling_price}, #{milk.status}, #{milk.created}, #{milk.updated})
+	<insert id="add_milk" useGeneratedKeys="true">
+		insert into milk(number, milk_name, specifications, purchase_price, selling_price, status, created, updated)
+		values(#{milk.number}, #{milk.milk_name}, #{milk.specifications}, #{milk.purchase_price}, #{milk.selling_price}, #{milk.status}, #{milk.created}, #{milk.updated})
 	</insert>
 	
 	<select id="get_milk_by_name_or_number" resultType="com.cy.milkms.db.entity.Milk">

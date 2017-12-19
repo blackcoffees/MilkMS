@@ -26,8 +26,8 @@ public class PurchaseController {
 	
 	@ResponseBody
 	@RequestMapping("getPurchaseByConditon")
-	public String getPurchaseByConditon(Pager pager){
-		List<ResultTotalPurchaseQuery> rows = service.getPurchaseByConditon(pager);
+	public String getPurchaseByConditon(String pucharseID, String startTime, String endTime, Pager pager){
+		List<ResultTotalPurchaseQuery> rows = service.getPurchaseByConditon(Integer.parseInt(pucharseID), startTime, endTime, pager);
 		int total = service.getPurchaseByConditonCount();
 		return ReturnJsonData.currentJsonData(total, rows);
 	}
