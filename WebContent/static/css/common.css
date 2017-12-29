@@ -70,3 +70,15 @@ span.red{
 	max-height: 200px;
 	overflow-y: scroll;
 }
+.row-detail-close{
+	background:url(../image/row-close.png) no-repeat;
+}
+.row-detail-open{
+	background:url(../image/row-open.png) no-repeat;
+}
+.row-detail{
+    display: inline-block;
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+}

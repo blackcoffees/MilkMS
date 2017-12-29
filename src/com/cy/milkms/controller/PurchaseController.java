@@ -9,9 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cy.milkms.db.query.ResultTotalPurchaseQuery;
 import com.cy.milkms.db.query.TotalPurchaseQuery;
 import com.cy.milkms.service.IPurchaseService;
+import com.cy.milkms.util.CommonTool;
 import com.cy.milkms.util.Pager;
 import com.cy.milkms.util.ReturnJsonData;
 
@@ -27,9 +27,15 @@ public class PurchaseController {
 	@ResponseBody
 	@RequestMapping("getPurchaseByConditon")
 	public String getPurchaseByConditon(String pucharseID, String startTime, String endTime, Pager pager){
-		List<ResultTotalPurchaseQuery> rows = service.getPurchaseByConditon(Integer.parseInt(pucharseID), startTime, endTime, pager);
-		int total = service.getPurchaseByConditonCount();
-		return ReturnJsonData.currentJsonData(total, rows);
+		Map result = new HashMap();
+		if(pucharseID != null && !CommonTool.isNumber(pucharseID)){
+			result.put("succ", false);
+			result.put("message", "请输入合法的采购单号");
+			return JSONObject.fromObject(result).toString();
+		}
+		List<List<TotalPurchaseQuery>> rows = service.getPurchaseByConditon(pucharseID, startTime, endTime, pager);
+		int total = service.getPurchaseByConditionCount(pucharseID, startTime, endTime);
+		return ReturnJsonData.createReturnJsonData(total, rows);
 	}
 	
 	

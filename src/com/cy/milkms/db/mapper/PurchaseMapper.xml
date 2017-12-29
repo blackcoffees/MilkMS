@@ -2,17 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.milkms.db.dao.PurchaseMapper">
 	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Purchase">
-		<id column="id" property="id" jdbcType="VARCHAR"/>
+		<id column="id" property="id" jdbcType="INTEGER"/>
 		<result column="time" property="time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="total_amount" property="total_amount"  jdbcType="DOUBLE"/>
 		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+		<result column="status" property="status" jdbcType="INTEGER" />
 	</resultMap>
 	
 	<resultMap id="detailedMap" type="com.cy.milkms.db.entity.Purchase_detailed">
-		<id column="id" property="id" jdbcType="VARCHAR" />
-		<result column="purchase_id" property="purchase_id" jdbcType="VARCHAR"/>
-		<result column="milk_id" property="milk_id" jdbcType="VARCHAR"/>
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="purchase_id" property="purchase_id" jdbcType="INTEGER"/>
+		<result column="milk_id" property="milk_id" jdbcType="INTEGER"/>
 		<result column="number" property="number" jdbcType="INTEGER"/>
 		<result column="purchase_price" property="purchase_price" jdbcType="DOUBLE"/>
 		<result column="total_amount" property="total_amount" jdbcType="DOUBLE"/>
@@ -26,24 +27,66 @@
 		<result column="name" property="name" jdbcType="VARCHAR" />
 	</resultMap>
 	
+	<resultMap id="totalPurchaseIDMap" type="com.cy.milkms.db.query.TotalPurchaseIDsQuery">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+	</resultMap>
+	
 	<select id="getPurchaseByConditon" resultMap="totalPurchaseQueryMap">
 		select 
-			purchase_id as id, milk_name as name, number, purchase_price, detailed.total_amount, purchase.total_amount as totalPurchaseAmount, time
-		from purchase, purchase_detailed as detailed
+			purchase_id as id, milk_name as name, detailed.number, detailed.purchase_price, detailed.total_amount, purchase.total_amount as totalPurchaseAmount, time, purchase.status
+		from purchase, purchase_detailed as detailed, milk
 		where
-			purchase.id = detailed.purchase_id
-		limit #{pager.statr}, #{pager.rows}
+			purchase.id = detailed.purchase_id and milk.id = detailed.milk_id
+			and purchase.id in (#{purchaseIDs})
+			<if test="purchaseID != null and purchaseID != ''">
+				and id = #{purchaseID}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and #{startTime} &gt; time
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} &lt; time
+			</if>
+		order by purchase.id desc
 	</select>
 	
-	<select id="getPurchaseByConditonCount" resultType="int">
+	<select id="getPurchaseByConditionByID" resultMap="totalPurchaseIDMap">
+		select 
+			purchase_id as id
+		from purchase, purchase_detailed as detailed, milk
+		where
+			purchase.id = detailed.purchase_id and milk.id = detailed.milk_id
+			<if test="purchaseID != null and purchaseID != ''">
+				and id = #{purchaseID}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and #{startTime} &gt; time
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} &lt; time
+			</if>
+		order by purchase.id desc
+		limit #{pager.start}, #{pager.rows}
+	</select>
+	
+	<select id="getPurchaseByConditionCount" resultType="int">
 		select 
 			count(purchase_id)
-		from purchase, purchase_detailed as detailed
+		from purchase, purchase_detailed as detailed, milk
 		where
-			purchase.id = detailed.purchase_id
-	</select>
+			purchase.id = detailed.purchase_id and milk.id = detailed.milk_id
+			<if test="purchaseID != null and purchaseID != ''">
+				and id = #{purchaseID}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and #{startTime} &gt; time
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} &lt; time
+			</if>
+	</select>	
 	
-	<insert id="addPurchase" useGeneratedKeys="true">
+	<insert id="addPurchase" useGeneratedKeys="true" keyProperty="purchase.id">
 		insert into purchase(time, total_amount, created, updated)
 		values(#{purchase.time}, #{purchase.total_amount}, #{purchase.created}, #{purchase.updated})
 	</insert>

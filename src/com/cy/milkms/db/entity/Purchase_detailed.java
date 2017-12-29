@@ -4,9 +4,9 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Purchase_detailed {
-	private String ID;
-	private String purchase_ID;
-	private String milk_ID;
+	private int id;
+	private int purchase_ID;
+	private int milk_ID;
 	private int number;
 	private double purchase_price;
 	private double total_amount;
@@ -14,6 +14,31 @@ public class Purchase_detailed {
 	private Timestamp updated;
 	
 	
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getPurchase_ID() {
+		return purchase_ID;
+	}
+
+	public void setPurchase_ID(int purchase_ID) {
+		this.purchase_ID = purchase_ID;
+	}
+
+	public int getMilk_ID() {
+		return milk_ID;
+	}
+
+	public void setMilk_ID(int milk_ID) {
+		this.milk_ID = milk_ID;
+	}
+
 	public Timestamp getCreated() {
 		return created;
 	}
@@ -31,31 +56,7 @@ public class Purchase_detailed {
 	}
 
 	public Purchase_detailed(){
-		this.ID = UUID.randomUUID().toString();
-	}
 
-	public String getID() {
-		return ID;
-	}
-
-	public void setID(String ID) {
-		this.ID = ID;
-	}
-
-	public String getPurchase_ID() {
-		return purchase_ID;
-	}
-
-	public void setPurchase_ID(String purchase_ID) {
-		this.purchase_ID = purchase_ID;
-	}
-
-	public String getMilk_ID() {
-		return milk_ID;
-	}
-
-	public void setMilk_ID(String milk_ID) {
-		this.milk_ID = milk_ID;
 	}
 
 	public int getNumber() {
@@ -81,5 +82,5 @@ public class Purchase_detailed {
 	public void setTotal_amount(double total_amount) {
 		this.total_amount = total_amount;
 	}
-	
+
 }

@@ -3,11 +3,8 @@ package com.cy.milkms.service.impl;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +14,7 @@ import com.cy.milkms.db.dao.PurchaseMapper;
 import com.cy.milkms.db.entity.Milk;
 import com.cy.milkms.db.entity.Purchase;
 import com.cy.milkms.db.entity.Purchase_detailed;
-import com.cy.milkms.db.query.ResultTotalPurchaseQuery;
+import com.cy.milkms.db.query.TotalPurchaseIDsQuery;
 import com.cy.milkms.db.query.TotalPurchaseQuery;
 import com.cy.milkms.service.IMilkService;
 import com.cy.milkms.service.IPurchaseDetailedService;
@@ -41,40 +38,44 @@ public class PurchaseService implements IPurchaseService{
 	private IPurchaseDetailedService detailedService;
 
 	@Override
-	public List<ResultTotalPurchaseQuery> getPurchaseByConditon(int pucharseID, String startTime, String endTime, Pager pager) {
+	public List<List<TotalPurchaseQuery>> getPurchaseByConditon(String pucharseID, String startTime, String endTime, Pager pager) {
 		// TODO Auto-generated method stub
-		List<TotalPurchaseQuery> rows = mapper.getPurchaseByConditon(pucharseID, startTime, endTime, pager);
-		Map<String, List<TotalPurchaseQuery>> map =new HashMap<String, List<TotalPurchaseQuery>>();
-		for(int i=0;i<rows.size();i++){
-			if(map.containsKey(rows.get(i).getID())){
-				map.get(rows.get(i).getID()).add(rows.get(i));
+		List<List<TotalPurchaseQuery>> rows = new ArrayList<List<TotalPurchaseQuery>>();
+		try {
+			List<TotalPurchaseIDsQuery> purchaseIDList = this.getPurchaseByConditionByID(pucharseID, startTime, endTime, pager);
+			String purchaseIDs = "";
+			for(int i=0;i<purchaseIDList.size();i++){
+				purchaseIDs =purchaseIDs + "," + purchaseIDList.get(i).getId();
 			}
-			else{
-				List<TotalPurchaseQuery> list = new ArrayList<TotalPurchaseQuery>();
-				list.add(rows.get(i));
-				map.put(rows.get(i).getID(), list);
+			purchaseIDs = purchaseIDs.substring(1);
+			List<TotalPurchaseQuery> purchaseList = mapper.getPurchaseByConditon(pucharseID, startTime, endTime, purchaseIDs);
+			Map<Integer, List<TotalPurchaseQuery>> map =new HashMap<Integer, List<TotalPurchaseQuery>>();
+			List<Integer> sortPurchaseIDs = new ArrayList<Integer>();
+			for(int i=0;i<purchaseList.size();i++){
+				if(map.containsKey(purchaseList.get(i).getId())){
+					map.get(purchaseList.get(i).getId()).add(purchaseList.get(i));
+				}
+				else{
+					List<TotalPurchaseQuery> list = new ArrayList<TotalPurchaseQuery>();
+					list.add(purchaseList.get(i));
+					map.put(purchaseList.get(i).getId(), list);
+					sortPurchaseIDs.add(purchaseList.get(i).getId());
+				}
 			}
+			for(int j=0;j<sortPurchaseIDs.size();j++){
+				rows.add(map.get(sortPurchaseIDs.get(j)));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
 		}
-		
-		Iterator<String> keyIte = map.keySet().iterator();
-		List<ResultTotalPurchaseQuery> result = new ArrayList<ResultTotalPurchaseQuery>();
-		while(keyIte.hasNext()){
-			String key = keyIte.next();
-			List<TotalPurchaseQuery> list = map.get(key);
-			ResultTotalPurchaseQuery query = new ResultTotalPurchaseQuery();
-			query.setName(list.get(0).getName());
-			query.setTime(list.get(0).getTime());
-			query.setList(list);
-			result.add(query);
-		}
-		
-		return result;
+		return rows;
 	}
 
 	@Override
-	public int getPurchaseByConditonCount() {
+	public List<TotalPurchaseIDsQuery> getPurchaseByConditionByID(String pucharseID, String startTime, String endTime, Pager pager) {
 		// TODO Auto-generated method stub
-		return mapper.getPurchaseByConditonCount();
+		return mapper.getPurchaseByConditionByID(pucharseID, startTime, endTime, pager);
 	}
 
 	@Override
@@ -102,7 +103,7 @@ public class PurchaseService implements IPurchaseService{
 		Purchase purchase = new Purchase();
 		purchase.setCreated(DateTool.getNowTime());
 		purchase.setUpdated(DateTool.getNowTime());
-		purchase.setTime(Timestamp.valueOf(time+" 00:00:00"));
+		purchase.setTime(Timestamp.valueOf(time));
 		purchase.setTotal_amount(totalPriceDouble);
 		int add_pur = mapper.addPurchase(purchase);
 		if(add_pur <= 0)
@@ -134,20 +135,24 @@ public class PurchaseService implements IPurchaseService{
 			}
 			
 			Purchase_detailed detailed = new Purchase_detailed();
-			detailed.setMilk_ID(milk.getID());
+			detailed.setMilk_ID(milk.getId());
 			detailed.setCreated(DateTool.getNowTime());
-			detailed.setNumber(Integer.getInteger(number));
-			detailed.setPurchase_ID(purchase.getID());
+			detailed.setNumber(Integer.parseInt(number));
+			detailed.setPurchase_ID(purchase.getId());
 			detailed.setPurchase_price(Double.parseDouble(price));
 			detailed.setTotal_amount(Double.parseDouble(totalPrice));
 			detailed.setUpdated(DateTool.getNowTime());
-			
 			detailedService.addPurchaseDetailed(detailed);
 		}
-		
 		result.put("succ", true);
 		result.put("message", "新增采购单成功");
 		return result;
+	}
+
+	@Override
+	public int getPurchaseByConditionCount(String pucharseID, String startTime, String endTime) {
+		// TODO Auto-generated method stub
+		return mapper.getPurchaseByConditionCount(pucharseID, startTime, endTime);
 	}
 	
 }

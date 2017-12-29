@@ -114,7 +114,7 @@
 											<div class="col-md-6">
 												<div class="form-group">
 													<h3 class="control-label col-md-4">采购时间</h3>
-													<div class="col-md-4">
+													<div class="col-md-7">
 														<div class="input-group date btn-datepicker" data-provide="datepicker">
 		                                                	<input type="text" class="form-control" id="purchase_time" readonly name="datepicker" style="width:200px"/>
 		                                                    <span class="input-group-btn">
@@ -123,6 +123,9 @@
 																</button>
 															</span>
 														</div>
+													</div>
+													<div>
+														<span class="red">*</span>
 													</div>
 												</div>
 											</div>
@@ -304,8 +307,6 @@
     					var totalInput = $(obj).parent().parent().find(".totalPrice");
     					var number = $(obj).parent().parent().find(".number").val();
     					var price = $(obj).parent().parent().find(".price").val();
-    					console.info(number);
-    					console.info(price);
     					if(number == '' || price == '') return;
     					var totalPrice = (price * number);
     					totalInput.val(totalPrice);
@@ -326,12 +327,14 @@
         			layer.msg("请填写采购时间");
         			return;
         		}
-        		
         		var trs = $(".add-tr");
         		var list = new Array();
+        		if(trs.length == 0){
+        			layer.msg("采购项不能为空");
+        			return;
+        		}
         		for(i=0;i<trs.length;i++){
         			var tr = $(trs[i]);
-        			
         			var milk_name = $(tr.children()[0]).find("input").val();
         			if(milk_name == ''){
         				layer.msg("请选择商品");
@@ -386,7 +389,16 @@
         			url: 'purchase/addPurchase.action',
         			data: {"data": data},
         			success:function(data){
-        				
+        				data = eval("("+data+")");
+        				if(data.succ){
+        					layer.msg(data.message);
+        					setTimeout(function(){
+        						window.location.href="purchase.jsp";
+        					}, 2000);
+        				}
+        				else{
+        					layer.msg(data.message);
+        				}
         			}
         		})
         		
@@ -396,10 +408,10 @@
 				$('.btn-datepicker').daterangepicker({
 	                singleDatePicker: true,
 	                showDropdowns: true,
-	                autoUpdateInput: false,
 	                timePicker24Hour : true,
 	                timePicker : true,
 	                drops: "down",
+	                autoUpdateInput: false,
 	                "locale": {
 	                    format: 'YYYY-MM-DD HH:mm:ss',
 	                    applyLabel: "应用",
@@ -411,14 +423,16 @@
 	            }, 
 	            function(start, end, label) {
 	                beginTimeTake = start;
-	                console.info(!this.startDate);
 	                if(!this.startDate){
-	                	$("#purchase_time").val('阿斯顿发送到发顺丰');
+	                	$("#purchase_time").val('');
 	                }else{
 	                    $("#purchase_time").val(this.startDate.format(this.locale.format));
 	                }
-	                console.info(this.startDate.format(this.locale.format));
 	            });
+				
+				$(".btn-datepicker").on('apply.daterangepicker', function(ev, picker) {
+					$("#purchase_time").val(picker.startDate.format('YYYY-MM-DD HH:mm:ss'));
+                });
 				
 				$(document).bind("click", function(){
 					$(".goods-list").hide('slow');

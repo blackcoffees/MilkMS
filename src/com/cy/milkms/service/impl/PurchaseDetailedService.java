@@ -21,7 +21,7 @@ public class PurchaseDetailedService implements IPurchaseDetailedService{
 		// TODO Auto-generated method stub
 		int result = mapper.addPurchaseDetailed(detailed);
 		if(result <= 0){
-			throw new Exception("新增采购单分单失败，分单ID: " + detailed.getID());
+			throw new Exception("新增采购单分单失败，分单ID: " + detailed.getId());
 		}
 		return result;
 	}

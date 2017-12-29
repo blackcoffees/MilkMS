@@ -4,23 +4,30 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Purchase {
-	private String id;
+	private int id;
 	private Timestamp time;
 	private double total_amount;
 	private Timestamp created;
 	private Timestamp updated;
+	private int status;
 	
+	public static int PURCHASE_STATUS_ON = 1;
+	public static int PURCHASE_STATUS_OFF = 2;
+	
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
 	public Purchase(){
 	}
-
-	public String getId() {
+	public int getId() {
 		return id;
 	}
-
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
-
 	public Timestamp getTime() {
 		return time;
 	}

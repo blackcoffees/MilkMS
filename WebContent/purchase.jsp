@@ -9,6 +9,11 @@
         <meta content="" name="author" />
         <%@include file="header.jsp"%>
         <link rel="shortcut icon" href="favicon.ico" />
+        <style type="text/css">
+        	.daterangepicker_input{
+        		display: none;
+        	}
+        </style>
 	</head>
 
     <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
@@ -112,36 +117,60 @@
                         			<div class="portlet-body flip-scroll">
                         				<div class="row table-tool">
 											<div class="col-md-12">
-												<input type="search" placeholder="牛奶名称 /商品编号" class="form-control input-small input-inline" v-model.lazy="milkName" onkeyup="if(event==13){init_table()}">
+												<input type="search" placeholder="采购单号" class="form-control input-small input-inline" v-model.lazy="purchaseID" onkeyup="if(event==13){init_table()}">
+												<input type="text" id="puchase_time" placeholder="采购时间" class="form-control input-inline" style="width: 340px;"/>
 												<button type="button" class="btn btn-success btn-search">搜索</button>
 												<button type="button" class="btn btn-danger btn-add">新增</button>
 											</div>
 										</div>
-                        				<table class="table table-bordered table-striped table-condensed flip-content" id="table">
+                        				<table class="table table-bordered table-striped dataTable table-condensed flip-content" id="table">
                         					<thead class="flip-content">
                         						<tr>
-                        							<th></th>
-													<th>商品编号</th>
-													<th>牛奶名称</th>
-													<th>规格</th>
-													<th>进货价</th>
-													<th>销售价</th>
+                        							<th text-align="center"></th>
+                        							<th>采购单号</th>
+													<th>采购时间</th>
+													<th>采购总额</th>
 													<th>操作</th>
 												</tr>
                         					</thead>
                         					<tbody>
-                        						<tr v-for="(item, index) in data" :key="item.id">
-                        							<td v-text="index+1"></td>
-													<td v-text="item.number"></td>
-													<td v-text="item.milk_name"></td>
-													<td v-text="item.specifications"></td>
-													<td v-text="item.purchase_price"></td>
-													<td v-text="item.selling_price"></td>
-													<td>
-														<button class="btn btn-sm green btn-outline filter-submit margin-bottom" @click="edit(item)">编辑</button>
-														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.number)">删除</button>
-													</td>
-												</tr>
+                        						<template v-for="purchase in data" :key="purchase.id">
+	                        						<tr>
+	                        							<td style="vertical-align: inherit;text-align: center;">
+	                        								<span class="row-detail row-detail-close"></span>
+	                        							</td>
+	                        							<td v-text="purchase[0].id"></td>
+														<td v-text="purchase[0].time"></td>
+														<td v-text="purchase[0].totalPurchaseAmount"></td>
+														<td>
+															<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(purchase.number)">删除</button>
+														</td>
+													</tr>
+													<tr style="display: none;">
+														<td colspan="6">
+															<table class="table table-striped table-hover">
+																<thead>
+																	<tr>
+																		<th width="60"></th>
+																		<td>商品名称</td>
+																		<td>数量</td>
+																		<td>采购单价</td>
+																		<td>总价格</td>
+																	</tr>
+																</thead>
+																<tbody>
+																	<tr v-for="item in purchase">
+																		<td></td>
+																		<td>((item.name))</td>
+																		<td>((item.number))</td>
+																		<td>((item.purchase_price))</td>
+																		<td>((item.total_amount))</td>
+																	</tr>
+																</tbody>
+															</table>
+														</td>
+													</tr>
+												</template>
                         					</tbody>
                         				</table>
                         				<div class="bottom-tool row">
@@ -177,20 +206,10 @@
 			delimiters:['((', '))'],
 			el:'#table',
 			data:{
-				milkName: '',
+				purchaseID: '',
 				data: []
 			},
 			methods:{
-				edit: function(milk){
-					edit_vue.edit_data = milk;
-					layer.open({
-						type: '1',
-						skin: 'layui-layer-molv',
-						title: '编辑牛奶',
-						area: ['362px', '368px'],
-						content: $('#layer-window')
-					})
-				},
 				deleted: function(number){
 					$.ajax({
 						type:"post",
@@ -208,72 +227,7 @@
 			}
 		})
 	
-		var edit_vue = new Vue({
-			delimiters:['((', '))'],
-			el:'#layer-window',
-			data:{
-				edit_data: null
-			},
-			methods:{
-				check_price_format:function(event){
-					var obj = event.target;
-				    obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的  
-				    obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$","."); 
-				    obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数  
-				    if(obj.value.indexOf(".")< 0 && obj.value !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
-				        obj.value= parseFloat(obj.value);
-				    } 
-				},
-				check_price:function(event){
-					var obj = event.target;
-					if(obj.value > 20000){
-						layer.tips('金额不能超过20000且只能保留两位小数', obj);
-						$(obj).css('color', 'red');
-						$(obj).attr('data-validat', 'false');
-					}
-					else{
-						$(obj).css('color', 'black');
-						$(obj).attr('data-validat', 'true');
-					}
-				},
-				current:function(){
-					if(this.edit_data != null){
-						$("form").parsley().on("form:success", function(){
-							$.ajax({
-								type:'post',
-								url:'milk/edit_milk.action',
-								data:$('.layer-form').serialize(),
-								success:function(data){
-									data = eval("("+data+")");
-									layer.msg(data[0].message);
-									if(data[0].succ){
-										layer.closeAll("page");
-										init_table();
-									}						
-								}
-							});
-						});
-					}
-					else{
-						$("form").parsley().on("form:success", function(){
-							$.ajax({
-								type:'post',
-								url:'milk/add_milk.action',
-								data:$('.layer-form').serialize(),
-								success:function(data){
-									data = eval("("+data+")");
-									layer.msg(data[0].message);
-									if(data[0].succ){
-										layer.closeAll("page");
-										init_table();
-									}						
-								}
-							});
-						});
-					}
-				}
-			}
-		})
+		
 		$(function(){
 			init_table();
 			$('.btn-add').on('click', function(){
@@ -292,6 +246,17 @@
 			$('.btn-refresh').on('click', function(){
 				init_table();
 			})
+			
+			$("tbody").on('click', ".row-detail", function(){
+				if(this.className.indexOf("row-detail-close") > 0){
+					this.className = "row-detail row-detail-open";
+					$(this).parents("tr").next("tr").show(500);
+				}
+				else if(this.className.indexOf("row-detail-open") > 0){
+					this.className = "row-detail row-detail-close";
+					$(this).parents("tr").next("tr").hide(500);
+				}
+			});
 		})
 		
 		var g_rows = 10;
@@ -316,8 +281,8 @@
 				page = g_page;
 			
 			$.ajax({
-				type:'post',
-				url:'milk/get_milk_condition.action',
+				type:'get',
+				url:'purchase/getPurchaseByConditon.action',
 				data:{
 					rows: rows,
 					page: page,
@@ -343,6 +308,33 @@
 				}
 				
 			})
+			
+			$(".btn-calendar").daterangepicker({
+                showDropdowns: true,
+				autoUpdateInput: false,
+				showWeekNumbers: false,
+				linkedCalendars: false,
+				drops: "down",
+				"locale": {
+                    format: 'YYYY-MM-DD',
+                    applyLabel: "应用",
+                    cancelLabel: "取消",
+                    daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ], 
+                    monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',  
+                                   '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                }
+			},
+            function(start, end, label){
+				if(!this.startDate)
+                	$("#purchase_time").val('');
+				else
+					$("#purchase_time").val(this.startDate.format(this.locale.format) + " - " + this.endDate.format(this.locale.formate));
+            });
+			
+			$(".btn-calendar").on('apply.daterangepicker', function(ev, picker) {
+				$("#purchase_time").val("asdf");
+				$("#purchase_time").val(picker.startDate.format('YYYY-MM-DD') + " - " + picker.endDate.format("YYYY-MM-DD"));
+            });
 		}
         </script>
     </body>
