@@ -5,13 +5,11 @@ import java.util.List;
 
 import com.cy.milkms.db.entity.Purchase_detailed;
 
-public class TotalPurchaseQuery extends Purchase_detailed{
+public class TotalPurchaseQuery{
 	private String name;
 	private Timestamp time;
 	private double totalPurchaseAmount;
 	private int id;
-	private int purchase_ID;
-	private int milk_ID;
 	private int number;
 	private double purchase_price;
 	private double total_amount;
@@ -24,22 +22,6 @@ public class TotalPurchaseQuery extends Purchase_detailed{
 
 	public void setStatus(int status) {
 		this.status = status;
-	}
-
-	public int getPurchase_ID() {
-		return purchase_ID;
-	}
-
-	public void setPurchase_ID(int purchase_ID) {
-		this.purchase_ID = purchase_ID;
-	}
-
-	public int getMilk_ID() {
-		return milk_ID;
-	}
-
-	public void setMilk_ID(int milk_ID) {
-		this.milk_ID = milk_ID;
 	}
 
 	public int getNumber() {

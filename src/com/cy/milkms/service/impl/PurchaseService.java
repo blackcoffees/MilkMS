@@ -3,8 +3,10 @@ package com.cy.milkms.service.impl;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +16,13 @@ import com.cy.milkms.db.dao.PurchaseMapper;
 import com.cy.milkms.db.entity.Milk;
 import com.cy.milkms.db.entity.Purchase;
 import com.cy.milkms.db.entity.Purchase_detailed;
+import com.cy.milkms.db.entity.Stock;
 import com.cy.milkms.db.query.TotalPurchaseIDsQuery;
 import com.cy.milkms.db.query.TotalPurchaseQuery;
 import com.cy.milkms.service.IMilkService;
 import com.cy.milkms.service.IPurchaseDetailedService;
 import com.cy.milkms.service.IPurchaseService;
+import com.cy.milkms.service.IStockService;
 import com.cy.milkms.util.DateTool;
 import com.cy.milkms.util.Pager;
 
@@ -36,6 +40,9 @@ public class PurchaseService implements IPurchaseService{
 	
 	@Autowired
 	private IPurchaseDetailedService detailedService;
+	
+	@Autowired
+	private IStockService stockService;
 
 	@Override
 	public List<List<TotalPurchaseQuery>> getPurchaseByConditon(String pucharseID, String startTime, String endTime, Pager pager) {
@@ -43,12 +50,11 @@ public class PurchaseService implements IPurchaseService{
 		List<List<TotalPurchaseQuery>> rows = new ArrayList<List<TotalPurchaseQuery>>();
 		try {
 			List<TotalPurchaseIDsQuery> purchaseIDList = this.getPurchaseByConditionByID(pucharseID, startTime, endTime, pager);
-			String purchaseIDs = "";
+			Integer[] purchaseIDs = new Integer[purchaseIDList.size()];
 			for(int i=0;i<purchaseIDList.size();i++){
-				purchaseIDs =purchaseIDs + "," + purchaseIDList.get(i).getId();
+				purchaseIDs[i] = purchaseIDList.get(i).getId();
 			}
-			purchaseIDs = purchaseIDs.substring(1);
-			List<TotalPurchaseQuery> purchaseList = mapper.getPurchaseByConditon(pucharseID, startTime, endTime, purchaseIDs);
+			List<TotalPurchaseQuery> purchaseList = mapper.getPurchaseByConditon(startTime, endTime, purchaseIDs);
 			Map<Integer, List<TotalPurchaseQuery>> map =new HashMap<Integer, List<TotalPurchaseQuery>>();
 			List<Integer> sortPurchaseIDs = new ArrayList<Integer>();
 			for(int i=0;i<purchaseList.size();i++){
@@ -111,6 +117,7 @@ public class PurchaseService implements IPurchaseService{
 		
 		String listStr = jsonArray.getJSONObject(0).getString("list");
 		JSONArray listJsonArray = JSONArray.fromObject(listStr);
+		Map<Integer, Integer> stockMap = new HashMap<Integer, Integer>();
 		for(int i=0;i<listJsonArray.size();i++){
 			JSONObject jsonObject = listJsonArray.getJSONObject(i);
 			String milk_name = jsonObject.getString("milk_name");
@@ -133,6 +140,15 @@ public class PurchaseService implements IPurchaseService{
 				(Integer.parseInt(number)*Double.parseDouble(price) != Double.parseDouble(totalPrice))){
 				throw new Exception("商品总价错误");
 			}
+			/*计算库存*/
+			boolean flag = stockMap.containsKey(milk.getId());
+			if(flag){
+				int stockNumber = stockMap.get(milk.getId());
+				stockMap.put(milk.getId(), (stockNumber + Integer.parseInt(number)));
+			}
+			else{
+				stockMap.put(milk.getId(), Integer.parseInt(number));
+			}
 			
 			Purchase_detailed detailed = new Purchase_detailed();
 			detailed.setMilk_ID(milk.getId());
@@ -143,6 +159,26 @@ public class PurchaseService implements IPurchaseService{
 			detailed.setTotal_amount(Double.parseDouble(totalPrice));
 			detailed.setUpdated(DateTool.getNowTime());
 			detailedService.addPurchaseDetailed(detailed);
+		}
+		Set<Integer> keySet = stockMap.keySet();
+		Iterator<Integer> iterator = keySet.iterator();
+		while(iterator.hasNext()){
+			int key = iterator.next();
+			int stockNumber = stockMap.get(key);
+			Stock stock = stockService.getStockByMilkID(key);
+			if(stock == null){
+				int stockID = stockService.addStock(key, stockNumber);
+				if(stockID <= 0){
+					throw new Exception("库存添加失败");
+				}
+			}
+			else{
+				stockNumber += stock.getNumber();
+				int effect = stockService.updateStock(key, stockNumber);
+				if(effect <= 0){
+					throw new Exception("库存添加失败");
+				}
+			}
 		}
 		result.put("succ", true);
 		result.put("message", "新增采购单成功");

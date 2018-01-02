@@ -18,6 +18,10 @@ var menu_vue = new Vue({
 			span_icon: 'icon-basket',
 			title: '采购管理',
 			href: 'purchase.jsp'
+		},{
+			span_icon: 'icon-drawer',
+			title: '销售管理',
+			href: 'sale.jsp'
 		}],
 		now_href: window.location.href.split("MilkMS/")[1]
 	}
