@@ -12,6 +12,4 @@ public class CommonTool {
         }
         return true;
 	}
-	
-	
 }

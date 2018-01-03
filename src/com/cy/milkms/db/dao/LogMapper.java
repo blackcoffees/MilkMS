@@ -1,5 +1,5 @@
 package com.cy.milkms.db.dao;
 
-public interface LogMapper {
+public class LogMapper {
 
 }

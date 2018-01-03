@@ -69,7 +69,7 @@ public class ReturnJsonData {
 	}
 	
 	
-	public static List genJsonData(List<?> list){
+	private static List genJsonData(List<?> list){
 		try {
 			if(list.get(0) instanceof List){
 				List jsonDatas = new ArrayList();
