@@ -68,5 +68,17 @@ public class DistributorService implements IDistributorService{
 		return mapper.updateDistributor(address, people, phone, updated, name);
 	}
 
+	@Override
+	public Distributor getDistributorByID(int distributorID) {
+		// TODO Auto-generated method stub
+		return mapper.getDistributorByID(distributorID);
+	}
+
+	@Override
+	public int updateDistributorAmount(Distributor distributor) {
+		// TODO Auto-generated method stub
+		return mapper.updateDistributorAmount(distributor);
+	}
+
 
 }

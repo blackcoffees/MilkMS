@@ -1,5 +1,7 @@
 package com.cy.milkms.service;
 
-public interface ISaleDetailedService {
+import com.cy.milkms.db.entity.Sale_detailed;
 
+public interface ISaleDetailedService {
+	public int addSaleDetailed(Sale_detailed detailed);
 }

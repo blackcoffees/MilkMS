@@ -20,4 +20,8 @@ public interface DistributorMapper {
 	public int deleteDistributor(@Param("distributorID")String distributorID, @Param("updated")Timestamp updated);
 	
 	public int updateDistributor(@Param("address")String address, @Param("people")String people, @Param("phone")String phone, @Param("updated")Timestamp updated, @Param("name")String name);
+	
+	public Distributor getDistributorByID(@Param("distributorID")int distributorID);
+	
+	public int updateDistributorAmount(@Param("distributor")Distributor distributor);
 }

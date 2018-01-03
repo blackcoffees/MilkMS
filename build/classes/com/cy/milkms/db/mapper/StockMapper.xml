@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.milkms.db.dao.StockMapper">
+	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Stock">
+		<id column="milk_ID" property="milk_ID" jdbcType="INTEGER"/>
+		<result column="number" property="number"  jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<update id="updateStock">
+		update stock set number=#{number} where milk_id=#{milkID} 
+	</update>
+	
+	<select id="getStockByMilkID" resultType="com.cy.milkms.db.entity.Stock">
+		select * from stock where milk_id=#{milkID}
+	</select>
+	
+	<insert id="addStock" useGeneratedKeys="true" keyProperty="stock.milk_id">
+		insert into stock(milk_id, number)
+		values(#{milkID}, #{number})
+	</insert>
+</mapper>

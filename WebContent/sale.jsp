@@ -82,7 +82,7 @@
                                     <i class="fa fa-angle-right"></i>
                                 </li>
                                 <li>
-                                    <span>采购管理</span>
+                                    <span>销售管理</span>
                                 </li>
                             </ul>
                             <div class="page-toolbar">
@@ -96,8 +96,8 @@
                         <!-- END PAGE BAR -->
                         
                         <!-- BEGIN PAGE TITLE-->
-                        <h1 class="page-title"> PURCHASE
-                            <small>采购单管理</small>
+                        <h1 class="page-title"> SALE
+                            <small>销售单管理</small>
                         </h1>
                         
                         <!-- BEGIN PAGE MAIN-->
@@ -108,7 +108,7 @@
                         		<div class="portlet box green">
                         			<div class="portlet-title">
                         				<div class="caption">
-                        					<i class="fa fa-globe"></i>采购单列表
+                        					<i class="fa fa-globe"></i>销售单列表
                         				</div>
                         				<div class="tools">
                                             <span class="btn-refresh"><i class="fa fa-refresh"></i></span>
@@ -117,8 +117,8 @@
                         			<div class="portlet-body flip-scroll">
                         				<div class="row table-tool">
 											<div class="col-md-12">
-												<input type="search" placeholder="采购单号" class="form-control input-small input-inline" v-model.lazy="purchaseID" onkeyup="if(event==13){init_table()}">
-												<input type="text" id="purchase_time" placeholder="采购时间" class="form-control input-inline" style="width: 340px;"/>
+												<input type="search" placeholder="销售单号" class="form-control input-small input-inline" v-model.lazy="purchaseID" onkeyup="if(event==13){init_table()}">
+												<input type="text" id="purchase_time" placeholder="销售时间" class="form-control input-inline" style="width: 340px;"/>
 												<button type="button" class="btn btn-success btn-search">搜索</button>
 												<button type="button" class="btn btn-danger btn-add">新增</button>
 											</div>
@@ -127,9 +127,9 @@
                         					<thead class="flip-content">
                         						<tr>
                         							<th text-align="center"></th>
-                        							<th>采购单号</th>
-													<th>采购时间</th>
-													<th>采购总额</th>
+                        							<th>销售单号</th>
+													<th>销售时间</th>
+													<th>销售总额</th>
 													<th>操作</th>
 												</tr>
                         					</thead>
@@ -231,7 +231,7 @@
 		$(function(){
 			init_table();
 			$('.btn-add').on('click', function(){
-				location.href="addPurchase.jsp";
+				location.href="addSale.jsp";
 			});
 			
 			$(".btn-cancle").on('click', function(){

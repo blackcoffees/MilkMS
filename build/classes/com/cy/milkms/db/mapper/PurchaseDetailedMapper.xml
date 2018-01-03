@@ -17,4 +17,8 @@
 		values(#{detailed.purchase_ID}, #{detailed.milk_ID}, #{detailed.number}, #{detailed.purchase_price}
 		, #{detailed.total_amount}, #{detailed.created}, #{detailed.updated})
 	</insert>
+	
+	<select id="getPurchaseDetailedByPurchaseID" resultMap="baseResultMap">
+		select * from purchase_detailed where purchase_ID = #{purchaseID}
+	</select>
 </mapper>

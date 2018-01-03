@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.milkms.db.dao.DistributorMapper">
 	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Distributor">
-		<id column="id" property="id" jdbcType="VARCHAR"/>
+		<id column="id" property="id" jdbcType="INTEGER"/>
 		<result column="name" property="name"  jdbcType="VARCHAR"/>
 		<result column="address" property="address"  jdbcType="VARCHAR"/>
 		<result column="people" property="people"  jdbcType="VARCHAR"/>
@@ -14,6 +14,10 @@
 		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 	</resultMap>
+	
+	<select id="getDistributorByID" resultType="com.cy.milkms.db.entity.Distributor">
+		select * from distributor where id=#{distributorID}
+	</select>
 	
 	<select id="getDistributorByCondition" resultMap="baseResultMap">
 		select * from distributor
@@ -49,5 +53,9 @@
 		
 	<update id="updateDistributor">
 		update distributor set address=#{address}, people=#{people}, phone=#{phone}, updated=#{updated} where name=#{name}
+	</update>
+	
+	<update id="updateDistributorAmount">
+		update distributor set total_amount=#{distributor.total_amount}, unpaid_amount=#{distributor.unpaid_amount}, paid_amount=#{distributor.paid_amount}, updated=#{distributor.updated} where id=#{distributor.id}
 	</update>
 </mapper>

@@ -16,6 +16,7 @@ public interface PurchaseMapper {
 	
 	public int getPurchaseByConditionCount(@Param("purchaseID")String pucharseID, @Param("startTime")String startTime, @Param("endTime")String endTime);
 	
-	
 	public int addPurchase(@Param("purchase")Purchase purchase);
+	
+	public int updatePurchaseOff(@Param("purchaseID")int purchaseID);
 }

@@ -57,6 +57,7 @@ span.red{
 	position:absolute;
 	width: 193px;
 	display: none;
+	z-index:100;
 }
 .goods-list tr{
 	height: 24px;

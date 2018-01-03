@@ -1,5 +1,7 @@
 package com.cy.milkms.service.impl;
 
+import java.util.List;
+
 import org.springframework.aop.ThrowsAdvice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,12 @@ public class PurchaseDetailedService implements IPurchaseDetailedService{
 			throw new Exception("新增采购单分单失败，分单ID: " + detailed.getId());
 		}
 		return result;
+	}
+
+	@Override
+	public List<Purchase_detailed> getPurchaseDetailedByPurchaseID(int purchaseID) {
+		// TODO Auto-generated method stub
+		return mapper.getPurchaseDetailedByPurchaseID(purchaseID);
 	}
 	
 }

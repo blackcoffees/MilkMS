@@ -149,7 +149,7 @@
 														<td v-text="purchase[0].time"></td>
 														<td v-text="purchase[0].totalPurchaseAmount"></td>
 														<td>
-															<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(purchase.number)">废弃</button>
+															<button v-if="purchase[0].status==1" class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(purchase[0].id)">废弃</button>
 														</td>
 													</tr>
 													<tr style="display: none;">
@@ -216,15 +216,16 @@
 				data: []
 			},
 			methods:{
-				deleted: function(number){
+				deleted: function(id){
 					$.ajax({
 						type:"post",
-						url:"milk/delete_milk.action",
-						data:{"number": number},
+						url:"purchase/updatePurchaseOff.action",
+						data:{"purchaseID": id},
 						success:function(data){
 							data = eval("("+data+")");
-							layer.msg(data[0].message);
-							if(data[0].succ){
+							console.info(data);
+							layer.msg(data.message);
+							if(data.succ){
 								init_table();
 							}
 						}

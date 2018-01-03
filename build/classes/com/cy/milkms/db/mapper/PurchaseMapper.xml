@@ -87,5 +87,9 @@
 		insert into purchase(time, total_amount, created, updated)
 		values(#{purchase.time}, #{purchase.total_amount}, #{purchase.created}, #{purchase.updated})
 	</insert>
+	
+	<update id="updatePurchaseOff">
+		update purchase set status=2 where id=#{purchaseID}
+	</update>
 </mapper>
 

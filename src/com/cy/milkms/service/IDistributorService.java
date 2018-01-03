@@ -3,6 +3,8 @@ package com.cy.milkms.service;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.cy.milkms.db.entity.Distributor;
 import com.cy.milkms.util.Pager;
 
@@ -18,4 +20,8 @@ public interface IDistributorService {
 	public int deleteDistributor(String distributorID);
 	
 	public int updateDistributor(String address, String people, String phone, String name);
+	
+	public Distributor getDistributorByID(int distributorID);
+	
+	public int updateDistributorAmount(Distributor distributor);
 }

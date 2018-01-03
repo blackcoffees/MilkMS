@@ -1,32 +1,57 @@
 package com.cy.milkms.db.entity;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Sale_detailed {
-	private String ID;
-	private String milk_ID;
+	private int ID;
+	private int milk_ID;
 	private int number;
+	private int sale_ID;
 	private double price;
 	private double total_amount;
+	private Timestamp created;
+	private Timestamp updated;
 	
-	public Sale_detailed(){
-		this.ID = UUID.randomUUID().toString().replaceAll("-", "");
+	
+	public int getSale_ID() {
+		return sale_ID;
 	}
 
-	public String getID() {
+	public void setSale_ID(int sale_ID) {
+		this.sale_ID = sale_ID;
+	}
+
+	public int getID() {
 		return ID;
 	}
 
-	public void setID(String ID) {
-		this.ID = ID;
+	public void setID(int iD) {
+		ID = iD;
 	}
 
-	public String getMilk_ID() {
+	public int getMilk_ID() {
 		return milk_ID;
 	}
 
-	public void setMilk_ID(String milk_ID) {
+	public void setMilk_ID(int milk_ID) {
 		this.milk_ID = milk_ID;
+	}
+
+	public Timestamp getCreated() {
+		return created;
+	}
+
+	public void setCreated(Timestamp created) {
+		this.created = created;
+	}
+
+	public Timestamp getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(Timestamp updated) {
+		this.updated = updated;
 	}
 
 	public int getNumber() {

@@ -190,5 +190,36 @@ public class PurchaseService implements IPurchaseService{
 		// TODO Auto-generated method stub
 		return mapper.getPurchaseByConditionCount(pucharseID, startTime, endTime);
 	}
+
+	@Override
+	public int updatePurchaseOff(int purchaseID) throws Exception {
+		// TODO Auto-generated method stub
+		List<Purchase_detailed> list = detailedService.getPurchaseDetailedByPurchaseID(purchaseID);
+		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+		for(int i=0;i<list.size();i++){
+			if(map.get(list.get(i).getMilk_ID()) != null){
+				int number = map.get(list.get(i).getMilk_ID());
+				map.put(map.get(list.get(i).getMilk_ID()), (number+list.get(i).getNumber()));
+			}
+			else {
+				map.put(list.get(i).getMilk_ID(), list.get(i).getNumber());
+			}
+		}
+		Set<Integer> keySet = map.keySet();
+		Iterator<Integer> iterator = keySet.iterator();
+		while(iterator.hasNext()){
+			int milkID = iterator.next();
+			Stock stock = stockService.getStockByMilkID(milkID);
+			if(stock.getNumber() < (stock.getNumber() - map.get(milkID))){
+				throw new Exception("库存不足，无法废弃采购单");
+			}
+			int newNumber = stock.getNumber() - map.get(milkID);
+			int stockResult = stockService.updateStock(milkID, newNumber);
+			if(stockResult <= 0){
+				throw new Exception("修改库存失败，请联系管理员");
+			}
+		}
+		return mapper.updatePurchaseOff(purchaseID);
+	}
 	
 }

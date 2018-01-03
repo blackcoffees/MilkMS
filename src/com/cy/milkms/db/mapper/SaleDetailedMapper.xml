@@ -2,12 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.milkms.db.dao.SaleDetailedMapper">
 	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Sale_detailed">
-		<id column="ID" property="ID" jdbcType="VARCHAR"/>
-		<result column="milk_ID" property="milk_ID" jdbcType="VARCHAR"/>
+		<id column="ID" property="ID" jdbcType="INTEGER"/>
+		<result column="milk_ID" property="milk_ID" jdbcType="INTEGER"/>
+		<result column="sale_ID" property="sale_ID" jdbcType="INTEGER"/>
 		<result column="number" property="number"  jdbcType="INTEGER"/>
 		<result column="price" property="price"  jdbcType="DOUBLE"/>
 		<result column="total_amount" property="total_amount" jdbcType="DOUBLE"/>
+		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
+		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 	</resultMap>
 	
-	
+	<insert id="addSaleDetailed" useGeneratedKeys="true" >
+		insert into sale_detailed(milk_id, number, price, total_amount, created, updated, sale_id)
+		values(#{detailed.milk_id}, #{detailed.number}, #{detailed.price}, #{detailed.total_amount}, #{detailed.created}, #{detailed.updated}, #{detailed.sale_ID})
+	</insert>
 </mapper>

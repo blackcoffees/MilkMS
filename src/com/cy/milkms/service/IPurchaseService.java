@@ -17,4 +17,6 @@ public interface IPurchaseService {
 	public int getPurchaseByConditionCount(String pucharseID, String startTime, String endTime);
 	
 	public Map addPurchase(String data) throws Exception;
+	
+	public int updatePurchaseOff(int purchaseID) throws Exception;
 }
