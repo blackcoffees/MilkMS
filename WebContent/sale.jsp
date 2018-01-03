@@ -13,10 +13,6 @@
         	.daterangepicker_input{
         		display: none;
         	}
-        	
-        	.searchTime{
-        		display: none;!important
-        	}
         </style>
 	</head>
 
@@ -123,8 +119,6 @@
 											<div class="col-md-12">
 												<input type="search" placeholder="采购单号" class="form-control input-small input-inline" v-model.lazy="purchaseID" onkeyup="if(event==13){init_table()}">
 												<input type="text" id="purchase_time" placeholder="采购时间" class="form-control input-inline" style="width: 340px;"/>
-												<input class="searchTime" id="startTime" />
-												<input class="searchTime" id="endTime" />
 												<button type="button" class="btn btn-success btn-search">搜索</button>
 												<button type="button" class="btn btn-danger btn-add">新增</button>
 											</div>
@@ -149,7 +143,7 @@
 														<td v-text="purchase[0].time"></td>
 														<td v-text="purchase[0].totalPurchaseAmount"></td>
 														<td>
-															<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(purchase.number)">废弃</button>
+															<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(purchase.number)">删除</button>
 														</td>
 													</tr>
 													<tr style="display: none;">
@@ -285,17 +279,14 @@
 				g_page = page;
 			else
 				page = g_page;
-			var startTime = $("#startTime").val();
-			var endTime = $("#endTime").val();
+			
 			$.ajax({
 				type:'get',
 				url:'purchase/getPurchaseByConditon.action',
 				data:{
 					rows: rows,
 					page: page,
-					milkInfo: vue.milkName,
-					startTime: startTime,
-					endTime: endTime
+					milkInfo: vue.milkName
 				},
 				success:function(data){
 					data = eval("("+data+")");
@@ -336,17 +327,13 @@
             function(start, end, label){
 				if(!this.startDate)
                 	$("#purchase_time").val('');
-				else{
+				else
 					$("#purchase_time").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format(this.locale.formate));
-					$("#startTime").val(this.startDate.format(this.locale.format));
-					$("#endTime").val(this.endDate.format(this.locale.formate));
-				}
             });
 			
 			$("#purchase_time").on('apply.daterangepicker', function(ev, picker) {
+				$("#purchase_time").val("asdf");
 				$("#purchase_time").val(picker.startDate.format('YYYY-MM-DD') + " 至 " + picker.endDate.format("YYYY-MM-DD"));
-				$("#startTime").val(picker.startDate.format('YYYY-MM-DD'));
-				$("#endTime").val(picker.endDate.format("YYYY-MM-DD"));
             });
 		}
         </script>

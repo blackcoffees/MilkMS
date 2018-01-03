@@ -10,7 +10,7 @@ import com.cy.milkms.db.query.TotalPurchaseQuery;
 import com.cy.milkms.util.Pager;
 
 public interface PurchaseMapper {
-	public List<TotalPurchaseQuery> getPurchaseByConditon(@Param("purchaseID")String pucharseID, @Param("startTime")String startTime, @Param("endTime")String endTime, @Param("purchaseIDs")String purchaseIDs);
+	public List<TotalPurchaseQuery> getPurchaseByConditon(@Param("startTime")String startTime, @Param("endTime")String endTime, @Param("purchaseIDs")Integer[] purchaseIDs);
 	
 	public List<TotalPurchaseIDsQuery> getPurchaseByConditionByID(@Param("purchaseID")String pucharseID, @Param("startTime")String startTime, @Param("endTime")String endTime, @Param("pager") Pager pager);
 	

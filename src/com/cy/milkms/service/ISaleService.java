@@ -1,5 +1,5 @@
 package com.cy.milkms.service;
 
-public interface StockService {
+public interface ISaleService {
 
 }

@@ -10,8 +10,11 @@
 		<result column="status" property="status" jdbcType="INTEGER" />
 	</resultMap>
 	
-	<resultMap id="detailedMap" type="com.cy.milkms.db.entity.Purchase_detailed">
-		<id column="id" property="id" jdbcType="INTEGER" />
+	<resultMap id="totalPurchaseQueryMap" type="com.cy.milkms.db.query.TotalPurchaseQuery">
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="time" property="time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+		<result column="totalPurchaseAmount" property="totalPurchaseAmount"  jdbcType="DOUBLE"/>
+		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="purchase_id" property="purchase_id" jdbcType="INTEGER"/>
 		<result column="milk_id" property="milk_id" jdbcType="INTEGER"/>
 		<result column="number" property="number" jdbcType="INTEGER"/>
@@ -19,12 +22,6 @@
 		<result column="total_amount" property="total_amount" jdbcType="DOUBLE"/>
 		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
-	</resultMap>
-	
-	<resultMap id="totalPurchaseQueryMap" type="com.cy.milkms.db.query.TotalPurchaseQuery" extends="detailedMap">
-		<result column="time" property="time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
-		<result column="totalPurchaseAmount" property="totalPurchaseAmount"  jdbcType="DOUBLE"/>
-		<result column="name" property="name" jdbcType="VARCHAR" />
 	</resultMap>
 	
 	<resultMap id="totalPurchaseIDMap" type="com.cy.milkms.db.query.TotalPurchaseIDsQuery">
@@ -37,10 +34,10 @@
 		from purchase, purchase_detailed as detailed, milk
 		where
 			purchase.id = detailed.purchase_id and milk.id = detailed.milk_id
-			and purchase.id in (#{purchaseIDs})
-			<if test="purchaseID != null and purchaseID != ''">
-				and id = #{purchaseID}
-			</if>
+			and purchase.id in 
+			<foreach collection="purchaseIDs" item="item" index="index" open="(" separator="," close=")">  
+				#{item}  
+		    </foreach>  
 			<if test="startTime != null and startTime != ''">
 				and #{startTime} &gt; time
 			</if>
