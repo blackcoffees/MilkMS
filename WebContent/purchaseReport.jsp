@@ -9,6 +9,11 @@
         <meta content="" name="author" />
         <%@include file="header.jsp"%>
         <link rel="shortcut icon" href="favicon.ico" />
+         <style type="text/css">
+        	.daterangepicker_input{
+        		display: none;
+        	}
+        </style>
 	</head>
 
     <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
@@ -49,15 +54,15 @@
                         <!-- BEGIN SIDEBAR MENU -->
                         <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
                         	<template v-for="(menu, i) in menu_list">
-                        		<li class="nav-item" :class="{start: i == 1, active: menu.href==now_href, open: menu.href==now_href, hasChildren: menu.children!=null}">
+                        		<li class="nav-item" :class="{start: i == 1, active: menu.href=='javascript:void(0)', open: menu.href=='javascript:void(0)', hasChildren: menu.children!=null}">
 	                                <a :href="menu.href" class="nav-link nav-toggle">
 	                                    <i :class="menu.span_icon"></i>
 	                                    <span class="title" v-text="menu.title"></span>
 	                                    <span class="selected"></span>
 	                                    <span class="arrow"></span>
 	                                </a>
-	                                <ul v-if="menu.children" class="sub-menu" style="display: none;">
-	                                	<li v-for="child in menu.children">
+	                                <ul v-if="menu.children" class="sub-menu" >
+	                                	<li v-for="child in menu.children" :class="child.href==now_href ? 'nav-sub-menu-hover': ''">
 	                                		<a :href="child.href">
 	                                			<i :class="child.span_icon" ></i>((child.title))
 	                                		</a>
@@ -84,7 +89,7 @@
                                     <i class="fa fa-angle-right"></i>
                                 </li>
                                 <li>
-                                    <span>商品管理</span>
+                                    <span>报表中心</span>
                                 </li>
                             </ul>
                             <div class="page-toolbar">
@@ -98,14 +103,107 @@
                         <!-- END PAGE BAR -->
                         
                         <!-- BEGIN PAGE TITLE-->
-                        <h1 class="page-title"> GOODS
-                            <small>商品管理</small>
+                        <h1 class="page-title"> Procurement Report
+                            <small>采购报表</small>
                         </h1>
                         
                         <!-- BEGIN PAGE MAIN-->
                         <div class="row">
                         	<div class="col-md-12">
                         	
+                        		<!-- BEGIN SEARCH -->
+                        		<div class="note note-info">
+                        			<input type="text" placeholder="商品名称/商品编号" class="form-control input-inline" id="milkName" style="width:150px;" />
+                        			<input type="text" placeholder="采购时间" class="form-control input-inline" id="purchaseTime" style="width:300px" />
+                        			<button type="button" class="btn btn-success btn-search">搜索</button>
+                        			<input id="startTime" style="display:none;" />
+                        			<input id="endTime" style="display:none" />
+                        			<p>
+                        				NOTE: 采购时间默认为当月
+                        			</p>
+								</div>
+                        		<!-- END SEARCH-->
+                        		
+                        		<!-- BEGIN Summary-->
+                        		<div class="row">
+                        			<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+										<div class="dashboard-stat blue-madison">
+											<div class="visual">
+												<i class="fa fa-comments"></i>
+											</div>
+											<div class="details">
+												<div class="number">
+													 1349
+												</div>
+												<div class="desc">
+													 采购总数
+												</div>
+											</div>
+											<a class="more" href="#">
+											View more <i class="m-icon-swapright m-icon-white"></i>
+											</a>
+										</div>
+									</div>
+									
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+										<div class="dashboard-stat red-intense">
+											<div class="visual">
+												<i class="fa fa-bar-chart-o"></i>
+											</div>
+											<div class="details">
+												<div class="number">
+													 12,5M$
+												</div>
+												<div class="desc">
+													 采购总额
+												</div>
+											</div>
+											<a class="more" href="#">
+											View more <i class="m-icon-swapright m-icon-white"></i>
+											</a>
+										</div>
+									</div>
+									
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+										<div class="dashboard-stat green-haze">
+											<div class="visual">
+												<i class="fa fa-shopping-cart"></i>
+											</div>
+											<div class="details">
+												<div class="number">
+													 549
+												</div>
+												<div class="desc">
+													 采购总件数
+												</div>
+											</div>
+											<a class="more" href="#">
+											View more <i class="m-icon-swapright m-icon-white"></i>
+											</a>
+										</div>
+									</div>
+									
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+										<div class="dashboard-stat purple-plum">
+											<div class="visual">
+												<i class="fa fa-globe"></i>
+											</div>
+											<div class="details">
+												<div class="number">
+													 +89%
+												</div>
+												<div class="desc">
+													 热销
+												</div>
+											</div>
+											<a class="more" href="#">
+											View more <i class="m-icon-swapright m-icon-white"></i>
+											</a>
+										</div>
+									</div>
+                        		</div>
+                        		<!-- END Summary-->
+                        		
                         		<!-- BEGIN TABLE-->
                         		<div class="portlet box green">
                         			<div class="portlet-title">
@@ -117,13 +215,6 @@
                                         </div>
                         			</div>
                         			<div class="portlet-body flip-scroll">
-                        				<div class="row table-tool">
-											<div class="col-md-12">
-												<input type="search" placeholder="牛奶名称 /商品编号" class="form-control input-small input-inline" v-model.lazy="milkName" onkeyup="if(event==13){init_table()}">
-												<button type="button" class="btn btn-success btn-search">搜索</button>
-												<button type="button" class="btn btn-danger btn-add">新增</button>
-											</div>
-										</div>
                         				<table class="table table-bordered table-striped table-condensed flip-content" id="table">
                         					<thead class="flip-content">
                         						<tr>
@@ -390,6 +481,32 @@
 			$('.btn-refresh').on('click', function(){
 				init_table();
 			})
+			
+			$("#purchaseTime").daterangepicker({
+                showDropdowns: true,
+				autoUpdateInput: false,
+				showWeekNumbers: false,
+				linkedCalendars: false,
+				drops: "down",
+				"locale": {
+                    format: 'YYYY-MM-DD',
+                    applyLabel: "应用",
+                    cancelLabel: "取消",
+                    daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ], 
+                    monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',  
+                                   '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                }
+			},
+            function(start, end, label){
+				if(!this.startDate)
+                	$("#purchaseTime").val('');
+				else
+					$("#purchaseTime").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format(this.locale.formate));
+            });
+			
+			$("#purchaseTime").on('apply.daterangepicker', function(ev, picker) {
+				$("#purchaseTime").val(picker.startDate.format('YYYY-MM-DD') + " 至 " + picker.endDate.format("YYYY-MM-DD"));
+            });
 		})
 		
 		var g_rows = 10;

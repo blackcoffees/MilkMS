@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cy.milkms.db.dao.LogMapper">
+	<resultMap id="totalPurchaseQueryMap" type="com.cy.milkms.db.query.TotalPurchaseQuery">
+		<result column="time" property="time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+		<result column="totalPurchaseAmount" property="totalPurchaseAmount"  jdbcType="DOUBLE"/>
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="id" property="id" jdbcType="INTEGER" />
+		<result column="number" property="number" jdbcType="INTEGER"/>
+		<result column="purchase_price" property="purchase_price" jdbcType="DOUBLE"/>
+		<result column="total_amount" property="total_amount" jdbcType="DOUBLE"/>
+	</resultMap>
+	
+	<resultMap id="totalPurchaseIDMap" type="com.cy.milkms.db.query.TotalPurchaseIDsQuery">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<select id="getPurchaseReportByCondition" resultMap="totalPurchaseQueryMap">
+		select 
+			purchase_id as id, milk_name as name, detailed.number, detailed.purchase_price, detailed.total_amount, purchase.total_amount as totalPurchaseAmount, time, purchase.status
+		from purchase, purchase_detailed as detailed, milk
+		where
+			purchase.id = detailed.purchase_id and milk.id = detailed.milk_id
+			<if test="purchaseIDs != null and purchaseIDs.length > 0">
+				and purchase.id in 
+				<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+					${item}
+				</foreach>
+			</if>
+			<if test="milkName != null and milkName != ''">
+				and milk_name like '%${milkName}%'
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and #{startTime} &lt; purchase.time
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and purchase.time &lt; #{endTime} 
+			</if>
+			order by purchase.id desc
+	</select>
+	
+	<select id="getPurchaseReportByConditionIDs" resultMap="totalPurchaseIDMap">
+		select id from purchase where 1=1
+		<if test="milkName != null and milkName != ''">
+			and milk_name like '%${milkName}%'
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and #{startTime} &lt; purchase.time
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and purchase.time &lt; #{endTime} 
+		</if>
+		order by purchase.id desc
+		limit #{pager.start}, #{pager.rows}
+	</select>
+	
+	<select id="getPurchaseReportByConditionCount" resultType="int">
+		select count(id) from purchase where 1=1
+		<if test="milkName != null and milkName != ''">
+			and milk_name like '%${milkName}%'
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and #{startTime} &lt; purchase.time
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and purchase.time &lt; #{endTime} 
+		</if>
+	</select>
+</mapper>
