@@ -49,7 +49,7 @@
                         <!-- BEGIN SIDEBAR MENU -->
                         <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
                         	<template v-for="(menu, i) in menu_list">
-                        		<li class="nav-item" :class="{start: i == 1, active: menu.href==now_href, open: menu.href==now_href}">
+                        		<li class="nav-item" :class="{start: i == 1, active: menu.href=='purchase.jsp', open: menu.href=='purchase.jsp'}">
 	                                <a :href="menu.href" class="nav-link nav-toggle">
 	                                    <i :class="menu.span_icon"></i>
 	                                    <span class="title" v-text="menu.title"></span>
@@ -116,7 +116,7 @@
 													<h3 class="control-label col-md-4">采购时间</h3>
 													<div class="col-md-7">
 														<div class="input-group date btn-datepicker" data-provide="datepicker">
-		                                                	<input type="text" class="form-control" id="purchase_time" readonly name="datepicker" style="width:200px"/>
+		                                                	<input type="text" class="form-control" id="purchase_time" readonly name="datepicker" style="width:224px"/>
 		                                                    <span class="input-group-btn">
 																<button class="btn default" type="button">
 																	<i class="fa fa-calendar"></i>
@@ -267,8 +267,8 @@
     						data: {'name': name},
     						success:function(data){
     							data = eval("("+data+")");
-    							if(data[0].total>0){
-    								table_vue.data_list = data[0].data;
+    							if(data.total>0){
+    								table_vue.data_list = data.data;
     								$(event.target).parent().find(".goods-list").show('slow');
     							}
     						}

@@ -273,8 +273,8 @@
             						data: $('.layer-form').serialize(),
             						success:function(data){
             							data = eval("("+data+")");
-            							layer.msg(data[0].message);
-            							if(data[0].succ){
+            							layer.msg(data.message);
+            							if(data.succ){
             								layer.closeAll("page");
             								init_table();
             							}
@@ -290,8 +290,8 @@
 	        						data: $('.layer-form').serialize(),
 	        						success:function(data){
 	        							data = eval("("+data+")");
-	        							layer.msg(data[0].message);
-	        							if(data[0].succ){
+	        							layer.msg(data.message);
+	        							if(data.succ){
 	        								layer.closeAll("page");
 	        								init_table();
 	        							}
@@ -329,8 +329,8 @@
         					data: {'distributorID': id},
         					success:function(data){
         						data = eval("("+data+")");
-        						layer.msg(data[0].message);
-        						if(data[0].succ){
+        						layer.msg(data.message);
+        						if(data.succ){
         							layer.closeAll("page");
         							init_table();
         						}
@@ -364,9 +364,9 @@
        				},
        				success:function(data){
        					data = eval("("+data+")");
-       					var pageTotal = get_page_total(data[0].total, rows);
-       					paginate_tool.init("init_table", pageTotal, data[0].total, []);
-       					table_vue.data_list = data[0].data;
+       					var pageTotal = get_page_total(data.total, rows);
+       					paginate_tool.init("init_table", pageTotal, data.total, []);
+       					table_vue.data_list = data.data;
        					layer.closeAll("loading");
        				},
        				error:function(){

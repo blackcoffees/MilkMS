@@ -22,6 +22,19 @@ var menu_vue = new Vue({
 			span_icon: 'icon-drawer',
 			title: '销售管理',
 			href: 'sale.jsp'
+		},{
+			span_icon: 'icon-social-dropbox',
+			title: '库存管理',
+			href: 'stock.jsp'
+		},{
+			span_icon: 'icon-layers',
+			title: '报表中心',
+			href: 'javascript:void(0)',
+			hasChildren: true,
+			children: [{
+				title: '采购报表',
+				href: 'purchaseReport.jsp'
+			}]
 		}],
 		now_href: window.location.href.split("MilkMS/")[1]
 	}

@@ -117,11 +117,30 @@
                         			<div class="portlet-body flip-scroll">
                         				<div class="row table-tool">
 											<div class="col-md-12">
-												<input type="search" placeholder="销售单号" class="form-control input-small input-inline" v-model.lazy="purchaseID" onkeyup="if(event==13){init_table()}">
-												<input type="text" id="purchase_time" placeholder="销售时间" class="form-control input-inline" style="width: 340px;"/>
+												<input type="search" placeholder="销售单号" class="form-control input-small input-inline" v-model.lazy="saleID" onkeyup="if(event==13){init_table()}">
+												<input type="search" placeholder="商家名称" class="form-control input-small input-inline" id="distributorName" onkeyup="if(event==13){init_table()}">
+												<input type="text" id="time" placeholder="销售时间" class="form-control input-inline" style="width: 260px;"/>
+												<div class="dropdown input-inline" id="status-list"> 
+													<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> 
+													<span>全部</span>
+													<span class="caret"></span> 
+													</button> 
+													<ul class="dropdown-menu"> 
+														<li><a href="javascript:;" data-status="0">全部</a></li>
+														<li><a href="javascript:;" data-status="1">已支付</a></li>
+														<li><a href="javascript:;" data-status="2">未支付</a></li>
+														<li><a href="javascript:;" data-status="3">废弃</a></li>
+													</ul> 
+												</div>
+												
 												<button type="button" class="btn btn-success btn-search">搜索</button>
 												<button type="button" class="btn btn-danger btn-add">新增</button>
 											</div>
+											<form style="display: none">
+												<input id="startTime" name="startTime" />
+												<input id="endTime" name="endTime" />
+												<input id="status" name="status" value="0"/>
+											</form>
 										</div>
                         				<table class="table table-bordered table-striped dataTable table-condensed flip-content" id="table">
                         					<thead class="flip-content">
@@ -129,41 +148,54 @@
                         							<th text-align="center"></th>
                         							<th>销售单号</th>
 													<th>销售时间</th>
-													<th>销售总额</th>
+													<th>商家名称</th>
+													<th>应收金额</th>
+													<th>实收金额</th>
+													<th>未收金额</th>
+													<th>状态</th>
+													<th>支付时间</th>
 													<th>操作</th>
 												</tr>
                         					</thead>
                         					<tbody>
-                        						<template v-for="purchase in data">
-	                        						<tr :key="purchase.id">
+                        						<template v-for="sale in data">
+	                        						<tr :key="sale.id">
 	                        							<td style="vertical-align: inherit;text-align: center;">
 	                        								<span class="row-detail row-detail-close"></span>
 	                        							</td>
-	                        							<td v-text="purchase[0].id"></td>
-														<td v-text="purchase[0].time"></td>
-														<td v-text="purchase[0].totalPurchaseAmount"></td>
+	                        							<td v-text="sale[0].id"></td>
+														<td v-text="sale[0].sale_time"></td>
+														<td v-text="sale[0].name"></td>
+														<td>￥((sale[0].receivables_amount))</td>
+														<td>￥((sale[0].paid_amount))</td>
+														<td>￥((sale[0].unpaid_amount))</td>
+														<td v-if="sale[0].status == 1">已支付</td>
+														<td v-else-if="sale[0].status == 2">未支付</td>
+														<td v-else-if="sale[0].status == 3">废弃</td>
+														<td>((sale[0].paid_time))</td>
 														<td>
-															<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(purchase.number)">删除</button>
+															<button v-if="sale[0].status == 2" class="btn btn-sm blue btn-outline filter-submit margin-bottom" @click="balance(sale[0])">结算</button>
+															<button v-if="sale[0].status == 2" class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(sale[0].id)">废弃</button>
 														</td>
 													</tr>
 													<tr style="display: none;">
-														<td colspan="6">
+														<td colspan="10">
 															<table class="table table-striped table-hover">
 																<thead>
 																	<tr>
 																		<th width="60"></th>
 																		<td>商品名称</td>
 																		<td>数量</td>
-																		<td>采购单价</td>
+																		<td>销售单价</td>
 																		<td>总价格</td>
 																	</tr>
 																</thead>
 																<tbody>
-																	<tr v-for="item in purchase">
+																	<tr v-for="item in sale">
 																		<td></td>
-																		<td>((item.name))</td>
+																		<td>((item.milk_name))</td>
 																		<td>((item.number))</td>
-																		<td>((item.purchase_price))</td>
+																		<td>((item.price))</td>
 																		<td>((item.total_amount))</td>
 																	</tr>
 																</tbody>
@@ -199,6 +231,34 @@
             
         </div>
 		
+		<!-- BEGIN LAYER -->
+		<div id="layer-window" style="display:none">
+			<div class="col-mid-6">
+				<form class="layer-form" data-parsley-validate onsubmit="return false">
+					<table>
+						<tr>
+							<td width="70">应收金额:</td>
+							<td>
+								<label name="receivables_amount" type="receivables_amount" id="receivables_amount" style="font-size:28px"></label>
+							</td>
+						</tr>
+						<tr>
+							<td width="70">结算金额:</td>
+							<td>
+								<input name="amount" type="number" id="amount" data-parsley-type="integer" style="color:red;"/>
+								<input id="saleID" style="display:none"/>
+							</td>
+						</tr>
+					</table>
+					<div class="layer-button">
+						<input type="submit" class="btn btn-danger btn-submit" onclick="current()" value="确定"/>
+						<button type="button" class="btn grey-cascade btn-cancle" >取消</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- END LAYER -->
+		
         <script src="static/js/common.js" type="text/javascript"></script>
         <script src="static/js/paginate_tool.js" type="text/javascript"></script>
         <script>
@@ -206,27 +266,57 @@
 			delimiters:['((', '))'],
 			el:'#table',
 			data:{
-				purchaseID: '',
+				saleID: '',
 				data: []
 			},
 			methods:{
-				deleted: function(number){
+				deleted: function(saleID){
 					$.ajax({
-						type:"post",
-						url:"milk/delete_milk.action",
-						data:{"number": number},
+						type:"get",
+						url:"sale/abandonSale.action",
+						data:{"saleID": saleID},
 						success:function(data){
 							data = eval("("+data+")");
-							layer.msg(data[0].message);
-							if(data[0].succ){
+							layer.msg(data.message);
+							if(data.succ){
 								init_table();
 							}
 						}
 					})
 				},
+				balance: function(sale){
+					$("#receivables_amount").html("￥"+sale.unpaid_amount);
+					$("#amount").val(sale.unpaid_amount);
+					$("#saleID").val(sale.id);
+					layer.open({
+						type: '1',
+						skin: 'layui-layer-molv',
+						title: '结算',
+						area: ['362px', '231px'],
+						content: $('#layer-window')
+					})
+				}
 			}
 		})
-	
+		
+        function current(){
+			var saleID = $("#saleID").val();
+			var amount = $("#amount").val();
+			$.ajax({
+				type: 'post',
+				url: 'sale/balanceSale.action',
+				data:{
+					'saleID': saleID,
+					'amount': amount
+				},
+				success:function(data){
+					data = eval("("+data+")");
+					layer.closeAll("page");
+					layer.msg(data.message);
+					init_table();
+				}
+			})
+		}
 		
 		$(function(){
 			init_table();
@@ -236,7 +326,6 @@
 			
 			$(".btn-cancle").on('click', function(){
 				layer.closeAll();
-				edit_vue.edit_data = null;
 			})
 			
 			$('.btn-search').on('click', function(){
@@ -262,13 +351,6 @@
 		var g_rows = 10;
         var g_page = 1;
         
-		function init_add_layer(){
-			$("#number").val("");
-			$("#milk_name").val("");
-			$("#purchase_price").val("");
-			$("#selling_price").val("");
-		}        
-		
 		function init_table(rows, page){
 			if(rows != '' && rows > 0)
 				g_rows = rows;
@@ -280,23 +362,43 @@
 			else
 				page = g_page;
 			
+			var saleID = vue.saleID;
+			if(saleID == '' || saleID == null){
+				saleID = 0;				
+			}
+			else if(saleID != '' && !isNaN(saleID)){
+				alert("销售单号必须是数字");
+				return;
+			}
+			
+			var startTime = $("#startTime").val();
+			var endTime = $("#endTime").val();
+			var distributorName = $("#distributorName").val();
+			var status =$("#status").val();
 			$.ajax({
 				type:'get',
-				url:'purchase/getPurchaseByConditon.action',
+				url:'sale/getSaleByCondition.action',
 				data:{
 					rows: rows,
 					page: page,
-					milkInfo: vue.milkName
+					saleID: saleID,
+					startTime: startTime,
+					endTime: endTime,
+					distributorName: distributorName,
+					status: status					
 				},
 				success:function(data){
-					data = eval("("+data+")");
-					
-					//一共生成多少页
-					page_total = get_page_total(data[0].total, g_rows);
-					paginate_tool.init("init_table", page_total, data[0].total, []);
-					
-					vue.data = data[0].data;
 					layer.closeAll('loading');
+					data = eval("("+data+")");
+					if(!data.succ){
+						layer.msg(data.message);
+					}
+					else{
+						//一共生成多少页
+						page_total = get_page_total(data.total, g_rows);
+						paginate_tool.init("init_table", page_total, data.total, []);
+						vue.data = data.data;
+					}
 				},
 				beforeSend:function(){
 					layer.load(1, {
@@ -309,7 +411,7 @@
 				
 			})
 			
-			$("#purchase_time").daterangepicker({
+			$("#time").daterangepicker({
                 showDropdowns: true,
 				autoUpdateInput: false,
 				showWeekNumbers: false,
@@ -326,15 +428,35 @@
 			},
             function(start, end, label){
 				if(!this.startDate)
-                	$("#purchase_time").val('');
-				else
-					$("#purchase_time").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format(this.locale.formate));
+                	$("#time").val('');
+				else{
+					$("#time").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format("YYYY-MM-DD"));
+					$("#startTime").val(this.startDate.format(this.locale.format));
+					$("#endTime").val(this.endDate.format("YYYY-MM-DD"));
+				}
             });
 			
-			$("#purchase_time").on('apply.daterangepicker', function(ev, picker) {
-				$("#purchase_time").val("asdf");
-				$("#purchase_time").val(picker.startDate.format('YYYY-MM-DD') + " 至 " + picker.endDate.format("YYYY-MM-DD"));
+			$("#time").on('apply.daterangepicker', function(ev, picker) {
+				$("#time").val(picker.startDate.format('YYYY-MM-DD') + " 至 " + picker.endDate.format("YYYY-MM-DD"));
+				$("#startTime").val(picker.startDate.format('YYYY-MM-DD'));
+				$("#endTime").val(picker.endDate.format("YYYY-MM-DD"));
             });
+			
+			/*下拉框*/
+			$("#status-list").on('click', 'button.btn', function(e){
+				e.stopPropagation();
+				$(this).siblings('ul.dropdown-menu').stop().slideDown('fase');
+			}).on('click', 'ul.dropdown-menu li', function(e){
+				e.stopPropagation();
+				$(this).parents('ul.dropdown-menu').stop().slideToggle('fast');
+				$(this).parents("ul.dropdown-menu").prev("button").find("span").first().html($(this).find("a").html());
+				$("#status").val($(this).find("a").attr("data-status"));
+			});
+			
+			$('body').on('click', function(e){
+				e.stopPropagation();
+				$("#status-list").find("ul.dropdown-menu").stop().slideUp('fast');
+			})
 		}
         </script>
     </body>

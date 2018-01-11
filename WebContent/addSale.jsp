@@ -53,12 +53,13 @@
 						data-slide-speed="200" style="padding-top: 20px">
 						<template v-for="(menu, i) in menu_list">
 						<li class="nav-item"
-							:class="{start: i == 1, active: menu.href==now_href, open: menu.href==now_href}">
-							<a :href="menu.href" class="nav-link nav-toggle"> <i
-								:class="menu.span_icon"></i> <span class="title"
-								v-text="menu.title"></span> <span class="selected"></span> <span
-								class="arrow open"></span>
-						</a>
+							:class="{start: i == 1, active: menu.href=='sale.jsp', open: menu.href=='sale.jsp'}">
+							<a :href="menu.href" class="nav-link nav-toggle"> 
+								<i :class="menu.span_icon"></i> 
+								<span class="title" v-text="menu.title"></span> 
+								<span class="selected"></span> 
+								<span class="arrow open"></span>
+							</a>
 						</li>
 						</template>
 					</ul>
@@ -120,7 +121,7 @@
 										<div class="col-md-5">
 											<div class="form-group">
 												<i class="icon-speedometer left" style="padding-top: 7px;"></i>
-												<h3 class="control-label col-md-4" style="font-size: 18px; padding-top: 4px;">销售时间</h3>
+												<h3 class="control-label col-md-3" style="font-size: 18px; padding-top: 4px;">销售时间</h3>
 												<div class="col-md-7">
 													<div class="input-group date btn-datepicker" data-provide="datepicker">
 														<input type="text" class="form-control" id="purchase_time" readonly name="datepicker" style="width: 200px" />
@@ -138,7 +139,7 @@
 										</div>
 										<div class="col-md-4" style="margin-left: 18px">
 											<i class="icon-user left" style="padding-top: 7px;"></i>
-											<h3 class="control-label col-md-5" style="font-size: 18px; padding-top: 4px;">商家名称</h3>
+											<h3 class="control-label col-md-4" style="font-size: 18px; padding-top: 4px;">商家名称</h3>
 											<input id="distributorName" class="form-control input-small input-inline" @keyup="disChange($event)"/>
 											<div class="goods-list" style="width:300px;margin-top:10px;margin-left:141px;background: #f9f9f9;">
 												<table class="table table-hover">
@@ -162,8 +163,9 @@
 											</div>
 											
 										</div>
-										<div style="margin-left: 18px">
-											支付状态
+										<div class="col-md-3" style="width:23%;">
+											<i class="icon-notebook left" style="padding-top: 7px;"></i>
+											<h3 class="control-label col-md-4" style="font-size: 18px; padding-top: 4px;">支付状态</h3>
 											<div class="btn-group">
 												<button type="button" class="btn btn-default">未支付</button>
 												<button type="button"
@@ -196,9 +198,9 @@
 																class="table table-striped table-bordered table-advance edit-table">
 																<thead>
 																	<tr>
-																		<th width="193"><i class="fa fa-briefcase"></i>商品名称</th>
-																		<th width="30"><i class="fa fa-star">规格 </th>
-																		<th width="87"><i class="fa fa-shopping-cart"></i>数量</th>
+																		<th width="193"><i class="fa fa-briefcase"></i>&nbsp;商品名称</th>
+																		<th width="30"><i class="fa fa-star">&nbsp;规格 </th>
+																		<th width="87"><i class="fa fa-shopping-cart"></i>&nbsp;数量</th>
 																		<th width="117"><i class="fa fa-money"></i> 单价（￥）</th>
 																		<th width="117"><i class="fa fa-money"></i> 合计（￥）</th>
 																		<th><i class="fa fa-cog"></i> 操作</th>
@@ -213,15 +215,15 @@
 																						<tr>
 																							<th width="50" align="center">编号</th>
 																							<th width="80" align="center">商品名称</th>
-																							<th width="50" align="center">规格</th>
+																							<th width="70" align="center">库存数</th>
 																						</tr>
 																					</thead>
 																					<tbody>
 																						<tr v-for="item in data_list" :key="item.number"
 																							@click="selectGoods($event, item)">
 																							<td v-text="item.number"></td>
-																							<td v-text="item.milk_name"></td>
-																							<td v-text="item.specifications"></td>
+																							<td v-text="item.milkName"></td>
+																							<td v-text="item.number"></td>
 																						</tr>
 																					</tbody>
 																				</table>
@@ -231,7 +233,7 @@
 																		<td><input type="number" class="edit-input number" data-parsley-type="integer" @change="countTotalPrice" style="width: 70px" /></td>
 																		<td><input class="edit-input price" style="width: 100px" @change="check_price" @keyup="check_price_format" /></td>
 																		<td><input class="edit-input totalPrice" style="width: 100px" readonly /></td>
-																		<td><a href="javascript:;" class="btn btn-outline btn-circle btn-sm red" @click="deleteRow"> <i class="fa fa-trash-o"></i>删除</a></td>
+																		<td><a href="javascript:;" class="btn btn-outline btn-circle btn-sm red" @click="deleteRow"> <i class="fa fa-trash-o"></i>&nbsp;删除</a></td>
 																	</tr>
 																</tbody>
 															</table>
@@ -304,14 +306,14 @@
 							}
 							$.ajax({
 								type : 'post',
-								url : 'milk/getMilkByName.action',
+								url : 'stock/getStockByMilkName.action',
 								data : {
 									'name' : name
 								},
 								success : function(data) {
 									data = eval("(" + data + ")");
-									if (data[0].total > 0) {
-										table_vue.data_list = data[0].data;
+									if (data.total > 0) {
+										table_vue.data_list = data.data;
 										$(event.target).parent().find(".goods-list").show('slow');
 									}
 								}
@@ -321,7 +323,7 @@
 							var input = $(event.target).parent().parent().parent().parent().prev("input");
 							var td = $(event.target).parent().parent().parent().parent().parent();
 							td.next("td").text(item.specifications);
-							input.val(item.milk_name);
+							input.val(item.milkName);
 							td.next("td").next("td").next("td").val(item.selling_price);
 						},
 						check_price_format : function(event) {
@@ -365,6 +367,8 @@
 							var tr = $(event.target).parent().parent();
 							this.rows -= 1;
 							tr.remove();
+							var amount = $(event.target).parent().prev().find("input").val();
+							this.totalPrice -= amount;
 						},
 						disChange: function(event){
 							/*商家选择*/
@@ -378,7 +382,7 @@
 								},
 								success:function(data){
 									data = eval("("+data+")");
-									table_vue.dis_list = data[0].data;
+									table_vue.dis_list = data.data;
 									$(event.target).parent().find(".goods-list").show('slow');
 								}
 							})
@@ -394,7 +398,7 @@
 		function add() {
 			var time = $("input[name='datepicker']").val();
 			if (time == '') {
-				layer.msg("请填写采购时间");
+				layer.msg("请填写销售时间");
 				return;
 			}
 			var trs = $(".add-tr");
@@ -446,7 +450,7 @@
 				}
 
 				var one = {
-					"milk_name" : milk_name,
+					"milkName" : milk_name,
 					'number' : number,
 					'price' : price,
 					'totalPrice' : totalPrice
@@ -456,7 +460,9 @@
 			var obj = {
 				'time' : time,
 				'totalPrice' : table_vue.totalPrice,
-				'list' : list
+				'list' : list, 
+				'distributorID': distributorID,
+				'status': status
 			}
 			var list2 = new Array()
 			list2.push(obj)
@@ -464,7 +470,7 @@
 
 			$.ajax({
 				type : 'post',
-				url : 'purchase/addPurchase.action',
+				url : 'sale/addSale.action',
 				data : {
 					"data" : data
 				},
@@ -473,7 +479,7 @@
 					if (data.succ) {
 						layer.msg(data.message);
 						setTimeout(function() {
-							window.location.href = "purchase.jsp";
+							window.location.href = "sale.jsp";
 						}, 2000);
 					} else {
 						layer.msg(data.message);

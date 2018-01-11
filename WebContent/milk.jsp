@@ -281,8 +281,8 @@
 						data:{"number": number},
 						success:function(data){
 							data = eval("("+data+")");
-							layer.msg(data[0].message);
-							if(data[0].succ){
+							layer.msg(data.message);
+							if(data.succ){
 								init_table();
 							}
 						}
@@ -328,8 +328,8 @@
 								data:$('.layer-form').serialize(),
 								success:function(data){
 									data = eval("("+data+")");
-									layer.msg(data[0].message);
-									if(data[0].succ){
+									layer.msg(data.message);
+									if(data.succ){
 										layer.closeAll("page");
 										init_table();
 									}						
@@ -345,8 +345,8 @@
 								data:$('.layer-form').serialize(),
 								success:function(data){
 									data = eval("("+data+")");
-									layer.msg(data[0].message);
-									if(data[0].succ){
+									layer.msg(data.message);
+									if(data.succ){
 										layer.closeAll("page");
 										init_table();
 									}						
@@ -418,10 +418,10 @@
 					data = eval("("+data+")");
 					
 					//一共生成多少页
-					page_total = get_page_total(data[0].total, g_rows);
-					paginate_tool.init("init_table", page_total, data[0].total, []);
+					page_total = get_page_total(data.total, g_rows);
+					paginate_tool.init("init_table", page_total, data.total, []);
 					
-					vue.data = data[0].data;
+					vue.data = data.data;
 					layer.closeAll('loading');
 				},
 				beforeSend:function(){
