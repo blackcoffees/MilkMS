@@ -1,5 +1,6 @@
 package com.cy.milkms.service.impl;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,11 +18,13 @@ import com.cy.milkms.db.entity.Milk;
 import com.cy.milkms.db.entity.Purchase;
 import com.cy.milkms.db.entity.Purchase_detailed;
 import com.cy.milkms.db.entity.Stock;
+import com.cy.milkms.db.entity.StockRecord;
 import com.cy.milkms.db.query.TotalPurchaseIDsQuery;
 import com.cy.milkms.db.query.TotalPurchaseQuery;
 import com.cy.milkms.service.IMilkService;
 import com.cy.milkms.service.IPurchaseDetailedService;
 import com.cy.milkms.service.IPurchaseService;
+import com.cy.milkms.service.IStockRecordService;
 import com.cy.milkms.service.IStockService;
 import com.cy.milkms.util.DateTool;
 import com.cy.milkms.util.Pager;
@@ -43,10 +46,12 @@ public class PurchaseService implements IPurchaseService{
 	
 	@Autowired
 	private IStockService stockService;
+	
+	@Autowired
+	private IStockRecordService stockRecordService;
 
 	@Override
 	public List<List<TotalPurchaseQuery>> getPurchaseByConditon(String pucharseID, String startTime, String endTime, Pager pager) {
-		// TODO Auto-generated method stub
 		List<List<TotalPurchaseQuery>> rows = new ArrayList<List<TotalPurchaseQuery>>();
 		try {
 			List<TotalPurchaseIDsQuery> purchaseIDList = this.getPurchaseByConditionByID(pucharseID, startTime, endTime, pager);
@@ -72,7 +77,6 @@ public class PurchaseService implements IPurchaseService{
 				rows.add(map.get(sortPurchaseIDs.get(j)));
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}
 		return rows;
@@ -80,15 +84,13 @@ public class PurchaseService implements IPurchaseService{
 
 	@Override
 	public List<TotalPurchaseIDsQuery> getPurchaseByConditionByID(String pucharseID, String startTime, String endTime, Pager pager) {
-		// TODO Auto-generated method stub
 		return mapper.getPurchaseByConditionByID(pucharseID, startTime, endTime, pager);
 	}
 
 	@Override
 	@Transactional
-	public Map addPurchase(String data) throws Exception {
-		// TODO Auto-generated method stub
-		Map result = new HashMap();
+	public Map<String, Object> addPurchase(String data) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("message", "系统繁忙，请稍后再试");
 		result.put("succ", false);
 			
@@ -160,6 +162,7 @@ public class PurchaseService implements IPurchaseService{
 			detailed.setUpdated(DateTool.getNowTime());
 			detailedService.addPurchaseDetailed(detailed);
 		}
+		/*新增库存*/
 		Set<Integer> keySet = stockMap.keySet();
 		Iterator<Integer> iterator = keySet.iterator();
 		while(iterator.hasNext()){
@@ -167,14 +170,29 @@ public class PurchaseService implements IPurchaseService{
 			int stockNumber = stockMap.get(key);
 			Stock stock = stockService.getStockByMilkID(key);
 			if(stock == null){
-				int stockID = stockService.addStock(key, stockNumber);
+				Stock stock2 = new Stock();
+				stock.setMilk_ID(key);
+				stock.setNumber(stockNumber);
+				stock.setCreated(DateTool.getNowTime());
+				int stockID = stockService.addStock(stock2);
 				if(stockID <= 0){
 					throw new Exception("库存添加失败");
 				}
 			}
 			else{
-				stockNumber += stock.getNumber();
-				int effect = stockService.updateStock(key, stockNumber);
+				StockRecord stockRecord = new StockRecord();
+				stockRecord.setCreated(DateTool.getNowTime());
+				stockRecord.setMilk_id(key);
+				stockRecord.setNew_number(stock.getNumber() + stockNumber);
+				stockRecord.setOld_number(stock.getNumber());
+				stockRecord.setUpdated(DateTool.getNowTime());
+				int addStockRecordResult = stockRecordService.addStockRecord(stockRecord);
+				if(addStockRecordResult <= 0){
+					throw new Exception("库存添加失败");
+				}
+				stock.setNumber(stockNumber + stock.getNumber());
+				stock.setUpdated(DateTool.getNowTime());
+				int effect = stockService.updateStock(stock);
 				if(effect <= 0){
 					throw new Exception("库存添加失败");
 				}
@@ -187,13 +205,11 @@ public class PurchaseService implements IPurchaseService{
 
 	@Override
 	public int getPurchaseByConditionCount(String pucharseID, String startTime, String endTime) {
-		// TODO Auto-generated method stub
 		return mapper.getPurchaseByConditionCount(pucharseID, startTime, endTime);
 	}
 
 	@Override
 	public int updatePurchaseOff(int purchaseID) throws Exception {
-		// TODO Auto-generated method stub
 		List<Purchase_detailed> list = detailedService.getPurchaseDetailedByPurchaseID(purchaseID);
 		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 		for(int i=0;i<list.size();i++){
@@ -213,8 +229,19 @@ public class PurchaseService implements IPurchaseService{
 			if(stock.getNumber() < (stock.getNumber() - map.get(milkID))){
 				throw new Exception("库存不足，无法废弃采购单");
 			}
-			int newNumber = stock.getNumber() - map.get(milkID);
-			int stockResult = stockService.updateStock(milkID, newNumber);
+			StockRecord stockRecord = new StockRecord();
+			stockRecord.setCreated(DateTool.getNowTime());
+			stockRecord.setMilk_id(milkID);
+			stockRecord.setNew_number(stock.getNumber() - map.get(milkID));
+			stockRecord.setOld_number(stock.getNumber());
+			stockRecord.setUpdated(DateTool.getNowTime());
+			int addStockRecordResult = stockRecordService.addStockRecord(stockRecord);
+			if(addStockRecordResult <= 0){
+				throw new Exception("修改库存失败，请联系管理员");
+			}
+			stock.setNumber(stock.getNumber() - map.get(milkID));
+			stock.setUpdated(DateTool.getNowTime());
+			int stockResult = stockService.updateStock(stock);
 			if(stockResult <= 0){
 				throw new Exception("修改库存失败，请联系管理员");
 			}

@@ -14,6 +14,10 @@
 	
 	<insert id="addSaleDetailed" useGeneratedKeys="true" >
 		insert into sale_detailed(milk_id, number, price, total_amount, created, updated, sale_id)
-		values(#{detailed.milk_id}, #{detailed.number}, #{detailed.price}, #{detailed.total_amount}, #{detailed.created}, #{detailed.updated}, #{detailed.sale_ID})
+		values(#{detailed.milk_ID}, #{detailed.number}, #{detailed.price}, #{detailed.total_amount}, #{detailed.created}, #{detailed.updated}, #{detailed.sale_ID})
 	</insert>
+	
+	<select id="getSaleDetailedBySaleID" resultMap="baseResultMap">
+		select * from sale_detailed where sale_id = #{saleID}
+	</select>
 </mapper>

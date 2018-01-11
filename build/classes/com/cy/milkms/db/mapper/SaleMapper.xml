@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.milkms.db.dao.SaleMapper">
 	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Sale">
-		<id column="ID" property="ID" jdbcType="INTEGER"/>
+		<id column="id" property="id" jdbcType="INTEGER"/>
 		<result column="distributor_id" property="distributor_id" jdbcType="INTEGER"/>
 		<result column="receivables_amount" property="receivables_amount"  jdbcType="DOUBLE"/>
 		<result column="paid_amount" property="paid_amount"  jdbcType="DOUBLE"/>
@@ -14,9 +14,75 @@
 		<result column="status" property="status" jdbcType="INTEGER" />
 	</resultMap>
 	
+	<resultMap id="totalSaleQuery" type="com.cy.milkms.db.query.TotalSaleQuery" extends="baseResultMap">
+		<result column="number" property="number" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="DOUBLE" />
+		<result column="total_amount" property="total_amount" jdbcType="DOUBLE" />
+		<result column="milk_name" property="milk_name" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+	</resultMap>
+
 	<insert id="addSale" useGeneratedKeys="true" keyProperty="sale.id">
 		insert into sale(distributor_id, receivables_amount, paid_amount, unpaid_amount, sale_time, paid_time, created, updated, status)
 		values(#{sale.distributor_id}, #{sale.receivables_amount}, #{sale.paid_amount}, #{sale.unpaid_amount}, 
 		#{sale.sale_time}, #{sale.paid_time}, #{sale.created}, #{sale.updated}, #{sale.status})
 	</insert>
+	
+	<select id="getSaleByCondition" resultMap="totalSaleQuery">
+		select
+			sale.id, sale.sale_time, sale.paid_time, sale.status, sale.receivables_amount, sale.paid_amount, sale.unpaid_amount,
+			detailed.number, detailed.price, detailed.total_amount,
+			milk.milk_name, distributor.name
+		from 
+			milk, sale, sale_detailed as detailed, distributor
+		where
+			detailed.sale_id = sale.id
+			and detailed.milk_id = milk.id
+			and sale.distributor_id = distributor.id
+			<if test="startTime != null and startTime != ''">
+				 and #{startTime} &lt;= sale.created
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and sale.created &lt;= #{endTime}
+			</if>
+			<choose>
+				<when test="saleID != null and saleID != '' and saleID != 0">
+					and sale.id=#{saleID}
+				</when>
+				<otherwise>
+					and sale.id in (select t.id from (select * from sale order by id desc limit #{pager.start}, #{pager.rows}) as t)
+				</otherwise>
+			</choose>
+			<if test="status != 0">
+				and sale.status = #{status}
+			</if>
+			<if test="distributorName != null and distributorName != ''">
+				and distributor.name like '%${distributorName}%'
+			</if>
+	</select>
+	
+	<select id="getSaleByConditionCount" resultType="int">
+		select count(id) from sale where 1=1
+		<if test="startTime != null and startTime != ''">
+			 and #{startTime} &lt;= sale.created
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and sale.created &lt;= #{endTime}
+		</if>
+		<if test="saleID != null and saleID != '' and saleID != 0">
+			and sale.id=#{saleID}
+		</if>
+	</select>
+	
+	<update id="updateSaleStatus">
+		update sale set status=#{status}, updated=#{updated} where id=#{saleID}
+	</update>
+	
+	<select id="getSaleByID" resultType="com.cy.milkms.db.entity.Sale">
+		select * from sale where id=#{saleID}
+	</select>
+	
+	<update id="updateBalanceSale">
+		update sale set paid_amount=#{sale.paid_amount}, unpaid_amount=#{sale.unpaid_amount}, status=#{sale.status}, updated=#{sale.updated}, paid_time=#{sale.paid_time} where id=#{sale.id}
+	</update>
 </mapper>

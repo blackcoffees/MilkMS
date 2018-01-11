@@ -1,6 +1,7 @@
 package com.cy.milkms.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cy.milkms.db.entity.Milk;
 import com.cy.milkms.util.Pager;
@@ -10,7 +11,7 @@ public interface IMilkService {
 	
 	public int get_milk_condition_count(String milkInfo);
 	
-	public int add_milk(Milk milk);
+	public Map<String, Object> add_milk(Milk milk);
 	
  	public Milk get_milk_by_name_or_number(String milk_name, String number);
  	

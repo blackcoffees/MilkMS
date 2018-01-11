@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
 import com.cy.milkms.db.entity.Milk;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class ReturnJsonData {
 	public static String currentJsonData(int total, List<?> list){
@@ -20,12 +22,14 @@ public class ReturnJsonData {
 		 * 一重list，返回json
 		 * */
 		if(total == 0 || list.size() == 0){
-			Map map2 = new HashMap();
+			Map<String, Object> map2 = new HashMap<String, Object>();
 			map2.put("total", total);
 			map2.put("data", list);
-			return JSONArray.fromObject(map2).toString();
+			map2.put("succ", true);
+			map2.put("message", "");
+			return JSONObject.fromObject(map2).toString();
 		}
-		List result = new ArrayList();
+		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 		for(int j=0;j<list.size();j++){
 			Map<String, String> map = new HashMap<String, String>();
 			Field[] fields = list.get(j).getClass().getDeclaredFields();
@@ -45,10 +49,12 @@ public class ReturnJsonData {
 			result.add(map);
 		}
 		
-		Map map2 = new HashMap();
+		Map<String, Object> map2 = new HashMap<String, Object>();
 		map2.put("total", total);
 		map2.put("data", result);
-		return JSONArray.fromObject(map2).toString();
+		map2.put("succ", true);
+		map2.put("message", "");
+		return JSONObject.fromObject(map2).toString();
 	}
 	
 	public static String createReturnJsonData(int total, List<?> list){
@@ -56,37 +62,46 @@ public class ReturnJsonData {
 		 * 多重list，返回json
 		 * */
 		if(total == 0 || list.size() == 0){
-			Map map2 = new HashMap();
+			Map<String, Object> map2 = new HashMap<String, Object>();
 			map2.put("total", total);
 			map2.put("data", list);
-			return JSONArray.fromObject(map2).toString();
+			map2.put("succ", true);
+			map2.put("message", "");
+			return JSONObject.fromObject(map2).toString();
 		}
 		List reslut = genJsonData(list);
-		Map map = new HashMap();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("total", total);
 		map.put("data", reslut);
-		return JSONArray.fromObject(map).toString();
+		map.put("succ", true);
+		map.put("message", "");
+		return JSONObject.fromObject(map).toString();
 	}
 	
 	
 	private static List genJsonData(List<?> list){
 		try {
 			if(list.get(0) instanceof List){
-				List jsonDatas = new ArrayList();
+				List<List<Map<String, String>>> jsonDatas = new ArrayList<List<Map<String, String>>>();
 				for(int i=0;i<list.size();i++){
-					List jsonData = genJsonData((List)list.get(i));
+					List<Map<String, String>> jsonData = genJsonData((List)list.get(i));
 					jsonDatas.add(jsonData);
 				}
 				return jsonDatas;
 			}
 			else{
-				Field[] fields = list.get(0).getClass().getDeclaredFields();
+				Class<?> clazz = list.get(0).getClass();
+				List<Field> fields = new ArrayList<>();
+				while(clazz != null){
+					fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+					clazz = clazz.getSuperclass();
+				}
 				PropertyDescriptor pd = null;
-				List result = new ArrayList();
+				List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 				for(int i=0;i<list.size();i++){
 					Map<String, String> valueMap = new HashMap<String, String>();
-					for(int j=0;j<fields.length;j++){
-						String fieldName = fields[j].getName();
+					for(int j=0;j<fields.size();j++){
+						String fieldName = fields.get(j).getName();
 						pd = new PropertyDescriptor(fieldName, list.get(0).getClass());
 						Method method = pd.getReadMethod();
 						String value = String.valueOf(method.invoke(list.get(i)));

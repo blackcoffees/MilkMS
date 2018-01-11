@@ -16,8 +16,7 @@ import com.cy.milkms.util.Enum;
 import com.cy.milkms.util.Pager;
 import com.cy.milkms.util.ReturnJsonData;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @Controller
 @RequestMapping("milk")
@@ -47,37 +46,26 @@ public class MilkController {
 		boolean isValidat = Pattern.matches(pattern, milk.getNumber());
 		if(!isValidat){
 			res.put("message", message);
-			return JSONArray.fromObject(res).toString();
+			return JSONObject.fromObject(res).toString();
 		}
 		pattern = "^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$";
 		isValidat = Pattern.matches(pattern, purchase_price);
 		if(!isValidat || Double.parseDouble(purchase_price) > 2000){
 			res.put("message", message);
-			return JSONArray.fromObject(res).toString();
+			return JSONObject.fromObject(res).toString();
 		}
 		isValidat = Pattern.matches(pattern, selling_price);
 		if(!isValidat || Double.parseDouble(selling_price) > 2000){
 			res.put("message", message);
-			return JSONArray.fromObject(res).toString();
+			return JSONObject.fromObject(res).toString();
 		}
 		
 		milk.setPurchase_price(Double.parseDouble(purchase_price));
 		milk.setSelling_price(Double.parseDouble(selling_price));
 		milk.setStatus(Enum.MILK_STATUS_ON);
 		
-		int add_result = service.add_milk(milk);
-		if(add_result>0){
-			succ = true;
-			res.put("succ", succ);
-			res.put("message", "新增成功");
-		}
-		else if(add_result == -1){
-			res.put("message", "牛奶名称或编号已经存在，请重新输入");
-		}
-		else{
-			res.put("message", "新增失败");
-		}
-		return JSONArray.fromObject(res).toString();
+		res = service.add_milk(milk);
+		return JSONObject.fromObject(res).toString();
 		
 	}
 	
@@ -93,12 +81,12 @@ public class MilkController {
 		boolean isValidat = Pattern.matches(pattern, purchase_price);
 		if(!isValidat || Double.parseDouble(purchase_price) > 2000){
 			result.put("message", "进货价格式错误");
-			return JSONArray.fromObject(result).toString();
+			return JSONObject.fromObject(result).toString();
 		}
 		isValidat = Pattern.matches(pattern, selling_price);
 		if(!isValidat || Double.parseDouble(selling_price) > 2000){
 			result.put("message", "销售价格式错误");
-			return JSONArray.fromObject(result).toString();
+			return JSONObject.fromObject(result).toString();
 		}
 		
 		int edit_result = service.edit_milk(Double.parseDouble(purchase_price), Double.parseDouble(selling_price), number);
@@ -110,7 +98,7 @@ public class MilkController {
 		else{
 			result.put("message", "编辑失败");
 		}
-		return JSONArray.fromObject(result).toString();
+		return JSONObject.fromObject(result).toString();
 	}
 	
 	
@@ -132,7 +120,7 @@ public class MilkController {
 		}
 		map.put("succ", succ);
 		map.put("message", message);
-		return JSONArray.fromObject(map).toString();
+		return JSONObject.fromObject(map).toString();
 	}
 	
 	@ResponseBody

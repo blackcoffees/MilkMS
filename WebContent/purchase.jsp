@@ -63,8 +63,15 @@
 	                                    <i :class="menu.span_icon"></i>
 	                                    <span class="title" v-text="menu.title"></span>
 	                                    <span class="selected"></span>
-	                                    <span class="arrow open"></span>
+	                                    <span class="arrow"></span>
 	                                </a>
+	                                <ul v-if="menu.children" class="sub-menu" style="display: none;">
+										<li v-for="child in menu.children">
+											<a :href="child.href">
+												<i :class="child.span_icon" ></i>((child.title))
+											</a>
+										</li>
+									</ul>
 	                            </li>
                         	</template>
                         </ul>

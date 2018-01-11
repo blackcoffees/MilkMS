@@ -49,14 +49,14 @@
                         <!-- BEGIN SIDEBAR MENU -->
                         <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
                         	<template v-for="(menu, i) in menu_list">
-                        		<li class="nav-item" :class="{start: i == 1, active: menu.href=='javascript:void(0)', open: menu.href=='javascript:void(0)', hasChildren: menu.children!=null}">
+                        		<li class="nav-item" :class="{start: i == 1, active: menu.href=='javascript:void(0)', open: menu.href=='javascript:void(0)'}">
 	                                <a :href="menu.href" class="nav-link nav-toggle">
 	                                    <i :class="menu.span_icon"></i>
 	                                    <span class="title" v-text="menu.title"></span>
 	                                    <span class="selected"></span>
-	                                    <span class="arrow"></span>
+	                                    <span class="arrow open"></span>
 	                                </a>
-	                                <ul v-if="menu.children" class="sub-menu" style="display: none;">
+	                                <ul v-if="menu.children" class="sub-menu" style="display: block;">
 										<li v-for="child in menu.children"  :class="child.href==now_href ? 'nav-sub-menu-hover': ''">
 											<a :href="child.href">
 												<i :class="child.span_icon" ></i>((child.title))

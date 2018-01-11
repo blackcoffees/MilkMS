@@ -6,7 +6,7 @@ public class Sale {
 	private int id;
 	private int distributor_id;
 	private double receivables_amount;
-	private double unpaid_amoutn;
+	private double unpaid_amount;
 	private double paid_amount;
 	private Timestamp sale_time;
 	private Timestamp paid_time;
@@ -15,11 +15,11 @@ public class Sale {
 	private int status;
 	
 	
-	public double getUnpaid_amoutn() {
-		return unpaid_amoutn;
+	public double getUnpaid_amount() {
+		return unpaid_amount;
 	}
-	public void setUnpaid_amoutn(double unpaid_amoutn) {
-		this.unpaid_amoutn = unpaid_amoutn;
+	public void setUnpaid_amount(double unpaid_amount) {
+		this.unpaid_amount = unpaid_amount;
 	}
 	public int getStatus() {
 		return status;

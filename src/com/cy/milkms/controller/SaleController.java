@@ -1,29 +1,35 @@
 package com.cy.milkms.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cy.milkms.db.query.TotalSaleQuery;
 import com.cy.milkms.service.ISaleService;
 import com.cy.milkms.util.CommonTool;
+import com.cy.milkms.util.Enum;
+import com.cy.milkms.util.Pager;
+import com.cy.milkms.util.ReturnJsonData;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-
-@ResponseBody
+@Controller
 @RequestMapping("sale")
 public class SaleController {
 	
 	@Autowired
 	private ISaleService service;
 	
+	@ResponseBody
 	@RequestMapping("addSale")
 	public String addSale(String data){
-		Map result = new HashMap();
+		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("succ", false);
 		result.put("message", "系统繁忙，请稍后再试");
 		try {
@@ -65,6 +71,74 @@ public class SaleController {
 			result.put("message", e.getMessage());
 			e.printStackTrace();
 		}
+		return JSONObject.fromObject(result).toString();
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("getSaleByCondition")
+	public String getSaleByCondition(String saleID, String startTime, String endTime, Pager pager, String distributorName, String status){
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("succ", false);
+		result.put("message", "系統繁忙，请稍后再试");
+		try {
+			if(saleID == "" || saleID == null){
+				saleID = "0";
+			}
+			else if(!CommonTool.isNumber(saleID)){
+				result.put("message", "参数错误");
+				return JSONObject.fromObject(result).toString();
+			}
+			if(!CommonTool.isNumber(status)){
+				result.put("message", "参数错误");
+				return JSONObject.fromObject(result).toString();
+			}
+			else if(Integer.parseInt(status) == 0 || Integer.parseInt(status) == Enum.SALE_STATUS_OFF || Integer.parseInt(status) == Enum.SALE_STATUS_PAID || Integer.parseInt(status) == Enum.SALE_STATUS_UNPAID)
+				;
+			else{
+				result.put("message", "参数错误");
+				return JSONObject.fromObject(result).toString();
+			}
+			List<List<TotalSaleQuery>> rows = service.getSaleByCondition(startTime, endTime, Integer.parseInt(saleID), pager, distributorName, Integer.parseInt(status));
+			int total = service.getSaleByConditionCount(startTime, endTime, Integer.parseInt(saleID), distributorName, Integer.parseInt(status));
+			return ReturnJsonData.createReturnJsonData(total, rows);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return JSONObject.fromObject(result).toString();
+		}
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("abandonSale")
+	public String abandonSale(String saleID){
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("succ", false);
+		result.put("message", "系統繁忙，请稍后再试");
+		if(!CommonTool.isNumber(saleID)){
+			result.put("message", "参数错误");
+			return JSONObject.fromObject(result).toString();
+		}
+		result = service.abandonSale(Integer.parseInt(saleID));
+		return JSONObject.fromObject(result).toString();
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("balanceSale")
+	public String balanceSale(String saleID, String amount){
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("succ", false);
+		result.put("message", "系統繁忙，请稍后再试");
+		if(!CommonTool.isNumber(saleID)){
+			result.put("message", "参数错误");
+			return JSONObject.fromObject(result).toString();
+		}
+		if(!CommonTool.isNumber(amount)){
+			result.put("message", "参数错误");
+			return JSONObject.fromObject(result).toString();
+		}
+		result = service.balanceSale(Integer.parseInt(saleID), Double.parseDouble(amount));
 		return JSONObject.fromObject(result).toString();
 	}
 }

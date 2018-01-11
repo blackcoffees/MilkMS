@@ -65,7 +65,7 @@
 	</update>
 	
 	<select id="getMilkByName" resultMap="baseResultMap">
-		select * from milk where (milk_name like '%${name}%' or number like '%{name}%') 
+		select * from milk where (milk_name like '%${name}%' or number like '%{name}%') and status = 1
 	</select>
 </mapper>
 

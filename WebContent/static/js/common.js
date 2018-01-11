@@ -30,9 +30,9 @@ var menu_vue = new Vue({
 			span_icon: 'icon-layers',
 			title: '报表中心',
 			href: 'javascript:void(0)',
-			hasChildren: true,
 			children: [{
-				title: '采购报表',
+				span_icon: 'icon-pie-chart',
+				title: '  采购报表',
 				href: 'purchaseReport.jsp'
 			}]
 		}],

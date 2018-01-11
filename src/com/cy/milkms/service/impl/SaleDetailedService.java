@@ -1,5 +1,7 @@
 package com.cy.milkms.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,12 @@ public class SaleDetailedService implements ISaleDetailedService{
 	public int addSaleDetailed(Sale_detailed detailed) {
 		// TODO Auto-generated method stub
 		return mapper.addSaleDetailed(detailed);
+	}
+
+	@Override
+	public List<Sale_detailed> getSaleDetailedBySaleID(int saleID) {
+		// TODO Auto-generated method stub
+		return mapper.getSaleDetailedBySaleID(saleID);
 	}
 
 }

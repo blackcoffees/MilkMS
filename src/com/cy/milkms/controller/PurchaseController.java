@@ -28,7 +28,7 @@ public class PurchaseController {
 	@ResponseBody
 	@RequestMapping("getPurchaseByConditon")
 	public String getPurchaseByConditon(String pucharseID, String startTime, String endTime, Pager pager){
-		Map result = new HashMap();
+		Map<String, Object> result = new HashMap<String, Object>();
 		if(pucharseID != null && !CommonTool.isNumber(pucharseID)){
 			result.put("succ", false);
 			result.put("message", "请输入合法的采购单号");
@@ -43,11 +43,10 @@ public class PurchaseController {
 	@ResponseBody
 	@RequestMapping("addPurchase")
 	public String addPurchase(String data){
-		Map result = new HashMap();
+		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			result = service.addPurchase(data);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			result.put("succ", false);
 			result.put("message", e.getMessage());
@@ -59,7 +58,7 @@ public class PurchaseController {
 	@ResponseBody
 	@RequestMapping("updatePurchaseOff")
 	public String updatePurchaseOff(String purchaseID){
-		Map result = new HashMap();
+		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("succ", false);
 		result.put("message", "废弃失败");
 		if(!CommonTool.isNumber(purchaseID))
@@ -68,7 +67,6 @@ public class PurchaseController {
 		try {
 			updateResult = service.updatePurchaseOff(Integer.parseInt(purchaseID));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			result.put("message", e.getMessage());
 			e.printStackTrace();
 		}
