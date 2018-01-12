@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,7 @@ public class ReturnJsonData {
 	}
 	
 	
-	private static List genJsonData(List<?> list){
+	public static List genJsonData(List<?> list){
 		try {
 			if(list.get(0) instanceof List){
 				List<List<Map<String, String>>> jsonDatas = new ArrayList<List<Map<String, String>>>();
@@ -118,6 +119,25 @@ public class ReturnJsonData {
 		return list;
 	}
 	
+	public static String currentReturnJsonArray(int total, List<?> list){
+		/*只能使用基础数据类型*/
+		if(total == 0 || list.size() == 0){
+			Map<String, Object> map2 = new HashMap<String, Object>();
+			map2.put("total", total);
+			map2.put("data", list);
+			map2.put("succ", true);
+			map2.put("message", "");
+			return JSONObject.fromObject(map2).toString();
+		}
+		List reslut = genJsonData(list);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("total", total);
+		map.put("data", reslut);
+		map.put("succ", true);
+		map.put("message", "");
+		return JSONArray.fromObject(map).toString();
+	}
+	
 	public static void main(String[] args){
 		try{
 			List<Milk> list = new ArrayList<Milk>();
@@ -131,6 +151,15 @@ public class ReturnJsonData {
 			list3.add(list2);
 			String string = createReturnJsonData(4, list3);
 			System.out.println(string);
+			
+			
+			List<Date> list4 = new ArrayList<>();
+			list4.add(new Date(2015,5,15));
+			list4.add(new Date(2015,7,15));
+			list4.add(new Date(2015,10,15));
+			System.out.println(JSONArray.fromObject(list4).toString());
+			System.out.println(currentReturnJsonArray(4, list3));
+			//System.out.println(currentReturnJsonArray(3, list4));
 		}
 		catch (Exception e) {
 			// TODO: handle exception

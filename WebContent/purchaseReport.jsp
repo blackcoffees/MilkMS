@@ -84,7 +84,7 @@
                                     <i class="fa fa-angle-right"></i>
                                 </li>
                                 <li>
-                                    <span>库存管理</span>
+                                    <span>报表中心</span>
                                 </li>
                             </ul>
                             <div class="page-toolbar">
@@ -98,14 +98,103 @@
                         <!-- END PAGE BAR -->
                         
                         <!-- BEGIN PAGE TITLE-->
-                        <h1 class="page-title"> STOCK
-                            <small>库存管理</small>
+                        <h1 class="page-title"> REPORT
+                            <small>报表中心</small>
                         </h1>
                         
                         <!-- BEGIN PAGE MAIN-->
                         <div class="row">
                         	<div class="col-md-12">
-                        	
+                        		 <!-- BEGIN SEARCH -->
+								<div class="note note-info">
+									<input type="text" placeholder="商品名称/商品编号" class="form-control input-inline" id="milkName" style="width:150px;" />
+									<input type="text" placeholder="采购时间" class="form-control input-inline" id="purchaseTime" style="width:300px" />
+									<button type="button" class="btn btn-success btn-search">搜索</button>
+									<input id="startTime" style="display:none;" />
+									<input id="endTime" style="display:none" />
+									<p>
+										NOTE: 采购时间默认为当月
+									</p>
+								</div>
+								<!-- END SEARCH-->
+								
+								<!-- BEGIN Summary-->
+								<div class="row">
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+										<div class="dashboard-stat blue-madison">
+											<div class="visual">
+												<i class="fa fa-comments"></i>
+											</div>
+											<div class="details">
+												<div class="number" id="totalPurchaseOrderNumber">
+													 
+												</div>
+												<div class="desc">
+													 采购单数
+												</div>
+											</div>
+											<a class="more" href="javascript:void(0)">
+											View more <i class="m-icon-swapright m-icon-white"></i>
+											</a>
+										</div>
+									</div>
+									
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+										<div class="dashboard-stat red-intense">
+											<div class="visual">
+												<i class="fa fa-bar-chart-o"></i>
+											</div>
+											<div class="details">
+												<div class="number" id="totalPurchaseNumber">
+												</div>
+												<div class="desc">
+													 采购总数量
+												</div>
+											</div>
+											<a class="more" href="javascript:void(0)">
+											View more <i class="m-icon-swapright m-icon-white"></i>
+											</a>
+										</div>
+									</div>
+									
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+										<div class="dashboard-stat green-haze">
+											<div class="visual">
+												<i class="fa fa-shopping-cart"></i>
+											</div>
+											<div class="details">
+												<div class="number" id="totalPurchasePrice">
+												</div>
+												<div class="desc">
+													 采购总金额
+												</div>
+											</div>
+											<a class="more" href="javascript:void(0)">
+											View more <i class="m-icon-swapright m-icon-white"></i>
+											</a>
+										</div>
+									</div>
+									
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+										<div class="dashboard-stat purple-plum">
+											<div class="visual">
+												<i class="fa fa-globe"></i>
+											</div>
+											<div class="details">
+												<div class="number" id="firstThreeGoods">
+												</div>
+												<div class="desc">
+													 采购前三商品
+												</div>
+											</div>
+											<a class="more" href="javascript:void(0)">
+											View more <i class="m-icon-swapright m-icon-white"></i>
+											</a>
+										</div>
+									</div>
+								</div>
+                        		<!-- END Summary-->
+                        		
                         		<!-- BEGIN TABLE-->
                         		<div class="portlet box green">
                         			<div class="portlet-title">
@@ -117,26 +206,50 @@
                                         </div>
                         			</div>
                         			<div class="portlet-body flip-scroll">
-                        				<div class="row table-tool">
-											<div class="col-md-12">
-												<input type="search" id="search" placeholder="商品名称/商品编号" class="form-control input-small input-inline" onkeyup="if(event==13){init_table()}">
-												<button type="button" class="btn btn-success btn-search">搜索</button>
-											</div>
-										</div>
                         				<table class="table table-bordered table-striped dataTable table-condensed flip-content" id="table">
                         					<thead class="flip-content">
                         						<tr>
+                        							<th text-align="center"></th>
                         							<th>编号</th>
-                        							<th>商品名称</th>
-													<th>库存数量</th>
+													<th>商品名称</th>
+													<th>采购总数量</th>
+													<th>采购总金额</th>
 												</tr>
                         					</thead>
                         					<tbody>
-                        						<template v-for="(stock, $index) in data">
-	                        						<tr :key="stock.id">
-	                        							<td>(($index+1))</td>
-	                        							<td v-text="stock.milkName"></td>
-														<td v-text="stock.number"></td>
+                        						<template v-for="(purchase, $index) in data">
+	                        						<tr :key="purchase.id">
+	                        							<td style="vertical-align: inherit;text-align: center;">
+	                        								<span class="row-detail row-detail-close"></span>
+	                        							</td>
+	                        							<td v-text="$index+1"></td>
+														<td v-text="purchase[0].name"></td>
+														<td v-text="purchase[0].totalNumber"></td>
+														<td v-text="purchase[0].totalPrice"></td>
+													</tr>
+													<tr style="display: none;">
+														<td colspan="6">
+															<table class="table table-striped table-hover">
+																<thead>
+																	<tr>
+																		<td>采购单号</td>
+																		<td>采购时间</td>
+																		<td>数量</td>
+																		<td>采购单价</td>
+																		<td>总价格</td>
+																	</tr>
+																</thead>
+																<tbody>
+																	<tr v-for="item in purchase">
+																		<td>((item.id))</td>
+																		<td>((item.time))</td>
+																		<td>((item.number))</td>
+																		<td>((item.purchase_price))</td>
+																		<td>((item.total_amount))</td>
+																	</tr>
+																</tbody>
+															</table>
+														</td>
 													</tr>
 												</template>
                         					</tbody>
@@ -148,6 +261,11 @@
                         		</div>
                         		<!-- END TABLE-->
                         		
+                        		<!-- BEGIN CHART-->
+                        		<div class="lineChart row">
+                        			<div id="lineChart" style="min-width:400px;height:400px"></div>
+                        		</div>
+                        		<!-- END CHART-->
                         	</div>
                         </div>
                         
@@ -183,6 +301,35 @@
 			methods:{
 			}
 		})
+        
+        /*折线图*/
+        var lineChartVar = null;
+		var lineChart = {
+		    chart: {
+		    	renderTo: 'lineChart',
+		        type: 'line'
+		    },
+		    title: {
+		        text: '采购单走势图'
+		    },
+		    xAxis: {
+		        categories: []
+		    },
+		    yAxis: {
+		        title: {
+		            text: '价格（￥）'
+		        }
+		    },
+		    plotOptions: {
+		        line: {
+		            dataLabels: {
+		                enabled: false          // 开启数据标签
+		            },
+		            enableMouseTracking: true // 关闭鼠标跟踪，对应的提示框、点击事件会失效
+		        }
+		    },
+		    series: []
+		}
 		
 		$(function(){
 			init_table();
@@ -195,6 +342,18 @@
 			$('.btn-refresh').on('click', function(){
 				init_table();
 			})
+			
+			/*表格收缩展开*/
+			$("tbody").on('click', ".row-detail", function(){
+				if(this.className.indexOf("row-detail-close") > 0){
+					this.className = "row-detail row-detail-open";
+					$(this).parents("tr").next("tr").show(500);
+				}
+				else if(this.className.indexOf("row-detail-open") > 0){
+					this.className = "row-detail row-detail-close";
+					$(this).parents("tr").next("tr").hide(500);
+				}
+			});
 		})
 		
 		var g_rows = 10;
@@ -215,7 +374,7 @@
 			
 			$.ajax({
 				type:'get',
-				url:'stock/getStockByCondition.action',
+				url:'report/getPurchaseReport.action',
 				data:{
 					rows: rows,
 					page: page,
@@ -224,16 +383,26 @@
 				success:function(data){
 					layer.closeAll('loading');
 					data = eval("("+data+")");
-					if(!data.succ){
-						layer.msg(data.message);
-					}
-					else{
-						//一共生成多少页
-						page_total = get_page_total(data.total, g_rows);
-						console.info(page_total);
-						paginate_tool.init("init_table", page_total, data.total, []);
-						vue.data = data.data;
-					}
+					console.info(data);
+					//分页
+					page_total = get_page_total(data.tableTotal, g_rows);
+					paginate_tool.init("init_table", page_total, data.tableTotal, []);
+					
+					vue.data = data.tableDatas;
+					$("#totalPurchaseOrderNumber").html(data.purchaseOrderTotalNumber);
+					$("#totalPurchaseNumber").html(data.purchaseTotalNumber);
+					$("#totalPurchasePrice").html("￥" + data.purchaseTotalAmout);
+					$("#firstThreeGoods").html(data.firstThreeMilkName);
+					
+					/*折线图数据*/
+					var lineXData = data.lineXData;
+					lineChart.xAxis.categories = data.lineXData;
+					lineChart.xAxis.categories = ["2018-01-10","2018-01-08","2018-01-03","2017-12-19"];
+					console.info(lineChart.xAxis.categories);
+					lineChartVar = new Highcharts.Chart(lineChart);
+					console.info(lineChartVar);
+					lineChartVar.addAxis(data.lineYData, true);
+					lineChartVar.addSeries(data.lineYData);
 				},
 				beforeSend:function(){
 					layer.load(1, {

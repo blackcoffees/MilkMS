@@ -41,3 +41,7 @@
 <link href="static/css/daterangepicker.min.css" rel="stylesheet" type="text/css" />
 <script src="static/js/moment.min.js" type="text/javascript"></script>
 <script src="static/js/daterangepicker.min.js" type="text/javascript"></script> 
+
+<!-- highcharts插件 -->
+<link href="static/css/highcharts.css" rel="stylesheet" type="text/css" />
+<script src="static/js/highcharts.js" type="text/javascript"></script>
