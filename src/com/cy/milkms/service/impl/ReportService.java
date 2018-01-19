@@ -14,15 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cy.milkms.db.dao.ReportMapper;
+import com.cy.milkms.db.query.ReportPurchaseSummaryDataQuery;
 import com.cy.milkms.db.query.ReportPurchaseTableQuery;
-import com.cy.milkms.db.query.ReportTotalNumberQuery;
 import com.cy.milkms.service.IReportService;
 import com.cy.milkms.util.LineChart;
 import com.cy.milkms.util.Pager;
 import com.cy.milkms.util.PieChart;
 import com.cy.milkms.util.ReturnJsonData;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @Service("reportService")
@@ -32,32 +31,19 @@ public class ReportService implements IReportService{
 	private ReportMapper mapper;
 
 	@Override
-	public String getPurchaseReport(Pager pager, String startTime, String endTime) {
+	public String getPurchaseReport(Pager pager, String startTime, String endTime, String milkInfo) {
 		try {
 
 			Map<String, Object> result = new HashMap<>();
-			
-			List<ReportTotalNumberQuery> numberList = mapper.getPurchaseReportTotalNumber(startTime, endTime);
-			/*采购总数量*/
-			int purchaseTotalNumber = 0;
-			/*采购总金额*/
-			double purchaseTotalAmout = 0;
-			/*采购前三商品*/
-			String firstThreeMilkName = "";
-			for(int i=0;i<numberList.size();i++){
-				purchaseTotalNumber += numberList.get(i).getMilkTotalNumber();
-				purchaseTotalAmout += numberList.get(i).getMilkTotalPrice();
-				if(i<2){
-					firstThreeMilkName += numberList.get(i).getMilkName()+",";
-				}
-			}
-			firstThreeMilkName = firstThreeMilkName.substring(0, firstThreeMilkName.length()-1);
-			result.put("purchaseTotalNumber", purchaseTotalNumber);
-			result.put("purchaseTotalAmout", purchaseTotalAmout);
-			result.put("firstThreeMilkName", firstThreeMilkName);
+			/*汇总数据*/
+			List<ReportPurchaseSummaryDataQuery> summaryList = mapper.getPurchaseReportSummaryData(startTime, endTime, milkInfo);
+			result.put("summaryPurchaseOrderCount", summaryList.get(0).getSummaryPurchaseOrderCount());
+			result.put("summaryPurchaseMilkNumber", summaryList.get(0).getSummaryPurchaseMilkNumber());
+			result.put("summaryPurchaseMilkPrice", summaryList.get(0).getSummaryPurchaseMilkPrice());
+			result.put("summaryFirstThreeMilkName", summaryList.get(0).getSummaryFirstThreeMilkName());
 			
 			/*表格数据*/
-			List<ReportPurchaseTableQuery> tableList = mapper.getPurchaseReportLimit(startTime, endTime, pager);
+			List<ReportPurchaseTableQuery> tableList = mapper.getPurchaseReportLimit(startTime, endTime, pager, milkInfo);
 			Set<Integer> orderSet = new HashSet<>();
 			Map<String, List<ReportPurchaseTableQuery>> tableMap = new HashMap<>();
 			for(int i=0;i<tableList.size();i++){
@@ -130,8 +116,7 @@ public class ReportService implements IReportService{
 			for(int i=0;i<timeX.size();i++){
 				timeXStrList.add(df.format(timeX.get(i)));
 			}
-			String lineXData = JSONArray.fromObject(timeXStrList).toString();
-			result.put("lineXData", lineXData);
+			result.put("lineXData", timeXStrList);
 			/*折线图价格y轴*/
 			List<LineChart> lineChartList = new ArrayList<>();
 			for(int i=0;i<resultTableList.size();i++){
@@ -154,11 +139,11 @@ public class ReportService implements IReportService{
 						lineDatas[k] = null;
 					}
 				}
-				lineChart.setTitle(oneList.get(0).getName());
+				lineChart.setName(oneList.get(0).getName());
 				lineChart.setDatas(lineDatas);
 				lineChartList.add(lineChart);
 			}
-			List lineYData = ReturnJsonData.genJsonData(lineChartList);
+			String lineYData = ReturnJsonData.currentLineChartData(lineChartList);
 			result.put("lineYData", lineYData);
 			
 			/*饼状图数据*/
@@ -176,6 +161,146 @@ public class ReportService implements IReportService{
 			e.printStackTrace();
 			// TODO: handle exception
 		}
+		return null;
+	}
+
+	@Override
+	public String getSaleReport(Pager pager, String startTime, String endTime, String info, String type) {
+//		try {
+//			Map<String, Object> result = new HashMap<>();
+//			
+//			List<ReportTotalNumberQuery> numberList = mapper.getSaleReportTotalNumber(startTime, endTime, info, type);
+//			/*采购总数量*/
+//			int saleTotalNumber = 0;
+//			/*采购总金额*/
+//			double saleTotalAmout = 0;
+//			for(int i=0;i<numberList.size();i++){
+//				saleTotalNumber += numberList.get(i).getMilkTotalNumber();
+//				saleTotalAmout += numberList.get(i).getMilkTotalPrice();
+//			}
+//			result.put("saleTotalNumber", saleTotalNumber);
+//			result.put("saleTotalAmout", saleTotalAmout);
+//			
+//			/*总利润*/
+//			double saleTotalProfit = 0;
+//			/*销售单数*/
+//			Set<Integer> orderSet = new HashSet<>();
+//			/*表格数据*/
+//			List<ReportSaleTableQuery> saleList = mapper.getSaleReportLimit(startTime, endTime, pager, info, type);
+//			Map<String, List<ReportSaleTableQuery>> saleMap = new HashMap<>();
+//			for(ReportSaleTableQuery reportSale: saleList){
+//				orderSet.add(reportSale.getId());
+//				if(saleMap.containsKey(reportSale.getMilk_name())){
+//					saleMap.get(reportSale.getMilk_name()).add(reportSale);
+//				}
+//				else{
+//					List<ReportSaleTableQuery> temp = new ArrayList<>();
+//					temp.add(reportSale);
+//					saleMap.put(reportSale.getMilk_name(), temp);
+//				}
+//			}
+//			Set<String> keys = saleMap.keySet();
+//			Iterator<String> iterator = keys.iterator();
+//			List<List<ReportSaleTableQuery>> tableDatas = new ArrayList<>();
+//			/*x轴数据*/
+//			SimpleDateFormat sdf = new SimpleDateFormat("YYYY-mm-DD");
+//			Set<Date> saleTimeSet = new HashSet<>();
+//			while(iterator.hasNext()){
+//				String key = iterator.next();
+//				List<ReportSaleTableQuery> temp = saleMap.get(key);
+//				for(ReportSaleTableQuery reportSale: temp){
+//					temp.get(0).setTotalNumber(temp.get(0).getTotalNumber() + reportSale.getNumber());
+//					temp.get(0).setTotalPrice(temp.get(0).getTotalPrice() + reportSale.getTotal_amount());
+//					temp.get(0).setTotalProfit(temp.get(0).getTotalProfit() + (reportSale.getTotal_amount() - reportSale.getNumber() * reportSale.getCostPrice()));
+//					reportSale.setTotalCostPrice(reportSale.getTotal_amount() - reportSale.getNumber() * reportSale.getCostPrice());
+//					saleTimeSet.add(sdf.parse(sdf.format(reportSale.getSale_time())));
+//				}
+//				tableDatas.add(temp);
+//				saleTotalProfit += temp.get(0).getTotalProfit();
+//			}
+//			result.put("saleTotalProfit", saleTotalProfit);
+//			result.put("saleTotalOrder", orderSet.size());
+//			
+//			result.put("tableDatas", ReturnJsonData.genJsonData(tableDatas));
+//			
+//			/*折线图数据*/
+//			List<Date> saleTimeList = new ArrayList<>();
+//			Iterator<Date> saleTimeIte = saleTimeSet.iterator();
+//			while(saleTimeIte.hasNext()){
+//				Date key = saleTimeIte.next();
+//				if(saleTimeList.size() == 0){
+//					saleTimeList.add(key);
+//				}
+//				else{
+//					for(int i=0;i<saleTimeList.size();i++){
+//						if(saleTimeList.get(i).getTime() < key.getTime()){
+//							saleTimeList.add(i, key);
+//							break;
+//						}
+//					}
+//				}
+//			}
+//			result.put("lineXData", saleTimeList);
+//			/*销售数据*/
+//			List<LineChart> lineSaleYData = new ArrayList<>();
+//			/*利润数据*/
+//			List<LineChart> lineProfitYData = new ArrayList<>();
+//			for(List<ReportSaleTableQuery> temp: tableDatas){
+//				String[] lineSaleData = new String[saleTimeList.size()];
+//				String[] lineProfitData = new String[saleTimeList.size()];
+//				for(int i=0;i<saleTimeList.size();i++){
+//					int j=0;
+//					boolean is_exit = false;
+//					for(;j<temp.size();j++){
+//						if(saleTimeList.get(i).getTime() == temp.get(j).getSale_time().getTime()){
+//							is_exit = true;
+//							break;
+//						}
+//					}
+//					if(is_exit){
+//						lineSaleData[i] = String.valueOf(temp.get(j).getTotalPrice());
+//						lineProfitData[i] = String.valueOf(temp.get(j).getTotalProfit());
+//					}
+//					else{
+//						lineSaleData[i] = null;
+//						lineProfitData[i] = null;
+//					}
+//				}
+//				LineChart lineChart = new LineChart();
+//				lineChart.setDatas(lineSaleData);
+//				lineChart.setName(temp.get(0).getMilk_name());
+//				lineSaleYData.add(lineChart);
+//				
+//				LineChart lineChart2 = new LineChart();
+//				lineChart2.setDatas(lineProfitData);
+//				lineChart2.setName(temp.get(0).getMilk_name());
+//				lineProfitYData.add(lineChart2);
+//			}
+//			result.put("lineSaleYData", ReturnJsonData.currentLineChartData(lineSaleYData));
+//			result.put("lineProfitYData", ReturnJsonData.currentLineChartData(lineProfitYData));
+//			
+//			/*饼状图数据*/
+//			List<PieChart> pieSaleList = new ArrayList<>();
+//			List<PieChart> pieProfitList = new ArrayList<>();
+//			for(List<ReportSaleTableQuery> temp: tableDatas){
+//				PieChart pieChart = new PieChart();
+//				pieChart.setTitle(temp.get(0).getName());
+//				pieChart.setNumber(temp.get(0).getTotalPrice());
+//				pieSaleList.add(pieChart);
+//				
+//				PieChart pieChart2 = new PieChart();
+//				pieChart2.setTitle(temp.get(0).getName());
+//				pieChart2.setNumber(temp.get(0).getTotalProfit());
+//				pieProfitList.add(pieChart2);
+//			}
+//			List pieSaleData = ReturnJsonData.genJsonData(pieSaleList);
+//			List pieProfitData = ReturnJsonData.genJsonData(pieProfitList);
+//			result.put("pieSaleData", pieSaleData);
+//			result.put("pieProfitData", pieProfitData);
+//			return JSONObject.fromObject(result).toString();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		return null;
 	}
 	

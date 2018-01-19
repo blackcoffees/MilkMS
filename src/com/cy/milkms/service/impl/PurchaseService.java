@@ -107,7 +107,7 @@ public class PurchaseService implements IPurchaseService{
 			result.put("message", "采购总价不能小于等于0");
 			return result;
 		}
-			
+		/*采购单*/	
 		Purchase purchase = new Purchase();
 		purchase.setCreated(DateTool.getNowTime());
 		purchase.setUpdated(DateTool.getNowTime());
@@ -142,16 +142,7 @@ public class PurchaseService implements IPurchaseService{
 				(Integer.parseInt(number)*Double.parseDouble(price) != Double.parseDouble(totalPrice))){
 				throw new Exception("商品总价错误");
 			}
-			/*计算库存*/
-			boolean flag = stockMap.containsKey(milk.getId());
-			if(flag){
-				int stockNumber = stockMap.get(milk.getId());
-				stockMap.put(milk.getId(), (stockNumber + Integer.parseInt(number)));
-			}
-			else{
-				stockMap.put(milk.getId(), Integer.parseInt(number));
-			}
-			
+			/*采购分单*/
 			Purchase_detailed detailed = new Purchase_detailed();
 			detailed.setMilk_ID(milk.getId());
 			detailed.setCreated(DateTool.getNowTime());
@@ -161,36 +152,37 @@ public class PurchaseService implements IPurchaseService{
 			detailed.setTotal_amount(Double.parseDouble(totalPrice));
 			detailed.setUpdated(DateTool.getNowTime());
 			detailedService.addPurchaseDetailed(detailed);
-		}
-		/*新增库存*/
-		Set<Integer> keySet = stockMap.keySet();
-		Iterator<Integer> iterator = keySet.iterator();
-		while(iterator.hasNext()){
-			int key = iterator.next();
-			int stockNumber = stockMap.get(key);
-			Stock stock = stockService.getStockByMilkID(key);
+			/*新增库存*/
+			Stock stock = stockService.getStockByMilkID(milk.getId());
 			if(stock == null){
 				Stock stock2 = new Stock();
-				stock.setMilk_ID(key);
-				stock.setNumber(stockNumber);
-				stock.setCreated(DateTool.getNowTime());
+				stock2.setMilk_ID(milk.getId());
+				stock2.setNumber(Integer.parseInt(number));
+				stock2.setCreated(DateTool.getNowTime());
+				stock2.setCost_price(Double.parseDouble(price));
 				int stockID = stockService.addStock(stock2);
 				if(stockID <= 0){
 					throw new Exception("库存添加失败");
 				}
 			}
-			else{
+			else{ 
+				/*库存记录*/
+				double new_cost_price = (totalPriceDouble + (stock.getCost_price() * stock.getNumber())) / (stock.getNumber() + Integer.parseInt(number));
 				StockRecord stockRecord = new StockRecord();
 				stockRecord.setCreated(DateTool.getNowTime());
-				stockRecord.setMilk_id(key);
-				stockRecord.setNew_number(stock.getNumber() + stockNumber);
+				stockRecord.setMilk_id(milk.getId());
+				stockRecord.setNew_number(stock.getNumber() + Integer.parseInt(number));
 				stockRecord.setOld_number(stock.getNumber());
+				stockRecord.setOld_cost_price(stock.getCost_price());
+				stockRecord.setNew_cost_price(new_cost_price);
 				stockRecord.setUpdated(DateTool.getNowTime());
 				int addStockRecordResult = stockRecordService.addStockRecord(stockRecord);
 				if(addStockRecordResult <= 0){
 					throw new Exception("库存添加失败");
 				}
-				stock.setNumber(stockNumber + stock.getNumber());
+				/*库存*/
+				stock.setNumber(Integer.parseInt(number) + stock.getNumber());
+				stock.setCost_price(new_cost_price);
 				stock.setUpdated(DateTool.getNowTime());
 				int effect = stockService.updateStock(stock);
 				if(effect <= 0){

@@ -1,13 +1,14 @@
 package com.cy.milkms.util;
 
 public class LineChart {
-	private String title;
+	private String name;
 	private String[] datas;
-	public String getTitle() {
-		return title;
+	
+	public String getName() {
+		return name;
 	}
-	public void setTitle(String title) {
-		this.title = title;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public String[] getDatas() {
 		return datas;

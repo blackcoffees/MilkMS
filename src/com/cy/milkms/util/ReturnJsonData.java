@@ -138,6 +138,20 @@ public class ReturnJsonData {
 		return JSONArray.fromObject(map).toString();
 	}
 	
+	
+	public static String currentLineChartData(List<LineChart> list){
+		List<Map<String, Object>> mapList = new ArrayList<>();
+		for(int i=0;i<list.size();i++){
+			Map<String, Object> map = new HashMap<>();
+			map.put("name", list.get(i).getName());
+			map.put("data", JSONArray.fromObject(list.get(i).getDatas()).toString().replaceAll("\"", ""));
+			mapList.add(map);
+		}
+		Map result = new HashMap<>();
+		result.put("datas", mapList);
+		return JSONObject.fromObject(result).getString("datas");
+	}
+	
 	public static void main(String[] args){
 		try{
 			List<Milk> list = new ArrayList<Milk>();
@@ -153,13 +167,12 @@ public class ReturnJsonData {
 			System.out.println(string);
 			
 			
-			List<Date> list4 = new ArrayList<>();
-			list4.add(new Date(2015,5,15));
-			list4.add(new Date(2015,7,15));
-			list4.add(new Date(2015,10,15));
-			System.out.println(JSONArray.fromObject(list4).toString());
-			System.out.println(currentReturnJsonArray(4, list3));
-			//System.out.println(currentReturnJsonArray(3, list4));
+			int[] a = new int[4];
+			a[0]=0;
+			a[1]=1;
+			a[2]=2;
+			a[3]=3;
+			System.out.println(JSONArray.fromObject(a).toString());
 		}
 		catch (Exception e) {
 			// TODO: handle exception

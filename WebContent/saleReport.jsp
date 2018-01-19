@@ -88,7 +88,7 @@
                                     <i class="fa fa-angle-right"></i>
                                 </li>
                                 <li>
-                                    <span>采购报表</span>
+                                    <span>销售报表</span>
                                 </li>
                             </ul>
                             <div class="page-toolbar">
@@ -105,19 +105,28 @@
                         <h1 class="page-title"> REPORT
                             <small>报表中心</small>
                         </h1>
-                        
+                        <div class="tabbable-custom tabbable-full-width">
+                        	<ul class="nav nav-tabs" style="border-bottom:1px solid #cecece;">
+								<li class="active">
+									<a href="#tab_1_1" data-toggle="tab">商品销售报表</a>
+								</li>
+								<li class="">
+									<a href="#tab_1_2" data-toggle="tab">商家销售报表</a>
+								</li>
+							</ul>
+                        </div>
                         <!-- BEGIN PAGE MAIN-->
                         <div class="row">
                         	<div class="col-md-12">
                         		 <!-- BEGIN SEARCH -->
 								<div class="note note-info">
 									<input type="text" placeholder="商品名称/商品编号" class="form-control input-inline" id="milkName" style="width:150px;" />
-									<input type="text" placeholder="采购时间" class="form-control input-inline" id="purchaseTime" style="width:300px" />
+									<input type="text" placeholder="销售时间" class="form-control input-inline" id="purchaseTime" style="width:300px" />
 									<button type="button" class="btn btn-success btn-search">搜索</button>
 									<input id="startTime" style="display:none;" />
 									<input id="endTime" style="display:none" />
 									<p>
-										NOTE: 采购时间默认为当月
+										NOTE: 销售时间默认为当月
 									</p>
 								</div>
 								<!-- END SEARCH-->
@@ -134,7 +143,7 @@
 													 
 												</div>
 												<div class="desc">
-													 采购单数
+													 销售单数
 												</div>
 											</div>
 											<a class="more" href="javascript:void(0)">
@@ -152,7 +161,7 @@
 												<div class="number" id="totalPurchaseNumber">
 												</div>
 												<div class="desc">
-													 采购总数量
+													 销售总数量
 												</div>
 											</div>
 											<a class="more" href="javascript:void(0)">
@@ -170,7 +179,7 @@
 												<div class="number" id="totalPurchasePrice">
 												</div>
 												<div class="desc">
-													 采购总金额
+													 销售总金额
 												</div>
 											</div>
 											<a class="more" href="javascript:void(0)">
@@ -188,7 +197,7 @@
 												<div class="number" id="firstThreeGoods">
 												</div>
 												<div class="desc">
-													 采购前三商品
+													 销售总利润
 												</div>
 											</div>
 											<a class="more" href="javascript:void(0)">
@@ -214,10 +223,11 @@
                         					<thead class="flip-content">
                         						<tr>
                         							<th text-align="center"></th>
-                        							<th>商品编号</th>
+                        							<th>编号</th>
 													<th>商品名称</th>
-													<th>采购总数量</th>
-													<th>采购总金额</th>
+													<th>销售总数量</th>
+													<th>销售总金额</th>
+													<th>销售总利润</th>
 												</tr>
                         					</thead>
                         					<tbody>
@@ -236,11 +246,15 @@
 															<table class="table table-striped table-hover">
 																<thead>
 																	<tr>
-																		<td>采购单号</td>
-																		<td>采购时间</td>
+																		<td>销售单号</td>
+																		<td>销售时间</td>
+																		<td>商家名称</td>
 																		<td>数量</td>
-																		<td>采购单价</td>
-																		<td>总价格</td>
+																		<td>销售单价</td>
+																		<td>销售总价格</td>
+																		<td>采购成本</td>
+																		<td>采购总成本</td>
+																		<td>利润总价格</td>
 																	</tr>
 																</thead>
 																<tbody>
@@ -315,7 +329,7 @@
 		        type: 'line'
 		    },
 		    title: {
-		        text: '采购单走势图'
+		        text: '销售单走势图'
 		    },
 		    xAxis: {
 		        categories: []
@@ -345,7 +359,7 @@
 	            plotShadow: false
 	        },
 	        title: {
-	            text: '各商品采购占比'
+	            text: '各商品销售占比'
 	        },
 	        tooltip: {
 	            headerFormat: '{series.name}<br>',
@@ -366,7 +380,7 @@
 	        },
 	        series: [{
 	            type: 'pie',
-	            name: '商品采购占比',
+	            name: '商品销售占比',
 	            data: null
 	        }]
 	    });
@@ -421,11 +435,12 @@
 			
 			$.ajax({
 				type:'get',
-				url:'report/getPurchaseReport.action',
+				url:'report/getSaleReport.action',
 				data:{
 					rows: rows,
 					page: page,
-					milkInfo: milkName
+					info: milkName,
+					type: 1
 				},
 				success:function(data){
 					layer.closeAll('loading');
@@ -435,10 +450,10 @@
 					paginate_tool.init("init_table", page_total, data.tableTotal, []);
 					
 					vue.data = data.tableDatas;
-					$("#totalPurchaseOrderNumber").html(data.purchaseOrderTotalNumber);
-					$("#totalPurchaseNumber").html(data.purchaseTotalNumber);
-					$("#totalPurchasePrice").html("￥" + data.purchaseTotalAmout);
-					$("#firstThreeGoods").html(data.firstThreeMilkName);
+					$("#totalPurchaseOrderNumber").html(data.saleTotalOrder);
+					$("#totalPurchaseNumber").html(data.saleTotalNumber);
+					$("#totalPurchasePrice").html("￥" + data.saleTotalAmout);
+					$("#firstThreeGoods").html("￥" + data.saleTotalProfit);
 					
 					/*折线图数据*/
 					lineChart.xAxis.categories = data.lineXData;

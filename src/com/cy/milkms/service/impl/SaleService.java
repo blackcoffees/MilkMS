@@ -102,6 +102,7 @@ public class SaleService implements ISaleService{
 			detailed.setPrice(price);
 			detailed.setTotal_amount(signTotalAmount);
 			detailed.setUpdated(DateTool.getNowTime());
+			detailed.setCost_price(stock.getCost_price());
 			detailedList.add(detailed);
 		}
 		/*生成销售单*/

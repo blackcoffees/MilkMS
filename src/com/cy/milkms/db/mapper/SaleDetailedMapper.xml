@@ -8,13 +8,15 @@
 		<result column="number" property="number"  jdbcType="INTEGER"/>
 		<result column="price" property="price"  jdbcType="DOUBLE"/>
 		<result column="total_amount" property="total_amount" jdbcType="DOUBLE"/>
+		<result column="cost_price" property="cost_price" jdbcType="DOUBLE"/>
 		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 	</resultMap>
 	
 	<insert id="addSaleDetailed" useGeneratedKeys="true" >
-		insert into sale_detailed(milk_id, number, price, total_amount, created, updated, sale_id)
-		values(#{detailed.milk_ID}, #{detailed.number}, #{detailed.price}, #{detailed.total_amount}, #{detailed.created}, #{detailed.updated}, #{detailed.sale_ID})
+		insert into sale_detailed(milk_id, number, price, total_amount, created, updated, sale_id, cost_price)
+		values(#{detailed.milk_ID}, #{detailed.number}, #{detailed.price}, #{detailed.total_amount}, #{detailed.created},
+		 #{detailed.updated}, #{detailed.sale_ID}, #{detailed.cost_price})
 	</insert>
 	
 	<select id="getSaleDetailedBySaleID" resultMap="baseResultMap">

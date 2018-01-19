@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.milkms.db.dao.ReportMapper">
-	<resultMap id="reportTotalNumberMap" type="com.cy.milkms.db.query.ReportTotalNumberQuery">
-		<result column="milkID" property="milkID"  jdbcType="INTEGER"/>
-		<result column="milkName" property="milkName"  jdbcType="VARCHAR"/>
-		<result column="milkTotalNumber" property="milkTotalNumber"  jdbcType="INTEGER"/>
-		<result column="milkTotalPrice" property="milkTotalPrice"  jdbcType="DOUBLE"/>
+ 
+	<resultMap id="reportPurchaseSummaryDataQueryMap" type="com.cy.milkms.db.query.ReportPurchaseSummaryDataQuery">
+		<result column="summaryPurchaseOrderCount" property="summaryPurchaseOrderCount"  jdbcType="INTEGER"/>
+		<result column="summaryPurchaseMilkNumber" property="summaryPurchaseMilkNumber"  jdbcType="INTEGER"/>
+		<result column="summaryPurchaseMilkPrice" property="summaryPurchaseMilkPrice"  jdbcType="DOUBLE"/>
+		<result column="summaryFirstThreeMilkName" property="summaryFirstThreeMilkName"  jdbcType="VARCHAR"/>
 	</resultMap>
 	
 	<resultMap id="reportPurchaseTableQueryMap" type="com.cy.milkms.db.query.ReportPurchaseTableQuery" extends="com.cy.milkms.db.dao.PurchaseMapper.totalPurchaseQueryMap">
@@ -13,22 +14,26 @@
 		<result column="totalPrice" property="totalPrice"  jdbcType="DOUBLE" />
 	</resultMap>
 	
-	<select id="getPurchaseReportTotalNumber" resultMap="reportTotalNumberMap">
-		select 
-			detailed.id,milk.milk_name as milkName, sum(detailed.number) as milkTotalNumber, sum(detailed.total_amount) as milkTotalPrice
-		from purchase, purchase_detailed as detailed, milk
-		where
-			purchase.id = detailed.purchase_id and detailed.milk_id = milk.id 
-			and purchase.status = 1
-			<if test="startTime != null and startTime != ''">
-				and #{startTime} &gt; time
-			</if>
-			<if test="endTime != null and endTime != ''">
-				and #{endTime} &lt; time
-			</if>
-		group by detailed.milk_id
-		order by milkTotalPrice desc
+	<resultMap id="reportSaleTableQueryMap" type="com.cy.milkms.db.query.ReportSaleTableQuery" extends="com.cy.milkms.db.dao.SaleMapper.totalSaleQuery">
+		<result column="totalNumber" property="totalNumber"  jdbcType="INTEGER"/>
+		<result column="totalPrice" property="totalPrice"  jdbcType="DOUBLE" />
+		<result column="totalProfit" property="totalProfit"  jdbcType="DOUBLE" />
+		<result column="costPrice" property="costPrice"  jdbcType="DOUBLE" />
+	</resultMap>
+	
+	<select id="getPurchaseReportSummaryData" resultMap="reportPurchaseSummaryDataQueryMap" parameterMap="purchaseReportSummaryDataMap" statementType="CALLABLE">
+		CALL fc_purchase_report_summary_data(?,?,?,?,?,?,?)
 	</select>
+	
+	<parameterMap type="java.util.Map" id="purchaseReportSummaryDataMap">
+		<parameter property="startTime" mode="IN" jdbcType="VARCHAR"/>
+		<parameter property="endTime" mode="IN" jdbcType="VARCHAR" />
+		<parameter property="milkInfo" mode="IN" jdbcType="VARCHAR"/>
+		<parameter property="summaryPurchaseOrderCount" mode="OUT" jdbcType="INTEGER"/>
+		<parameter property="summaryPurchaseMilkNumber" mode="OUT" jdbcType="INTEGER"/>
+		<parameter property="summaryPurchaseMilkPrice" mode="OUT" jdbcType="DOUBLE"/>
+		<parameter property="summaryFirstThreeMilkName" mode="OUT" jdbcType="VARCHAR"/>
+	</parameterMap>
 	
 	<select id="getPurchaseReportLimit" resultMap="reportPurchaseTableQueryMap">
 		SELECT
@@ -42,12 +47,6 @@
 		where
 			purchase.id = detailed.purchase_id and milk.id = detailed.milk_id
 			and purchase.status = 1
-			<if test="startTime != null and startTime != ''">
-				and #{startTime} &gt; time
-			</if>
-			<if test="endTime != null and endTime != ''">
-				and #{endTime} &lt; time
-			</if>
 			AND detailed.milk_id IN (
 				SELECT
 					t.milk_id
@@ -55,11 +54,92 @@
 					(
 						SELECT DISTINCT
 							milk_id,
-							SUM(total_amount) AS t_total_amount
+							SUM(purchase_detailed.total_amount) AS t_total_amount
 						FROM
-							purchase_detailed
+							purchase_detailed, purchase, milk
+						WHERE
+							purchase.id = purchase_detailed.purchase_id and milk.id = purchase_detailed.milk_id
+							<if test="startTime != null and startTime != ''">
+								and #{startTime} &gt; time
+							</if>
+							<if test="endTime != null and endTime != ''">
+								and #{endTime} &lt; time
+							</if>
+							<if test="milkInfo != null and milkInfo != ''">
+								and (milk.milk_name like '%${milkInfo}%' or milk.number like '%${milkInfo}%')
+							</if>
 						GROUP BY
-							milk_id
+							purchase_detailed.milk_id
+						ORDER BY
+							t_total_amount DESC
+						LIMIT #{pager.start}, #{pager.rows}
+					) AS t
+			)
+	</select>
+	
+	
+	<select id="getSaleReportTotalNumber" resultMap="reportPurchaseSummaryDataQueryMap">
+		select 
+			detailed.id,milk.milk_name as milkName, sum(detailed.number) as milkTotalNumber, sum(detailed.total_amount) as milkTotalPrice
+		from sale, sale_detailed as detailed, milk, distributor
+		where
+			sale.id = detailed.sale_id and detailed.milk_id = milk.id and sale.distributor_id = distributor.id
+			and sale.status = 1
+			<if test="startTime != null and startTime != ''">
+				and #{startTime} &gt; time
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and #{endTime} &lt; time
+			</if>
+			<if test="type == 1 and info != null and info != ''">
+				and (milk.milk_name like '%${info}%' or milk.number like '%${info}%')
+			</if>
+			<if test="type == 2 and info != null and info != ''">
+				and (distributor.name like '%${info}%')
+			</if>
+		group by detailed.milk_id
+		order by milkTotalPrice desc
+	</select>
+	
+	<select id="getSaleReportLimit" resultMap="reportSaleTableQueryMap">
+		SELECT
+			milk.milk_name as milk_name,
+			sale.id,
+			sale.sale_time,
+			distributor.name as name,
+			detailed.number,
+			detailed.price,
+			detailed.total_amount,
+			detailed.cost_price as costPrice
+		from sale, sale_detailed as detailed, milk, distributor
+		where
+			sale.id = detailed.sale_id and milk.id = detailed.milk_id and sale.distributor_id = distributor.id
+			AND detailed.milk_id IN (
+				SELECT
+					t.milk_id
+				FROM
+					(
+						SELECT DISTINCT
+							milk_id,
+							SUM(sale_detailed.total_amount) AS t_total_amount
+						FROM
+							sale_detailed, sale, milk, distributor
+						WHERE
+							sale.id = sale_detailed.sale_id and milk.id = sale_detailed.milk_id and sale.distributor_id = distributor.id
+							<if test="startTime != null and startTime != ''">
+								and #{startTime} &gt; time
+							</if>
+							<if test="endTime != null and endTime != ''">
+								and #{endTime} &lt; time
+							</if>
+							<if test="type == 1 and info != null and info != ''">
+								and (milk.milk_name like '%${info}%' or milk.number like '%${info}%')
+							</if>
+							<if test="type == 2 and info != null and info != ''">
+								and distributor.name like '%{info}%'
+							</if>
+						GROUP BY
+							sale_detailed.milk_id
 						ORDER BY
 							t_total_amount DESC
 						LIMIT #{pager.start}, #{pager.rows}

@@ -6,12 +6,15 @@
 		<result column="milk_id" property="milk_id"  jdbcType="INTEGER"/>
 		<result column="old_number" property="old_number"  jdbcType="INTEGER"/>
 		<result column="new_number" property="new_number"  jdbcType="INTEGER"/>
+		<result column="new_cost_price" property="new_cost_price"  jdbcType="DOUBLE"/>
+		<result column="old_cost_price" property="old_cost_price"  jdbcType="DOUBLE"/>
 		<result column="created" property="created"  jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="updated" property="updated"  jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 	</resultMap>
 	
 	<insert id="addStockRecord" useGeneratedKeys="true">
-		insert into stock_record(id, milk_id, old_number, new_number, created, updated)
-		values(#{stockRecord.milk_id}, #{stockRecord.old_number}, #{stockRecord.number}, #{stockRecord.created}, #{stockRecord.updated})
+		insert into stock_record(id, milk_id, old_number, new_number, created, updated, new_cost_price, old_cost_price)
+		values(#{stockRecord.milk_id}, #{stockRecord.old_number}, #{stockRecord.number}, #{stockRecord.created}, #{stockRecord.updated}, 
+		#{stockRecord.new_cost_price}, #{stockRecord.old_cost_price})
 	</insert>
 </mapper>

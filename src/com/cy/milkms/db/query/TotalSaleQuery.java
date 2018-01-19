@@ -3,11 +3,11 @@ package com.cy.milkms.db.query;
 import com.cy.milkms.db.entity.Sale;
 
 public class TotalSaleQuery extends Sale{
-	private int number;
-	private double price;
-	private double total_amount;
-	private String milk_name;
-	private String name;
+	private int number;/*商品数量*/
+	private double price;/*商品单价*/
+	private double total_amount;/*商品总价*/
+	private String milk_name;/*商品名称*/
+	private String name;/*商家名称*/
 	public int getNumber() {
 		return number;
 	}

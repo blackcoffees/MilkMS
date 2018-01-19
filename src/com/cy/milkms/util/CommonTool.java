@@ -1,5 +1,6 @@
 package com.cy.milkms.util;
 
+import java.text.NumberFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,4 +25,14 @@ public class CommonTool {
 	        return true;
 		}
 	}
+	
+	public static double decimalNumber(double number, int digit){
+		/*保留小数*/
+		NumberFormat nf = NumberFormat.getNumberInstance();
+		nf.setMaximumFractionDigits(digit);
+		return Double.parseDouble(nf.format(number));
+	}
+	
+	
+	
 }

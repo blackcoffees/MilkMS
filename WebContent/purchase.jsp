@@ -10,10 +10,6 @@
         <%@include file="header.jsp"%>
         <link rel="shortcut icon" href="favicon.ico" />
         <style type="text/css">
-        	.daterangepicker_input{
-        		display: none;
-        	}
-        	
         	.searchTime{
         		display: none;!important
         	}

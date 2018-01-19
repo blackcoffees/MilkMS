@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cy.milkms.service.IReportService;
+import com.cy.milkms.util.DateTool;
 import com.cy.milkms.util.Pager;
 
 @Controller
@@ -18,7 +19,20 @@ public class ReportController {
 	
 	@RequestMapping("getPurchaseReport")
 	@ResponseBody
-	public String getPurchaseReport(Pager pager, String startTime, String endTime){
-		return service.getPurchaseReport(pager, startTime, endTime);
+	public String getPurchaseReport(Pager pager, String startTime, String endTime, String milkInfo){
+		if(startTime == null || startTime.equals("")){
+			startTime = DateTool.getNowMonthFirst();
+		}
+		if(endTime == null || endTime.equals("")){
+			endTime = DateTool.getNowMonthLast();
+		}
+		return service.getPurchaseReport(pager, startTime, endTime, milkInfo);
+	}
+	
+	
+	@RequestMapping("getSaleReport")
+	@ResponseBody
+	public String getSaleReport(Pager pager, String startTime, String endTime, String info, String type){
+		return service.getSaleReport(pager, startTime, endTime, info, type);
 	}
 }

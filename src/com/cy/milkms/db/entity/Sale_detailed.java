@@ -10,6 +10,7 @@ public class Sale_detailed {
 	private int sale_ID;
 	private double price;
 	private double total_amount;
+	private double cost_price;/*'加权平均成本'*/
 	private Timestamp created;
 	private Timestamp updated;
 	
@@ -76,6 +77,14 @@ public class Sale_detailed {
 
 	public void setTotal_amount(double total_amount) {
 		this.total_amount = total_amount;
+	}
+
+	public double getCost_price() {
+		return cost_price;
+	}
+
+	public void setCost_price(double cost_price) {
+		this.cost_price = cost_price;
 	}
 	
 }

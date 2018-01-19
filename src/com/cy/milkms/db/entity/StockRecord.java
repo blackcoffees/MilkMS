@@ -7,6 +7,8 @@ public class StockRecord {
 	private int milk_id;
 	private int old_number;
 	private int new_number;
+	private double old_cost_price;
+	private double new_cost_price;
 	private Timestamp created;
 	private Timestamp updated;
 	public int getId() {
@@ -44,6 +46,18 @@ public class StockRecord {
 	}
 	public void setUpdated(Timestamp updated) {
 		this.updated = updated;
+	}
+	public double getOld_cost_price() {
+		return old_cost_price;
+	}
+	public void setOld_cost_price(double old_cost_price) {
+		this.old_cost_price = old_cost_price;
+	}
+	public double getNew_cost_price() {
+		return new_cost_price;
+	}
+	public void setNew_cost_price(double new_cost_price) {
+		this.new_cost_price = new_cost_price;
 	}
 	
 }
