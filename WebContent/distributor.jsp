@@ -120,7 +120,7 @@
                         			<div class="portlet-body flip-scroll">
                         				<div class="row table-tool">
 											<div class="col-md-12">
-												<input type="search" placeholder="商家名称/联系人 " class="form-control input-small input-inline" v-model.lazy="milkName" onkeyup="if(event==13){init_table()}">
+												<input type="search" placeholder="商家名称/联系人 " class="form-control input-small input-inline" onchange="table_vue.distributorInfo=this.value" onkeyup="if(event.keyCode==13){table_vue.distributorInfo;init_table()}">
 												<button type="button" class="btn btn-success btn-search">搜索</button>
 												<button type="button" class="btn btn-danger btn-add">新增</button>
 											</div>
@@ -146,9 +146,9 @@
 													<td v-text="item.address"></td>
 													<td v-text="item.people"></td>
 													<td v-text="item.phone"></td>
-													<td v-text="item.total_amount"></td>
-													<td v-text="item.paid_amount"></td>
-													<td v-text="item.unpaid_amount"></td>
+													<td v-text="item.total_price"></td>
+													<td v-text="item.paid_price"></td>
+													<td v-text="item.unpaid_price"></td>
 													<td>
 														<button class="btn btn-sm green btn-outline filter-submit margin-bottom" @click="edit(item)">编辑</button>
 														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.ID)">删除</button>
@@ -237,10 +237,6 @@
         <script src="static/js/common.js" type="text/javascript"></script>
         <script src="static/js/paginate_tool.js" type="text/javascript"></script>
         <script>
-        	var g_rows = 10;
-        	var g_page = 1;
-        	
-        	
         	$(function(){
         		init_table();
         		
@@ -261,6 +257,10 @@
 						area: ['362px', '323px'],
 						content: $('#layer-window')
        				});
+        		})
+        		
+        		$(".btn-search").on("click", function(){
+        			init_table();
         		})
         	})
         	
@@ -350,12 +350,10 @@
         	
         	
        		function init_table(rows, page){
-       			if(rows == null || rows == 0 || rows == '') rows = g_rows;
-       			else g_rows = rows;
-       			
-       			if(page == null || page == 0 || page == '') page = g_page;
-       			else g_page = page;
-       			
+        		if(typeof(rows) == 'undefined')
+        			rows = 10;
+        		if(typeof(page) == 'undefined')
+        			page = 1;
        			$.ajax({
        				type:'post',
        				url:'distributor/getDistributorByCondition.action',
@@ -371,9 +369,9 @@
        				},
        				success:function(data){
        					data = eval("("+data+")");
-       					var pageTotal = get_page_total(data.total, rows);
-       					paginate_tool.init("init_table", pageTotal, data.total, []);
-       					table_vue.data_list = data.data;
+       					pager = eval("("+data.pager+")");
+       					paginate_tool.init("init_table", pager, []);
+       					table_vue.data_list = data.datas;
        					layer.closeAll("loading");
        				},
        				error:function(){

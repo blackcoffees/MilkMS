@@ -4,76 +4,44 @@
 	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Purchase">
 		<id column="id" property="id" jdbcType="INTEGER"/>
 		<result column="time" property="time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
-		<result column="total_amount" property="total_amount"  jdbcType="DOUBLE"/>
+		<result column="total_price" property="total_price"  jdbcType="DOUBLE"/>
 		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="status" property="status" jdbcType="INTEGER" />
 	</resultMap>
 	
-	<resultMap id="totalPurchaseQueryMap" type="com.cy.milkms.db.query.TotalPurchaseQuery">
-		<result column="id" property="id" jdbcType="INTEGER" />
-		<result column="time" property="time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
-		<result column="totalPurchaseAmount" property="totalPurchaseAmount"  jdbcType="DOUBLE"/>
-		<result column="name" property="name" jdbcType="VARCHAR" />
-		<result column="purchase_id" property="purchase_id" jdbcType="INTEGER"/>
-		<result column="milk_id" property="milk_id" jdbcType="INTEGER"/>
-		<result column="number" property="number" jdbcType="INTEGER"/>
-		<result column="purchase_price" property="purchase_price" jdbcType="DOUBLE"/>
+	<resultMap id="purchaseQueryMap" type="com.cy.milkms.db.query.PurchaseQuery" extends="baseResultMap">
+		<result column="milk_name" property="milk_name" jdbcType="VARCHAR" />
+		<result column="quantity" property="quantity" jdbcType="INTEGER"/>
+		<result column="price" property="price" jdbcType="DOUBLE"/>
 		<result column="total_amount" property="total_amount" jdbcType="DOUBLE"/>
-		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
-		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 	</resultMap>
 	
-	<resultMap id="totalPurchaseIDMap" type="com.cy.milkms.db.query.TotalPurchaseIDsQuery">
-		<result column="id" property="id" jdbcType="INTEGER"/>
-	</resultMap>
-	
-	<select id="getPurchaseByConditon" resultMap="totalPurchaseQueryMap">
+	<select id="getPurchaseByConditon" resultMap="purchaseQueryMap">
 		select 
-			purchase_id as id, milk_name as name, detailed.number, detailed.purchase_price, detailed.total_amount, purchase.total_amount as totalPurchaseAmount, time, purchase.status
+			purchase.id, purchase.time, purchase.total_price, purchase.status, milk.milk_name, detailed.quantity, detailed.price, detailed.total_price as total_amount
 		from purchase, purchase_detailed as detailed, milk
 		where
 			purchase.id = detailed.purchase_id and milk.id = detailed.milk_id
-			and purchase.id in 
-			<foreach collection="purchaseIDs" item="item" index="index" open="(" separator="," close=")">  
-				#{item}  
-		    </foreach>  
-			<if test="startTime != null and startTime != ''">
-				and #{startTime} &gt; time
-			</if>
-			<if test="endTime != null and endTime != ''">
-				and #{endTime} &lt; time
-			</if>
-		order by purchase.id desc
-	</select>
-	
-	<select id="getPurchaseByConditionByID" resultMap="totalPurchaseIDMap">
-		select 
-			purchase_id as id
-		from purchase, purchase_detailed as detailed, milk
-		where
-			purchase.id = detailed.purchase_id and milk.id = detailed.milk_id
-			<if test="purchaseID != null and purchaseID != ''">
-				and id = #{purchaseID}
-			</if>
-			<if test="startTime != null and startTime != ''">
-				and #{startTime} &gt; time
-			</if>
-			<if test="endTime != null and endTime != ''">
-				and #{endTime} &lt; time
-			</if>
-		order by purchase.id desc
-		limit #{pager.start}, #{pager.rows}
+			<choose>
+				<when test="purchaseID != null and purchaseID != ''">
+					and purchase.id = #{purchaseID}
+				</when>
+				<otherwise>
+					and purchase.id in (select t.id from (select id from purchase order by id desc limit #{pager.start}, #{pager.rows}) as t)
+				</otherwise>
+			</choose>
+			ORDER BY id DESC
 	</select>
 	
 	<select id="getPurchaseByConditionCount" resultType="int">
 		select 
-			count(purchase_id)
+			count(purchase.id)
 		from purchase, purchase_detailed as detailed, milk
 		where
 			purchase.id = detailed.purchase_id and milk.id = detailed.milk_id
 			<if test="purchaseID != null and purchaseID != ''">
-				and id = #{purchaseID}
+				and purchase.id = #{purchaseID}
 			</if>
 			<if test="startTime != null and startTime != ''">
 				and #{startTime} &gt; time
@@ -84,8 +52,8 @@
 	</select>	
 	
 	<insert id="addPurchase" useGeneratedKeys="true" keyProperty="purchase.id">
-		insert into purchase(time, total_amount, created, updated)
-		values(#{purchase.time}, #{purchase.total_amount}, #{purchase.created}, #{purchase.updated})
+		insert into purchase(time, total_price, created, updated, status)
+		values(#{purchase.time}, #{purchase.total_price}, #{purchase.created}, #{purchase.updated}, #{purchase.status})
 	</insert>
 	
 	<update id="updatePurchaseOff">

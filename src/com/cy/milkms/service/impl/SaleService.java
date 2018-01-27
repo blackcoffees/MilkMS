@@ -19,7 +19,7 @@ import com.cy.milkms.db.entity.Sale;
 import com.cy.milkms.db.entity.Sale_detailed;
 import com.cy.milkms.db.entity.Stock;
 import com.cy.milkms.db.entity.StockRecord;
-import com.cy.milkms.db.query.TotalSaleQuery;
+import com.cy.milkms.db.query.SaleQuery;
 import com.cy.milkms.service.IDistributorService;
 import com.cy.milkms.service.IMilkService;
 import com.cy.milkms.service.ISaleDetailedService;
@@ -72,7 +72,7 @@ public class SaleService implements ISaleService{
 		for(int i=0;i<jsonArray.size();i++){
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
 			String milkName = jsonObject.getString("milkName");
-			Milk milk = milkService.get_milk_by_name_or_number(milkName, "");
+			Milk milk = milkService.getMilkByNameOrCode(milkName, "");
 			if(milk == null){
 				throw new Exception(milkName+"商品不存在，请重新选择");
 			}
@@ -87,7 +87,7 @@ public class SaleService implements ISaleService{
 			}
 			/*判断库存是否充足*/
 			Stock stock = stockService.getStockByMilkID(milk.getId());
-			if(stock.getNumber() < number){
+			if(stock.getQuantity() < number){
 				throw new Exception(milkName+"库存不足");
 			}
 			stockMap.put(stock.getMilk_ID(), stock);
@@ -100,7 +100,7 @@ public class SaleService implements ISaleService{
 			detailed.setMilk_ID(milk.getId());
 			detailed.setNumber(number);
 			detailed.setPrice(price);
-			detailed.setTotal_amount(signTotalAmount);
+			detailed.setTotal_price(signTotalAmount);
 			detailed.setUpdated(DateTool.getNowTime());
 			detailed.setCost_price(stock.getCost_price());
 			detailedList.add(detailed);
@@ -109,15 +109,15 @@ public class SaleService implements ISaleService{
 		Sale sale = new Sale();
 		sale.setCreated(DateTool.getNowTime());
 		sale.setDistributor_id(distributorID);
-		sale.setReceivables_amount(totalAmount);
+		sale.setReceivables_price(totalAmount);
 		if(status == Enum.SALE_STATUS_PAID){
-			sale.setPaid_amount(totalAmount);
-			sale.setUnpaid_amount(0);
+			sale.setPaid_price(totalAmount);
+			sale.setUnpaid_price(0);
 			sale.setPaid_time(DateTool.getNowTime());
 		}
 		else if(status == Enum.SALE_STATUS_UNPAID){
-			sale.setPaid_amount(0);
-			sale.setUnpaid_amount(totalAmount);
+			sale.setPaid_price(0);
+			sale.setUnpaid_price(totalAmount);
 			sale.setPaid_time(null);
 		}
 		sale.setSale_time(DateTool.getNowTime());
@@ -138,14 +138,14 @@ public class SaleService implements ISaleService{
 			}
 		}
 		/*商家金额变动*/
-		distributor.setTotal_amount(distributor.getTotal_amount() + totalAmount);
+		distributor.setTotal_price(distributor.getTotal_price() + totalAmount);
 		if(status == Enum.SALE_STATUS_PAID){
-			distributor.setPaid_amount(distributor.getPaid_amount() + totalAmount);
+			distributor.setPaid_price(distributor.getPaid_price() + totalAmount);
 		}
 		else if(status == Enum.SALE_STATUS_UNPAID){
-			distributor.setUnpaid_amount(distributor.getUnpaid_amount() + totalAmount);
+			distributor.setUnpaid_price(distributor.getUnpaid_price() + totalAmount);
 		}
-		distributor.setTotal_amount(distributor.getTotal_amount() + totalAmount);
+		distributor.setTotal_price(distributor.getTotal_price() + totalAmount);
 		distributor.setUpdated(DateTool.getNowTime());
 		int disResult = distributorService.updateDistributorAmount(distributor);
 		if(disResult <= 0){
@@ -153,19 +153,19 @@ public class SaleService implements ISaleService{
 		}
 		/*库存修改*/
 		for(int i=0;i<detailedList.size();i++){
-			int newStockNumber = stockMap.get(detailedList.get(i).getMilk_ID()).getNumber() - detailedList.get(i).getNumber();
+			int newStockNumber = stockMap.get(detailedList.get(i).getMilk_ID()).getQuantity() - detailedList.get(i).getNumber();
 			StockRecord stockRecord = new StockRecord();
 			stockRecord.setCreated(DateTool.getNowTime());
 			stockRecord.setMilk_id(detailedList.get(i).getMilk_ID());
-			stockRecord.setNew_number(newStockNumber);
-			stockRecord.setOld_number(stockMap.get(detailedList.get(i).getMilk_ID()).getNumber());
+			stockRecord.setNew_qty(newStockNumber);
+			stockRecord.setOld_qty(stockMap.get(detailedList.get(i).getMilk_ID()).getQuantity());
 			stockRecord.setUpdated(DateTool.getNowTime());
 			int addStockRecordResult = stockRecordService.addStockRecord(stockRecord);
 			if(addStockRecordResult <= 0){
 				throw new Exception("减少库存失败, 请联系管理员");
 			}
 			Stock stock = stockMap.get(detailedList.get(i).getMilk_ID());
-			stock.setNumber(newStockNumber);
+			stock.setQuantity(newStockNumber);
 			stock.setUpdated(DateTool.getNowTime());
 			int updateStockResult = stockService.updateStock(stock);
 			if(updateStockResult < 0){
@@ -178,23 +178,23 @@ public class SaleService implements ISaleService{
 	}
 
 	@Override
-	public List<List<TotalSaleQuery>> getSaleByCondition(String startTime, String endTime, int saleID, Pager pager, String distributorName, int status) {
-		List<TotalSaleQuery> rows = mapper.getSaleByCondition(startTime, endTime, saleID, pager, distributorName, status);
-		Map<Integer, List<TotalSaleQuery>> map = new HashMap<Integer, List<TotalSaleQuery>>();
+	public List<List<SaleQuery>> getSaleByCondition(String startTime, String endTime, int saleID, Pager pager, String distributorName, int status) {
+		List<SaleQuery> rows = mapper.getSaleByCondition(startTime, endTime, saleID, pager, distributorName, status);
+		Map<Integer, List<SaleQuery>> map = new HashMap<Integer, List<SaleQuery>>();
 		for(int i=0;i < rows.size(); i++){
 			if(map.get(rows.get(i).getId()) != null){
-				List<TotalSaleQuery> list = map.get(rows.get(i).getId());
+				List<SaleQuery> list = map.get(rows.get(i).getId());
 				list.add(rows.get(i));
 			}
 			else{
-				List<TotalSaleQuery> list2 = new ArrayList<TotalSaleQuery>();
+				List<SaleQuery> list2 = new ArrayList<SaleQuery>();
 				list2.add(rows.get(i));
 				map.put(rows.get(i).getId(), list2);
 			}
 		}
 		Set<Integer> keys = map.keySet();
 		Iterator<Integer> iterator = keys.iterator();
-		List<List<TotalSaleQuery>> result = new ArrayList<List<TotalSaleQuery>>();
+		List<List<SaleQuery>> result = new ArrayList<List<SaleQuery>>();
 		while(iterator.hasNext()){
 			result.add(map.get(iterator.next()));
 		}
@@ -234,21 +234,21 @@ public class SaleService implements ISaleService{
 				if(stock == null){
 					throw new Exception("该商品不存在");
 				}
-				if(stock.getNumber() < detailedList.get(i).getNumber()){
+				if(stock.getQuantity() < detailedList.get(i).getNumber()){
 					throw new Exception("库存不足无法废弃");
 				}
-				int newStockNumber = stock.getNumber() - detailedList.get(i).getNumber();
+				int newStockNumber = stock.getQuantity() - detailedList.get(i).getNumber();
 				StockRecord stockRecord = new StockRecord();
 				stockRecord.setCreated(DateTool.getNowTime());
 				stockRecord.setMilk_id(detailedList.get(i).getMilk_ID());
-				stockRecord.setNew_number(newStockNumber);
-				stockRecord.setOld_number(stock.getNumber());
+				stockRecord.setNew_qty(newStockNumber);
+				stockRecord.setOld_qty(stock.getQuantity());
 				stockRecord.setUpdated(DateTool.getNowTime());
 				int addStockRecordResult = stockRecordService.addStockRecord(stockRecord);
 				if(addStockRecordResult <= 0){
 					throw new Exception("废弃失败, 请联系管理员");
 				}
-				stock.setNumber(newStockNumber);
+				stock.setQuantity(newStockNumber);
 				stock.setUpdated(DateTool.getNowTime());
 				int updateStockResult = stockService.updateStock(stock);
 				if(updateStockResult <= 0){
@@ -263,12 +263,12 @@ public class SaleService implements ISaleService{
 			/*商家金额变动*/
 			Distributor distributor = distributorService.getDistributorByID(sale.getDistributor_id());
 			if(sale.getStatus() == Enum.SALE_STATUS_PAID){
-				distributor.setPaid_amount(distributor.getPaid_amount() - sale.getReceivables_amount());
+				distributor.setPaid_price(distributor.getPaid_price() - sale.getReceivables_price());
 			}
 			else if(sale.getStatus() == Enum.SALE_STATUS_UNPAID){
-				distributor.setUnpaid_amount(distributor.getUnpaid_amount() - sale.getReceivables_amount());
+				distributor.setUnpaid_price(distributor.getUnpaid_price() - sale.getReceivables_price());
 			}
-			distributor.setTotal_amount(distributor.getTotal_amount() - sale.getReceivables_amount());
+			distributor.setTotal_price(distributor.getTotal_price() - sale.getReceivables_price());
 			distributor.setUpdated(DateTool.getNowTime());
 			int updateDisResult = distributorService.updateDistributorAmount(distributor);
 			if(updateDisResult <= 0){
@@ -304,19 +304,19 @@ public class SaleService implements ISaleService{
 		}
 		try {
 			Distributor distributor = distributorService.getDistributorByID(sale.getDistributor_id());
-			distributor.setUnpaid_amount(distributor.getUnpaid_amount() - amount);
-			distributor.setPaid_amount(distributor.getPaid_amount() + amount);
+			distributor.setUnpaid_price(distributor.getUnpaid_price() - amount);
+			distributor.setPaid_price(distributor.getPaid_price() + amount);
 			distributor.setUpdated(DateTool.getNowTime());
 			int updateDisResult = distributorService.updateDistributorAmount(distributor);
 			if(updateDisResult <= 0){
 				throw new Exception("结算失败");
 			}
 			
-			if(sale.getUnpaid_amount() == amount){
+			if(sale.getUnpaid_price() == amount){
 				sale.setStatus(Enum.SALE_STATUS_PAID);
 			}
-			sale.setPaid_amount(sale.getPaid_amount() + amount);
-			sale.setUnpaid_amount(sale.getUnpaid_amount() - amount);
+			sale.setPaid_price(sale.getPaid_price() + amount);
+			sale.setUnpaid_price(sale.getUnpaid_price() - amount);
 			sale.setUpdated(DateTool.getNowTime());
 			sale.setPaid_time(DateTool.getNowTime());
 			int updateSaleResult = this.updateBalanceSale(sale);

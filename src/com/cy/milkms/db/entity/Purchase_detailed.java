@@ -1,19 +1,16 @@
 package com.cy.milkms.db.entity;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 public class Purchase_detailed {
 	private int id;
 	private int purchase_ID;
 	private int milk_ID;
-	private int number;
-	private double purchase_price;
-	private double total_amount;
+	private int quantity;/*数量*/
+	private double price;/*采购单价*/
+	private double total_price;/*采购总价*/
 	private Timestamp created;
 	private Timestamp updated;
-	
-	
 	
 	public int getId() {
 		return id;
@@ -59,28 +56,29 @@ public class Purchase_detailed {
 
 	}
 
-	public int getNumber() {
-		return number;
+	public int getQuantity() {
+		return quantity;
 	}
 
-	public void setNumber(int number) {
-		this.number = number;
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 
-	public double getPurchase_price() {
-		return purchase_price;
+	public double getPrice() {
+		return price;
 	}
 
-	public void setPurchase_price(double purchase_price) {
-		this.purchase_price = purchase_price;
+	public void setPrice(double price) {
+		this.price = price;
 	}
 
-	public double getTotal_amount() {
-		return total_amount;
+	public double getTotal_price() {
+		return total_price;
 	}
 
-	public void setTotal_amount(double total_amount) {
-		this.total_amount = total_amount;
+	public void setTotal_price(double total_price) {
+		this.total_price = total_price;
 	}
+	
 
 }

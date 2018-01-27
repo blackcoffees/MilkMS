@@ -5,9 +5,9 @@ import java.sql.Timestamp;
 public class Sale {
 	private int id;
 	private int distributor_id;
-	private double receivables_amount;
-	private double unpaid_amount;
-	private double paid_amount;
+	private double receivables_price;
+	private double unpaid_price;
+	private double paid_price;
 	private Timestamp sale_time;
 	private Timestamp paid_time;
 	private Timestamp created;
@@ -15,12 +15,6 @@ public class Sale {
 	private int status;
 	
 	
-	public double getUnpaid_amount() {
-		return unpaid_amount;
-	}
-	public void setUnpaid_amount(double unpaid_amount) {
-		this.unpaid_amount = unpaid_amount;
-	}
 	public int getStatus() {
 		return status;
 	}
@@ -38,18 +32,6 @@ public class Sale {
 	}
 	public void setDistributor_id(int distributor_id) {
 		this.distributor_id = distributor_id;
-	}
-	public double getReceivables_amount() {
-		return receivables_amount;
-	}
-	public void setReceivables_amount(double receivables_amount) {
-		this.receivables_amount = receivables_amount;
-	}
-	public double getPaid_amount() {
-		return paid_amount;
-	}
-	public void setPaid_amount(double paid_amount) {
-		this.paid_amount = paid_amount;
 	}
 	public Timestamp getSale_time() {
 		return sale_time;
@@ -74,6 +56,24 @@ public class Sale {
 	}
 	public void setUpdated(Timestamp updated) {
 		this.updated = updated;
+	}
+	public double getReceivables_price() {
+		return receivables_price;
+	}
+	public void setReceivables_price(double receivables_price) {
+		this.receivables_price = receivables_price;
+	}
+	public double getUnpaid_price() {
+		return unpaid_price;
+	}
+	public void setUnpaid_price(double unpaid_price) {
+		this.unpaid_price = unpaid_price;
+	}
+	public double getPaid_price() {
+		return paid_price;
+	}
+	public void setPaid_price(double paid_price) {
+		this.paid_price = paid_price;
 	}
 	
 	

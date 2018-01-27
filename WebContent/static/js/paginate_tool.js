@@ -124,10 +124,14 @@ var paginate_tool = new Object();
 
 paginate_tool.method_name = "";
 
-paginate_tool.init = function (method_name, page_total, row_total, rows_list){
+paginate_tool.init = function (method_name, pager, rows_list){
+	var page_total = Math.floor(pager.total / pager.rows);
+	var yushu = pager.total % pager.rows;
+	if(yushu > 0)
+		page_total += 1;
 	this.method_name = method_name;
 	paginate_vue.$children[0].page_total = page_total;
-	paginate_vue.$children[0].row_total = row_total;
+	paginate_vue.$children[0].row_total = pager.rows;
 	
 	if(paginate_vue.$children[0].page == 1)
 		paginate_vue.$children[0].change_page(1);

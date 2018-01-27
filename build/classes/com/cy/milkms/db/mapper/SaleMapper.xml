@@ -4,9 +4,9 @@
 	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Sale">
 		<id column="id" property="id" jdbcType="INTEGER"/>
 		<result column="distributor_id" property="distributor_id" jdbcType="INTEGER"/>
-		<result column="receivables_amount" property="receivables_amount"  jdbcType="DOUBLE"/>
-		<result column="paid_amount" property="paid_amount"  jdbcType="DOUBLE"/>
-		<result column="unpaid_amount" property="unpaid_amount" jdbcType="BOOLEAN"/>
+		<result column="receivables_price" property="receivables_price"  jdbcType="DOUBLE"/>
+		<result column="paid_price" property="paid_price"  jdbcType="DOUBLE"/>
+		<result column="unpaid_price" property="unpaid_price" jdbcType="BOOLEAN"/>
 		<result column="sale_time" property="sale_time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="paid_time" property="paid_time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
@@ -14,12 +14,12 @@
 		<result column="status" property="status" jdbcType="INTEGER" />
 	</resultMap>
 	
-	<resultMap id="totalSaleQuery" type="com.cy.milkms.db.query.TotalSaleQuery" extends="baseResultMap">
-		<result column="number" property="number" jdbcType="INTEGER" />
+	<resultMap id="saleQuery" type="com.cy.milkms.db.query.SaleQuery" extends="baseResultMap">
+		<result column="quantity" property="quantity" jdbcType="INTEGER" />
 		<result column="price" property="price" jdbcType="DOUBLE" />
 		<result column="total_amount" property="total_amount" jdbcType="DOUBLE" />
 		<result column="milk_name" property="milk_name" jdbcType="VARCHAR" />
-		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="distributor_name" property="distributor_name" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<insert id="addSale" useGeneratedKeys="true" keyProperty="sale.id">
@@ -28,11 +28,11 @@
 		#{sale.sale_time}, #{sale.paid_time}, #{sale.created}, #{sale.updated}, #{sale.status})
 	</insert>
 	
-	<select id="getSaleByCondition" resultMap="totalSaleQuery">
+	<select id="getSaleByCondition" resultMap="saleQuery">
 		select
-			sale.id, sale.sale_time, sale.paid_time, sale.status, sale.receivables_amount, sale.paid_amount, sale.unpaid_amount,
-			detailed.number, detailed.price, detailed.total_amount,
-			milk.milk_name, distributor.name
+			sale.id, sale.sale_time, sale.paid_time, sale.status, sale.receivables_price, sale.paid_price, sale.unpaid_price,
+			detailed.quantity, detailed.price, detailed.total_price as total_amount,
+			milk.milk_name, distributor.distributor_name
 		from 
 			milk, sale, sale_detailed as detailed, distributor
 		where

@@ -9,9 +9,9 @@
         <meta content="" name="author" />
         <%@include file="header.jsp"%>
         <link rel="shortcut icon" href="favicon.ico" />
-        <style type="text/css">
+        <style>
         	.searchTime{
-        		display: none;!important
+        		display:none;
         	}
         </style>
 	</head>
@@ -124,7 +124,7 @@
                         			<div class="portlet-body flip-scroll">
                         				<div class="row table-tool">
 											<div class="col-md-12">
-												<input type="search" placeholder="采购单号" class="form-control input-small input-inline" v-model.lazy="purchaseID" onkeyup="if(event==13){init_table()}">
+												<input type="search" placeholder="采购单号" class="form-control input-small input-inline" onchange="vue.purchaseID=this.value" onkeyup="if(event.keyCode==13){;init_table()}">
 												<input type="text" id="purchase_time" placeholder="采购时间" class="form-control input-inline" style="width: 340px;"/>
 												<input class="searchTime" id="startTime" />
 												<input class="searchTime" id="endTime" />
@@ -151,7 +151,7 @@
 	                        							</td>
 	                        							<td v-text="purchase[0].id"></td>
 														<td v-text="purchase[0].time"></td>
-														<td v-text="purchase[0].totalPurchaseAmount"></td>
+														<td v-text="purchase[0].total_price"></td>
 														<td>
 															<span v-if="purchase[0].status == 2">废弃</span>
 														</td>
@@ -174,9 +174,9 @@
 																<tbody>
 																	<tr v-for="item in purchase">
 																		<td></td>
-																		<td>((item.name))</td>
-																		<td>((item.number))</td>
-																		<td>((item.purchase_price))</td>
+																		<td>((item.milk_name))</td>
+																		<td>((item.quantity))</td>
+																		<td>((item.price))</td>
 																		<td>((item.total_amount))</td>
 																	</tr>
 																</tbody>
@@ -230,7 +230,6 @@
 						data:{"purchaseID": id},
 						success:function(data){
 							data = eval("("+data+")");
-							console.info(data);
 							layer.msg(data.message);
 							if(data.succ){
 								init_table();
@@ -261,6 +260,18 @@
 				init_table();
 			})
 			
+			$("#purchase_time").on("keydown", function(event){
+				if(event.keyCode == 8){
+					$("#purchase_time").val("");
+					$("#startTime").val('');
+					$("#endTime").val("");
+				}
+				else{
+					layer.msg("无法输入，请选择日期");
+					return false;
+				}
+			})
+			
 			$("tbody").on('click', ".row-detail", function(){
 				if(this.className.indexOf("row-detail-close") > 0){
 					this.className = "row-detail row-detail-open";
@@ -273,9 +284,6 @@
 			});
 		})
 		
-		var g_rows = 10;
-        var g_page = 1;
-        
 		function init_add_layer(){
 			$("#number").val("");
 			$("#milk_name").val("");
@@ -284,15 +292,10 @@
 		}        
 		
 		function init_table(rows, page){
-			if(rows != '' && rows > 0)
-				g_rows = rows;
-			else
-				rows = g_rows;
-			
-			if(page != '' && page > 0)
-				g_page = page;
-			else
-				page = g_page;
+			if(typeof(rows) == 'undefined')
+				rows = 10;
+			if(typeof(page) == 'undefined')
+				page = 1;
 			var startTime = $("#startTime").val();
 			var endTime = $("#endTime").val();
 			$.ajax({
@@ -301,18 +304,17 @@
 				data:{
 					rows: rows,
 					page: page,
-					milkInfo: vue.milkName,
+					purchaseID: vue.purchaseID,
 					startTime: startTime,
 					endTime: endTime
 				},
 				success:function(data){
 					data = eval("("+data+")");
-					
+					pager = eval("("+data.pager+")");
 					//一共生成多少页
-					page_total = get_page_total(data.total, g_rows);
-					paginate_tool.init("init_table", page_total, data.total, []);
+					paginate_tool.init("init_table", pager, []);
 					
-					vue.data = data.data;
+					vue.data = data.datas;
 					layer.closeAll('loading');
 				},
 				beforeSend:function(){
@@ -345,9 +347,9 @@
 				if(!this.startDate)
                 	$("#purchase_time").val('');
 				else{
-					$("#purchase_time").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format(this.locale.formate));
+					$("#purchase_time").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format("YYYY-MM-DD"));
 					$("#startTime").val(this.startDate.format(this.locale.format));
-					$("#endTime").val(this.endDate.format(this.locale.formate));
+					$("#endTime").val(this.endDate.format("YYYY-MM-DD"));
 				}
             });
 			

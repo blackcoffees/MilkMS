@@ -5,17 +5,17 @@
 		<id column="id" property="id" jdbcType="INTEGER"/>
 		<result column="purchase_ID" property="purchase_ID" jdbcType="INTEGER"/>
 		<result column="milk_ID" property="milk_ID"  jdbcType="INTEGER"/>
-		<result column="number" property="number"  jdbcType="INTEGER"/>
-		<result column="purchase_price" property="purchase_price" jdbcType="DOUBLE"/>
-		<result column="total_amount" property="total_amount" jdbcType="DOUBLE"/>
+		<result column="quantity" property="quantity"  jdbcType="INTEGER"/>
+		<result column="price" property="price" jdbcType="DOUBLE"/>
+		<result column="total_price" property="total_price" jdbcType="DOUBLE"/>
 		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 	</resultMap>
 	
 	<insert id="addPurchaseDetailed" useGeneratedKeys="true">
-		insert into purchase_detailed(purchase_ID, milk_ID, number, purchase_price, total_amount, created, updated)
-		values(#{detailed.purchase_ID}, #{detailed.milk_ID}, #{detailed.number}, #{detailed.purchase_price}
-		, #{detailed.total_amount}, #{detailed.created}, #{detailed.updated})
+		insert into purchase_detailed(purchase_ID, milk_ID, quantity, price, total_price, created, updated)
+		values(#{detailed.purchase_ID}, #{detailed.milk_ID}, #{detailed.quantity}, #{detailed.price}
+		, #{detailed.total_price}, #{detailed.created}, #{detailed.updated})
 	</insert>
 	
 	<select id="getPurchaseDetailedByPurchaseID" resultMap="baseResultMap">

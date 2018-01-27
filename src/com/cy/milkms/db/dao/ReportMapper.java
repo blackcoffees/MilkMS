@@ -1,6 +1,7 @@
 package com.cy.milkms.db.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -10,7 +11,9 @@ import com.cy.milkms.db.query.ReportSaleTableQuery;
 import com.cy.milkms.util.Pager;
 
 public interface ReportMapper {
-	public List<ReportPurchaseSummaryDataQuery> getPurchaseReportSummaryData(@Param("startTime")String startTime, @Param("endTime")String endTime, @Param("milkInfo")String milkInfo);
+//	public ReportPurchaseSummaryDataQuery getPurchaseReportSummaryData(@Param("startTime")String startTime, @Param("endTime")String endTime, @Param("milkInfo")String milkInfo);
+	
+	public ReportPurchaseSummaryDataQuery getPurchaseReportSummaryData(@Param("summaryDataQuery")ReportPurchaseSummaryDataQuery summaryDataQuery);
 	
 	public List<ReportPurchaseTableQuery> getPurchaseReportLimit(@Param("startTime")String startTime, @Param("endTime")String endTime, @Param("pager")Pager pager, @Param("milkInfo")String milkInfo);
 	

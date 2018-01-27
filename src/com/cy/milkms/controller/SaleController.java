@@ -9,8 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cy.milkms.db.query.TotalSaleQuery;
+import com.cy.milkms.db.query.SaleQuery;
 import com.cy.milkms.service.ISaleService;
+import com.cy.milkms.util.BusinessException;
 import com.cy.milkms.util.CommonTool;
 import com.cy.milkms.util.Enum;
 import com.cy.milkms.util.Pager;
@@ -99,11 +100,15 @@ public class SaleController {
 				result.put("message", "参数错误");
 				return JSONObject.fromObject(result).toString();
 			}
-			List<List<TotalSaleQuery>> rows = service.getSaleByCondition(startTime, endTime, Integer.parseInt(saleID), pager, distributorName, Integer.parseInt(status));
+			List<List<SaleQuery>> rows = service.getSaleByCondition(startTime, endTime, Integer.parseInt(saleID), pager, distributorName, Integer.parseInt(status));
 			int total = service.getSaleByConditionCount(startTime, endTime, Integer.parseInt(saleID), distributorName, Integer.parseInt(status));
-			return ReturnJsonData.createReturnJsonData(total, rows);
+			pager.setTotal(total);
+			return ReturnJsonData.returnJsonDataMultipleList(pager, rows);
 		} catch (Exception e) {
-			e.printStackTrace();
+			if(e instanceof BusinessException)
+				result.put("message", e.getMessage());
+			else
+				e.printStackTrace();
 			return JSONObject.fromObject(result).toString();
 		}
 	}

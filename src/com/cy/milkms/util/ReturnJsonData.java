@@ -2,12 +2,9 @@ package com.cy.milkms.util;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +15,14 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class ReturnJsonData {
-	public static String currentJsonData(int total, List<?> list){
+	public static String returnJsonDataSigleList(Pager pager, List<?> list){
 		/*
 		 * 一重list，返回json
 		 * */
-		if(total == 0 || list.size() == 0){
+		if(pager.getTotal() == 0 || list.size() == 0){
 			Map<String, Object> map2 = new HashMap<String, Object>();
-			map2.put("total", total);
-			map2.put("data", list);
+			map2.put("pager", JSONObject.fromObject(pager).toString());
+			map2.put("datas", list);
 			map2.put("succ", true);
 			map2.put("message", "");
 			return JSONObject.fromObject(map2).toString();
@@ -43,28 +40,26 @@ public class ReturnJsonData {
 					String value = String.valueOf(method.invoke(list.get(j)));
 					map.put(name, value);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 			result.add(map);
 		}
-		
 		Map<String, Object> map2 = new HashMap<String, Object>();
-		map2.put("total", total);
-		map2.put("data", result);
+		map2.put("pager", JSONObject.fromObject(pager).toString());
+		map2.put("datas", list);
 		map2.put("succ", true);
 		map2.put("message", "");
 		return JSONObject.fromObject(map2).toString();
 	}
 	
-	public static String createReturnJsonData(int total, List<?> list){
+	public static String returnJsonDataMultipleList(Pager pager, List<?> list){
 		/*
 		 * 多重list，返回json
 		 * */
-		if(total == 0 || list.size() == 0){
+		if(pager.getTotal() == 0 || list.size() == 0){
 			Map<String, Object> map2 = new HashMap<String, Object>();
-			map2.put("total", total);
+			map2.put("pager", JSONObject.fromObject(pager).toString());
 			map2.put("data", list);
 			map2.put("succ", true);
 			map2.put("message", "");
@@ -72,8 +67,8 @@ public class ReturnJsonData {
 		}
 		List reslut = genJsonData(list);
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("total", total);
-		map.put("data", reslut);
+		map.put("pager", JSONObject.fromObject(pager).toString());
+		map.put("datas", reslut);
 		map.put("succ", true);
 		map.put("message", "");
 		return JSONObject.fromObject(map).toString();
@@ -154,25 +149,6 @@ public class ReturnJsonData {
 	
 	public static void main(String[] args){
 		try{
-			List<Milk> list = new ArrayList<Milk>();
-			list.add(new Milk());
-			list.add(new Milk());
-			List<Milk> list2 = new ArrayList<Milk>();
-			list2.add(new Milk());
-			list2.add(new Milk());
-			List list3 = new ArrayList();
-			list3.add(list);
-			list3.add(list2);
-			String string = createReturnJsonData(4, list3);
-			System.out.println(string);
-			
-			
-			int[] a = new int[4];
-			a[0]=0;
-			a[1]=1;
-			a[2]=2;
-			a[3]=3;
-			System.out.println(JSONArray.fromObject(a).toString());
 		}
 		catch (Exception e) {
 			// TODO: handle exception

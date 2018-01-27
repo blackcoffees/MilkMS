@@ -36,11 +36,15 @@ public class ReportService implements IReportService{
 
 			Map<String, Object> result = new HashMap<>();
 			/*汇总数据*/
-			List<ReportPurchaseSummaryDataQuery> summaryList = mapper.getPurchaseReportSummaryData(startTime, endTime, milkInfo);
-			result.put("summaryPurchaseOrderCount", summaryList.get(0).getSummaryPurchaseOrderCount());
-			result.put("summaryPurchaseMilkNumber", summaryList.get(0).getSummaryPurchaseMilkNumber());
-			result.put("summaryPurchaseMilkPrice", summaryList.get(0).getSummaryPurchaseMilkPrice());
-			result.put("summaryFirstThreeMilkName", summaryList.get(0).getSummaryFirstThreeMilkName());
+			ReportPurchaseSummaryDataQuery summaryDataQuery = new ReportPurchaseSummaryDataQuery();
+			summaryDataQuery.setStartTime(startTime);
+			summaryDataQuery.setEndTime(endTime);
+			summaryDataQuery.setMilkInfo(milkInfo);
+			summaryDataQuery = mapper.getPurchaseReportSummaryData(summaryDataQuery);
+			result.put("summaryPurchaseOrderCount", summaryDataQuery.getSummaryPurchaseOrderCount());
+			result.put("summaryPurchaseMilkNumber", summaryDataQuery.getSummaryPurchaseMilkNumber());
+			result.put("summaryPurchaseMilkPrice", summaryDataQuery.getSummaryPurchaseMilkPrice());
+			result.put("summaryFirstThreeMilkName", summaryDataQuery.getSummaryFirstThreeMilkName());
 			
 			/*表格数据*/
 			List<ReportPurchaseTableQuery> tableList = mapper.getPurchaseReportLimit(startTime, endTime, pager, milkInfo);
@@ -48,20 +52,19 @@ public class ReportService implements IReportService{
 			Map<String, List<ReportPurchaseTableQuery>> tableMap = new HashMap<>();
 			for(int i=0;i<tableList.size();i++){
 				orderSet.add(tableList.get(i).getId());
-				if(tableMap.containsKey(tableList.get(i).getName())){
-					tableMap.get(tableList.get(i).getName()).add(tableList.get(i));
-					tableMap.get(tableList.get(i).getName()).get(0).setTotalNumber(tableMap.get(tableList.get(i).getName()).get(0).getTotalNumber() + tableList.get(i).getNumber());
-					tableMap.get(tableList.get(i).getName()).get(0).setTotalPrice(tableMap.get(tableList.get(i).getName()).get(0).getTotalPrice() + tableList.get(i).getTotal_amount());
+				if(tableMap.containsKey(tableList.get(i).getMilk_name())){
+					tableMap.get(tableList.get(i).getMilk_name()).add(tableList.get(i));
+					tableMap.get(tableList.get(i).getMilk_name()).get(0).setTotalNumber(tableMap.get(tableList.get(i).getMilk_name()).get(0).getTotalNumber() + tableList.get(i).getQuantity());
+					tableMap.get(tableList.get(i).getMilk_name()).get(0).setTotalPrice(tableMap.get(tableList.get(i).getMilk_name()).get(0).getTotalPrice() + tableList.get(i).getTotal_amount());
 				}
 				else{
 					List<ReportPurchaseTableQuery> temp = new ArrayList<>();
-					tableList.get(i).setTotalNumber(tableList.get(i).getNumber());
+					tableList.get(i).setTotalNumber(tableList.get(i).getQuantity());
 					tableList.get(i).setTotalPrice(tableList.get(i).getTotal_amount());
 					temp.add(tableList.get(i));
-					tableMap.put(tableList.get(i).getName(), temp);
+					tableMap.put(tableList.get(i).getMilk_name(), temp);
 				}
 			}
-			result.put("purchaseOrderTotalNumber", orderSet.size());
 			/*根据商品分组采购总价排序*/
 			List<List<ReportPurchaseTableQuery>> resultTableList = new ArrayList<>();
 			Set<String> keys = tableMap.keySet();
@@ -139,7 +142,7 @@ public class ReportService implements IReportService{
 						lineDatas[k] = null;
 					}
 				}
-				lineChart.setName(oneList.get(0).getName());
+				lineChart.setName(oneList.get(0).getMilk_name());
 				lineChart.setDatas(lineDatas);
 				lineChartList.add(lineChart);
 			}
@@ -150,7 +153,7 @@ public class ReportService implements IReportService{
 			List<PieChart> pieChartList = new ArrayList<>();
 			for(int i=0;i<resultTableList.size();i++){
 				PieChart pieChart = new PieChart();
-				pieChart.setTitle(resultTableList.get(i).get(0).getName());
+				pieChart.setTitle(resultTableList.get(i).get(0).getMilk_name());
 				pieChart.setNumber(resultTableList.get(i).get(0).getTotalPrice());
 				pieChartList.add(pieChart);
 			}

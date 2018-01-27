@@ -6,13 +6,13 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.cy.milkms.db.entity.Sale;
-import com.cy.milkms.db.query.TotalSaleQuery;
+import com.cy.milkms.db.query.SaleQuery;
 import com.cy.milkms.util.Pager;
 
 public interface SaleMapper {
 	public int addSale(@Param("sale")Sale sale);
 	
-	public List<TotalSaleQuery> getSaleByCondition(@Param("startTime")String startTime,
+	public List<SaleQuery> getSaleByCondition(@Param("startTime")String startTime,
 			@Param("endTime")String endTime, @Param("saleID")int saleID, @Param("pager")Pager pager, @Param("distributorName")String distributorName, @Param("status")int status);
 	
 	public int getSaleByConditionCount(@Param("startTime")String startTime,

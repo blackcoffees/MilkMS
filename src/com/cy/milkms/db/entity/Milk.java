@@ -3,17 +3,14 @@ import java.sql.Timestamp;
 import java.util.UUID;
 public class Milk {
 	private int id;
-	private String number;
-	private String milk_name;
-	private String specifications;
-	private double purchase_price;
-	private double selling_price;
-	private int status;
+	private String code; /*商品编号*/
+	private String milk_name; /*商品名称*/
+	private String specifications;/*规格*/
+	private double purchase_price;/*采购价格*/
+	private double selling_price;/*建议出售价格*/
+	private int status;/*状态*/
 	private Timestamp created;
 	private Timestamp updated;
-	public Milk(){
-		;
-	}
 	
 	public int getId() {
 		return id;
@@ -22,13 +19,15 @@ public class Milk {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
+	public String getCode() {
+		return code;
+	}
 
-	public String getNumber() {
-		return number;
+	public void setCode(String code) {
+		this.code = code;
 	}
-	public void setNumber(String number) {
-		this.number = number;
-	}
+
 	public String getMilk_name() {
 		return milk_name;
 	}

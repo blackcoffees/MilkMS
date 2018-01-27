@@ -1,6 +1,6 @@
 package com.cy.milkms.db.query;
 
-public class ReportSaleTableQuery extends TotalSaleQuery{
+public class ReportSaleTableQuery extends SaleQuery{
 	private int totalNumber;/*商品分组总数量*/
 	private double totalPrice;/*商品分组总金额*/
 	private double totalProfit;/*商品分组总利润*/

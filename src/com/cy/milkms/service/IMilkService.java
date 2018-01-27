@@ -7,17 +7,17 @@ import com.cy.milkms.db.entity.Milk;
 import com.cy.milkms.util.Pager;
 
 public interface IMilkService {
-	public List<Milk> get_milk_condition(Pager pager, String milkInfo);
+	public List<Milk> getMilkByCondition(Pager pager, String milkInfo);
 	
-	public int get_milk_condition_count(String milkInfo);
+	public int getMilkByConditionCount(String milkInfo);
 	
-	public Map<String, Object> add_milk(Milk milk);
+	public Map<String, Object> addMilk(Milk milk) throws Exception;
 	
- 	public Milk get_milk_by_name_or_number(String milk_name, String number);
+ 	public Milk getMilkByNameOrCode(String milk_name, String code);
  	
- 	public int edit_milk(double purchase_price, double selling_price, String number);
+ 	public int editMilk(double purchase_price, double selling_price, String code);
  	
- 	public int delete_milk(String number);
+ 	public int deleteMilk(String code);
  	
  	public List<Milk> getMilkByName(String name);
 }

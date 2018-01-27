@@ -26,77 +26,69 @@ public class MilkService implements IMilkService{
 	private IStockService stockService;
 	
 	@Override
-	public List<Milk> get_milk_condition(Pager pager, String milkInfo) {
-		// TODO Auto-generated method stub
-		return mapper.get_milk_condition(pager, milkInfo);
+	public List<Milk> getMilkByCondition(Pager pager, String milkInfo) {
+		return mapper.getMilkByCondition(pager, milkInfo);
 	}
 
 	@Override
-	public int get_milk_condition_count(String milkInfo) {
-		// TODO Auto-generated method stub
-		return mapper.get_milk_condition_count(milkInfo);
+	public int getMilkByConditionCount(String milkInfo) {
+		return mapper.getMilkByConditionCount(milkInfo);
 	}
 
 	@Override
 	@Transactional
-	public Map<String, Object> add_milk(Milk milk) {
-		// TODO Auto-generated method stub
+	public Map<String, Object> addMilk(Milk milk) throws Exception {
 		Map<String, Object> result = new HashMap<>();
 		result.put("succ", false);
 		result.put("message", "系统繁忙，请稍后再试");
-		Milk milk2 = this.get_milk_by_name_or_number(milk.getMilk_name(),  milk.getNumber());
+		Milk milk2 = this.getMilkByNameOrCode(milk.getMilk_name(),  milk.getCode());
 		if(milk2 != null){
-			result.put("message", "商品已经存在");
+			if(milk.getMilk_name().equals(milk2.getMilk_name()))
+				result.put("message", "商品名称已经存在");
+			else if(milk.getCode().equals(milk2.getCode()))
+				result.put("message", "商品编号已经存在");
 			return result;
 		}
 		milk.setCreated(DateTool.getNowTime());
 		milk.setUpdated(DateTool.getNowTime());
-		try {
-			int addMilkResult = mapper.add_milk(milk);
-			if(addMilkResult <= 0){
-				throw new Exception("新增失败");
-			}
-			/*增加库存记录*/
-			Stock stock = new Stock();
-			stock.setMilk_ID(milk.getId());
-			stock.setNumber(0);
-			stock.setCreated(DateTool.getNowTime());
-			int addStockResult = stockService.addStock(stock);
-			if(addStockResult <= 0){
-				throw new Exception("新增失败");
-			}
-			result.put("succ", true);
-			result.put("message", "新增成功");
-			return result;
-		} catch (Exception e) {
-			result.put("message", e.getMessage());
-			return result;
+		int addMilkResult = mapper.addMilk(milk);
+		if(addMilkResult <= 0){
+			throw new Exception("新增失败");
 		}
+		/*增加库存记录*/
+		Stock stock = new Stock();
+		stock.setMilk_ID(milk.getId());
+		stock.setQuantity(0);
+		stock.setCreated(DateTool.getNowTime());
+		stock.setCost_price(0);
+		int addStockResult = stockService.addStock(stock);
+		if(addStockResult <= 0){
+			throw new Exception("新增失败");
+		}
+		result.put("succ", true);
+		result.put("message", "新增成功");
+		return result;
 	}
 
 	@Override
-	public Milk get_milk_by_name_or_number(String milk_name, String number) {
-		// TODO Auto-generated method stub
-		return mapper.get_milk_by_name_or_number(milk_name, number);
+	public Milk getMilkByNameOrCode(String milk_name, String code) {
+		return mapper.getMilkByNameOrCode(milk_name, code);
 	}
 
 	@Override
 	@Transactional
-	public int edit_milk(double purchase_price, double selling_price, String number) {
-		// TODO Auto-generated method stub
-		return mapper.edit_milk(purchase_price, selling_price, number, DateTool.getNowTime());
+	public int editMilk(double purchase_price, double selling_price, String code) {
+		return mapper.editMilk(purchase_price, selling_price, code, DateTool.getNowTime());
 	}
 
 	@Override
 	@Transactional
-	public int delete_milk(String number) {
-		// TODO Auto-generated method stub
-		return mapper.delete_milk(number, DateTool.getNowTime());
+	public int deleteMilk(String code) {
+		return mapper.deleteMilk(code, DateTool.getNowTime());
 	}
 
 	@Override
 	public List<Milk> getMilkByName(String name) {
-		// TODO Auto-generated method stub
 		return mapper.getMilkByName(name);
 	}
 	

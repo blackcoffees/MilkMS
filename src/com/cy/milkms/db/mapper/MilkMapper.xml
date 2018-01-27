@@ -3,7 +3,7 @@
 <mapper namespace="com.cy.milkms.db.dao.MilkMapper">
 	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Milk">
 		<id column="id" property="id" jdbcType="INTEGER"/>
-		<result column="number" property="number" jdbcType="VARCHAR"/>
+		<result column="code" property="code" jdbcType="VARCHAR"/>
 		<result column="milk_name" property="milk_name" jdbcType="VARCHAR"/>
 		<result column="specifications" property="specifications"  jdbcType="VARCHAR"/>
 		<result column="purchase_price" property="purchase_price"  jdbcType="DOUBLE"/>
@@ -13,59 +13,60 @@
 		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 	</resultMap>
 	
-	<select id="get_milk_condition" resultMap="baseResultMap">
+	<select id="getMilkByCondition" resultMap="baseResultMap">
 		select * from milk 
 		where
 			status = 1
 			<if test="milkInfo != '' and milkInfo != null">
-				and ( milk_name like '%${milkInfo}%' or number like '%${milkInfo}%' )
+				and ( milk_name like '%${milkInfo}%' or code like '%${milkInfo}%' )
 			</if>
 		limit #{pager.start}, #{pager.rows}
 	</select>
 	
-	<select id="get_milk_condition_count" resultType="int">
+	<select id="getMilkByConditionCount" resultType="int">
 		select count(id) from milk 
 		where
 			status = 1
 			<if test="milkInfo != '' and milkInfo != null">
-				and ( milk_name like '%${milkInfo}%' or number like '%${milkInfo}%' )
+				and ( milk_name like '%${milkInfo}%' or code like '%${milkInfo}%' )
 			</if>
 	</select>
 	
-	<insert id="add_milk" useGeneratedKeys="true">
-		insert into milk(number, milk_name, specifications, purchase_price, selling_price, status, created, updated)
-		values(#{milk.number}, #{milk.milk_name}, #{milk.specifications}, #{milk.purchase_price}, #{milk.selling_price}, #{milk.status}, #{milk.created}, #{milk.updated})
+	<insert id="addMilk" useGeneratedKeys="true" keyProperty="milk.id">
+		insert into milk(code, milk_name, specifications, purchase_price, selling_price, status, created, updated)
+		values(#{milk.code}, #{milk.milk_name}, #{milk.specifications}, #{milk.purchase_price}, #{milk.selling_price}, #{milk.status}, #{milk.created}, #{milk.updated})
 	</insert>
 	
-	<select id="get_milk_by_name_or_number" resultType="com.cy.milkms.db.entity.Milk">
+	<select id="getMilkByNameOrCode" resultType="com.cy.milkms.db.entity.Milk">
 		select * from milk
 		where status = 1
 		<choose>
-			<when test="milk_name != null and milk_name != '' and number != null and number != ''">
-				and ( milk_name = #{milk_name} or number = #{number} )
+			<when test="milk_name != null and milk_name != '' and code != null and code != ''">
+				and ( milk_name = #{milk_name} or code = #{code} )
 			</when>
 			<when test="milk_name != null and milk_name != '' ">
 				and milk_name = #{milk_name}
 			</when>
 			<otherwise>
-				<if test="number != null and number != ''">
-					and number = #{number}
+				<if test="code != null and code != ''">
+					and code = #{code}
 				</if>
 			</otherwise>
 		</choose>
+		limit 1;
 	</select>
 	
-	<update id="edit_milk">
+	<update id="editMilk">
 		update milk set purchase_price = #{purchase_price}, selling_price = #{selling_price}, updated=#{updated}
-		where number = #{number} and status = 1
+		where code = #{code} and status = 1
 	</update>
 	
-	<update id="delete_milk">
-		update milk set status = 2, updated=#{updated} where number = #{number} and status =  1
+	<update id="deleteMilk">
+		update milk set status = 2, updated=#{updated} where code = #{code} and status =  1
 	</update>
 	
 	<select id="getMilkByName" resultMap="baseResultMap">
-		select * from milk where (milk_name like '%${name}%' or number like '%{name}%') and status = 1
+		select * from milk where (milk_name like '%${name}%' or code like '%{name}%') and status = 1
 	</select>
 </mapper>
 

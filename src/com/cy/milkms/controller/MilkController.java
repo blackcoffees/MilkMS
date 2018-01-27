@@ -25,25 +25,26 @@ public class MilkController {
 	@Autowired
 	private IMilkService service;
 	
-	@RequestMapping("get_milk_condition")
+	@RequestMapping("getMilkByCondition")
 	@ResponseBody
-	public String get_milk_condition(Pager pager, String milkInfo){
-		int total = service.get_milk_condition_count(milkInfo);
-		List list = service.get_milk_condition(pager, milkInfo);
-		return ReturnJsonData.currentJsonData(total, list);
+	public String getMilkByCondition(Pager pager, String milkInfo){
+		int total = service.getMilkByConditionCount(milkInfo);
+		List<Milk> list = service.getMilkByCondition(pager, milkInfo);
+		pager.setTotal(total);
+		return ReturnJsonData.returnJsonDataSigleList(pager, list);
 	}
 	
 	
-	@RequestMapping("add_milk")
+	@RequestMapping("addMilk")
 	@ResponseBody
-	public String add_milk(Milk milk, String purchase_price, String selling_price){
-		Map res = new HashMap();
+	public String addMilk(Milk milk, String purchase_price, String selling_price){
+		Map<String, Object> res = new HashMap<>();
 		boolean succ = false;
 		res.put("succ", succ);
 		
 		String message = "表单输入错误";
 		String pattern = "[0-9]{4}";
-		boolean isValidat = Pattern.matches(pattern, milk.getNumber());
+		boolean isValidat = Pattern.matches(pattern, milk.getCode());
 		if(!isValidat){
 			res.put("message", message);
 			return JSONObject.fromObject(res).toString();
@@ -64,17 +65,20 @@ public class MilkController {
 		milk.setSelling_price(Double.parseDouble(selling_price));
 		milk.setStatus(Enum.MILK_STATUS_ON);
 		
-		res = service.add_milk(milk);
+		try {
+			res = service.addMilk(milk);
+		} catch (Exception e) {
+			res.put("message", e.getMessage());
+		}
 		return JSONObject.fromObject(res).toString();
 		
 	}
 	
-	@RequestMapping("edit_milk")
+	@RequestMapping("editMilk")
 	@ResponseBody
-	public String edit_milk(String purchase_price, String selling_price, String number){
+	public String editMilk(String purchase_price, String selling_price, String code){
 		boolean succ = false;
-		String message = "系统繁忙";
-		Map result = new HashMap();
+		Map<String, Object> result = new HashMap<>();
 		result.put("succ", succ);
 		
 		String pattern = "^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$";
@@ -89,7 +93,7 @@ public class MilkController {
 			return JSONObject.fromObject(result).toString();
 		}
 		
-		int edit_result = service.edit_milk(Double.parseDouble(purchase_price), Double.parseDouble(selling_price), number);
+		int edit_result = service.editMilk(Double.parseDouble(purchase_price), Double.parseDouble(selling_price), code);
 		if(edit_result > 0){
 			succ = true;
 			result.put("succ", succ);
@@ -102,15 +106,15 @@ public class MilkController {
 	}
 	
 	
-	@RequestMapping("delete_milk")
+	@RequestMapping("deleteMilk")
 	@ResponseBody
-	public String delete_milk(String number){
+	public String deleteMilk(String code){
 
 		String message = "系统繁忙";
 		boolean succ = false;
-		Map map = new HashMap();
+		Map<String, Object> map = new HashMap<>();
 		
-		int result = service.delete_milk(number);
+		int result = service.deleteMilk(code);
 		if(result <= 0){
 			message = "删除失败";
 		}
@@ -127,6 +131,8 @@ public class MilkController {
 	@RequestMapping("getMilkByName")
 	public String getMilkByName(String name){
 		List<Milk> list = service.getMilkByName(name);
-		return ReturnJsonData.currentJsonData(list.size(), list);
+		Pager pager = new Pager();
+		pager.setTotal(list.size());
+		return ReturnJsonData.returnJsonDataSigleList(pager, list);
 	}
 }

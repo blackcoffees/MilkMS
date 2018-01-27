@@ -2,18 +2,12 @@ package com.cy.milkms.db.query;
 
 import com.cy.milkms.db.entity.Sale;
 
-public class TotalSaleQuery extends Sale{
-	private int number;/*商品数量*/
+public class SaleQuery extends Sale{
+	private String milk_name;/*商品名称*/
+	private int quantity;/*商品数量*/
 	private double price;/*商品单价*/
 	private double total_amount;/*商品总价*/
-	private String milk_name;/*商品名称*/
-	private String name;/*商家名称*/
-	public int getNumber() {
-		return number;
-	}
-	public void setNumber(int number) {
-		this.number = number;
-	}
+	private String distributor_name;/*商家名称*/
 	public double getPrice() {
 		return price;
 	}
@@ -32,11 +26,17 @@ public class TotalSaleQuery extends Sale{
 	public void setMilk_name(String milk_name) {
 		this.milk_name = milk_name;
 	}
-	public String getName() {
-		return name;
+	public int getQuantity() {
+		return quantity;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+	public String getDistributor_name() {
+		return distributor_name;
+	}
+	public void setDistributor_name(String distributor_name) {
+		this.distributor_name = distributor_name;
 	}
 	
 }

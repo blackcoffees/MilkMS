@@ -201,7 +201,7 @@
 																	<tr v-for="item in sale">
 																		<td></td>
 																		<td>((item.milk_name))</td>
-																		<td>((item.number))</td>
+																		<td>((item.quantity))</td>
 																		<td>((item.price))</td>
 																		<td>((item.total_amount))</td>
 																	</tr>
@@ -355,20 +355,11 @@
 			});
 		})
 		
-		var g_rows = 10;
-        var g_page = 1;
-        
 		function init_table(rows, page){
-			if(rows != '' && rows > 0)
-				g_rows = rows;
-			else
-				rows = g_rows;
-			
-			if(page != '' && page > 0)
-				g_page = page;
-			else
-				page = g_page;
-			
+			if(typeof(rows) == 'undefined')
+				rows = 10;
+			if(typeof(page) == 'undefined')
+				page = 1;
 			var saleID = vue.saleID;
 			if(saleID == '' || saleID == null){
 				saleID = 0;				
@@ -397,14 +388,14 @@
 				success:function(data){
 					layer.closeAll('loading');
 					data = eval("("+data+")");
+					pager = eval("("+data.pager+")");
 					if(!data.succ){
 						layer.msg(data.message);
 					}
 					else{
 						//一共生成多少页
-						page_total = get_page_total(data.total, g_rows);
-						paginate_tool.init("init_table", page_total, data.total, []);
-						vue.data = data.data;
+						paginate_tool.init("init_table", pager, []);
+						vue.data = data.datas;
 					}
 				},
 				beforeSend:function(){

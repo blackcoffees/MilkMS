@@ -7,9 +7,9 @@
 		<result column="address" property="address"  jdbcType="VARCHAR"/>
 		<result column="people" property="people"  jdbcType="VARCHAR"/>
 		<result column="phone" property="phone"  jdbcType="VARCHAR"/>
-		<result column="total_amount" property="total_amount"  jdbcType="DOUBLE"/>
-		<result column="unpaid_amount" property="unpaid_amount"  jdbcType="DOUBLE"/>
-		<result column="paid_amount" property="paid_amount" jdbcType="DOUBLE" />
+		<result column="total_price" property="total_price"  jdbcType="DOUBLE"/>
+		<result column="unpaid_price" property="unpaid_price"  jdbcType="DOUBLE"/>
+		<result column="paid_price" property="paid_price" jdbcType="DOUBLE" />
 		<result column="status" property="status" jdbcType="INTEGER" />
 		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
 		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
@@ -42,9 +42,9 @@
 	</select>
 	
 	<insert id="addDistributor" useGeneratedKeys="true">
-		insert into distributor(name, address, people, phone, total_amount, paid_amount, unpaid_amount, status, created, updated)
+		insert into distributor(name, address, people, phone, total_price, paid_price, unpaid_price, status, created, updated)
 		values(#{distributor.name}, #{distributor.address}, #{distributor.people}, #{distributor.phone},
-		#{distributor.total_amount}, #{distributor.paid_amount}, #{distributor.unpaid_amount}, #{distributor.status}, #{distributor.created}, #{distributor.updated})
+		#{distributor.total_price}, #{distributor.paid_price}, #{distributor.unpaid_price}, #{distributor.status}, #{distributor.created}, #{distributor.updated})
 	</insert>
 	
 	<update id="deleteDistributor">
@@ -55,7 +55,7 @@
 		update distributor set address=#{address}, people=#{people}, phone=#{phone}, updated=#{updated} where name=#{name}
 	</update>
 	
-	<update id="updateDistributorAmount">
-		update distributor set total_amount=#{distributor.total_amount}, unpaid_amount=#{distributor.unpaid_amount}, paid_amount=#{distributor.paid_amount}, updated=#{distributor.updated} where id=#{distributor.id}
+	<update id="updateDistributorprice">
+		update distributor set total_price=#{distributor.total_price}, unpaid_price=#{distributor.unpaid_price}, paid_price=#{distributor.paid_price}, updated=#{distributor.updated} where id=#{distributor.id}
 	</update>
 </mapper>

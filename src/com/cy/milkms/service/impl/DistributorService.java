@@ -38,9 +38,9 @@ public class DistributorService implements IDistributorService{
 		// TODO Auto-generated method stub
 		int exit = this.getDistributorNameCount(distributor.getName());
 		if(exit > 0) return -1;
-		distributor.setPaid_amount(0);
-		distributor.setUnpaid_amount(0);
-		distributor.setTotal_amount(0);
+		distributor.setPaid_price(0);
+		distributor.setUnpaid_price(0);
+		distributor.setTotal_price(0);
 		distributor.setCreated(DateTool.getNowTime());
 		distributor.setUpdated(DateTool.getNowTime());
 		distributor.setStatus(Enum.DISTRIBUTOR_STATUS_ON);

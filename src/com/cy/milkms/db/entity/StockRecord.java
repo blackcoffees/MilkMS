@@ -5,8 +5,8 @@ import java.sql.Timestamp;
 public class StockRecord {
 	private int id;
 	private int milk_id;
-	private int old_number;
-	private int new_number;
+	private int old_qty;
+	private int new_qty;
 	private double old_cost_price;
 	private double new_cost_price;
 	private Timestamp created;
@@ -22,18 +22,6 @@ public class StockRecord {
 	}
 	public void setMilk_id(int milk_id) {
 		this.milk_id = milk_id;
-	}
-	public int getOld_number() {
-		return old_number;
-	}
-	public void setOld_number(int old_number) {
-		this.old_number = old_number;
-	}
-	public int getNew_number() {
-		return new_number;
-	}
-	public void setNew_number(int new_number) {
-		this.new_number = new_number;
 	}
 	public Timestamp getCreated() {
 		return created;
@@ -58,6 +46,18 @@ public class StockRecord {
 	}
 	public void setNew_cost_price(double new_cost_price) {
 		this.new_cost_price = new_cost_price;
+	}
+	public int getOld_qty() {
+		return old_qty;
+	}
+	public void setOld_qty(int old_qty) {
+		this.old_qty = old_qty;
+	}
+	public int getNew_qty() {
+		return new_qty;
+	}
+	public void setNew_qty(int new_qty) {
+		this.new_qty = new_qty;
 	}
 	
 }

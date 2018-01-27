@@ -9,9 +9,9 @@ public class Distributor {
 	private String address;
 	private String people;
 	private String phone;
-	private double total_amount;
-	private double unpaid_amount;
-	private double paid_amount;
+	private double total_price;
+	private double unpaid_price;
+	private double paid_price;
 	private int status;
 	private Timestamp created;
 	private Timestamp updated;
@@ -22,12 +22,6 @@ public class Distributor {
 	}
 	public void setId(int id) {
 		this.id = id;
-	}
-	public double getPaid_amount() {
-		return paid_amount;
-	}
-	public void setPaid_amount(double paid_amount) {
-		this.paid_amount = paid_amount;
 	}
 	public int getStatus() {
 		return status;
@@ -71,17 +65,23 @@ public class Distributor {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public double getTotal_amount() {
-		return total_amount;
+	public double getTotal_price() {
+		return total_price;
 	}
-	public void setTotal_amount(double total_amount) {
-		this.total_amount = total_amount;
+	public void setTotal_price(double total_price) {
+		this.total_price = total_price;
 	}
-	public double getUnpaid_amount() {
-		return unpaid_amount;
+	public double getUnpaid_price() {
+		return unpaid_price;
 	}
-	public void setUnpaid_amount(double unpaid_amount) {
-		this.unpaid_amount = unpaid_amount;
+	public void setUnpaid_price(double unpaid_price) {
+		this.unpaid_price = unpaid_price;
+	}
+	public double getPaid_price() {
+		return paid_price;
+	}
+	public void setPaid_price(double paid_price) {
+		this.paid_price = paid_price;
 	}
 	
 }

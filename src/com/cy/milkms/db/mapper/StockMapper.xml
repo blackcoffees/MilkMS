@@ -3,7 +3,7 @@
 <mapper namespace="com.cy.milkms.db.dao.StockMapper">
 	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Stock">
 		<id column="milk_ID" property="milk_ID" jdbcType="INTEGER"/>
-		<result column="number" property="number"  jdbcType="INTEGER"/>
+		<result column="quantity" property="quantity"  jdbcType="INTEGER"/>
 		<result column="cost_price" property="cost_price"  jdbcType="DOUBLE"/>
 		<result column="created" property="created"  jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="updated" property="updated"  jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
@@ -11,11 +11,11 @@
 	
 	<resultMap id="stockQueryResultMap" type="com.cy.milkms.db.query.StockQuery">
 		<result column="milkName" property="milkName" jdbcType="VARCHAR"/>
-		<result column="milkNumber" property="milkNumber"  jdbcType="VARCHAR"/>
+		<result column="milkquantity" property="milkquantity"  jdbcType="VARCHAR"/>
 	</resultMap>
 	
 	<update id="updateStock">
-		update stock set number=#{stock.number}, updated=#{stock.updated} where milk_id=#{stock.milk_ID} 
+		update stock set quantity=#{stock.quantity}, updated=#{stock.updated} where milk_id=#{stock.milk_ID} 
 	</update>
 	
 	<select id="getStockByMilkID" resultType="com.cy.milkms.db.entity.Stock">
@@ -23,31 +23,31 @@
 	</select>
 	
 	<insert id="addStock">
-		insert into stock(milk_id, number, created, updated)
-		values(#{stock.milk_ID}, #{stock.number}, #{stock.created}, #{stock.updated})
+		insert into stock(milk_id, quantity, created, updated, cost_price)
+		values(#{stock.milk_ID}, #{stock.quantity}, #{stock.created}, #{stock.updated}, #{stock.cost_price})
 	</insert>
 	
 	<select id="getStockByMilkName" resultMap="stockQueryResultMap">
-		select stock.milk_id, stock.number, milk.milk_name as milkName, milk.number as milkNumber, milk.specifications from stock left join milk on 
+		select stock.milk_id, stock.quantity, milk.milk_name as milkName, milk.quantity as milkquantity, milk.specifications from stock left join milk on 
 		milk.id = stock.milk_id 
 		<if test="milkName != null and milkName != ''">
-			and (milk.milk_name like '%${milkName}%' or milk.number like '%${milkName}%') 
+			and (milk.milk_name like '%${milkName}%' or milk.quantity like '%${milkName}%') 
 		</if>
 	</select>
 	
 	<select id="getStockByCondition" resultMap="stockQueryResultMap">
-		select stock.number, milk.milk_name as milkName from stock, milk where stock.milk_id = milk.id
+		select stock.quantity, milk.milk_name as milkName from stock, milk where stock.milk_id = milk.id
 		<if test="milkName != null and milkName != ''">
-			and (milk.milk_name like '%${milkName}%' or milk.number like '%${milkName}%')
+			and (milk.milk_name like '%${milkName}%' or milk.quantity like '%${milkName}%')
 		</if>
-		order by stock.number desc
+		order by stock.quantity desc
 		limit #{pager.start}, #{pager.rows}
 	</select>
 	
 	<select id="getStockByConditionCount" resultType="int">
 		select count(stock.milk_id) from stock, milk where stock.milk_id = milk.id
 		<if test="milkName != null and milkName != ''">
-			and (milk.milk_name like '%${milkName}%' or milk.number like '%${milkName}%')
+			and (milk.milk_name like '%${milkName}%' or milk.quantity like '%${milkName}%')
 		</if>
 	</select>
 </mapper>

@@ -11,17 +11,17 @@ import com.cy.milkms.util.Pager;
 
 public interface MilkMapper {
 	
-	public List<Milk> get_milk_condition(@Param("pager")Pager pager, @Param("milkInfo")String milkInfo);
+	public List<Milk> getMilkByCondition(@Param("pager")Pager pager, @Param("milkInfo")String milkInfo);
 	
-	public int get_milk_condition_count(@Param("milkInfo")String milkInfo);
+	public int getMilkByConditionCount(@Param("milkInfo")String milkInfo);
 	
-	public int add_milk(@Param("milk")Milk milk);
+	public int addMilk(@Param("milk")Milk milk);
 	
-	public Milk get_milk_by_name_or_number(@Param("milk_name")String milk_name, @Param("number")String number);
+	public Milk getMilkByNameOrCode(@Param("milk_name")String milk_name, @Param("code")String code);
 	
-	public int edit_milk(@Param("purchase_price")double purchase_price, @Param("selling_price")double selling_price, @Param("number")String number, @Param("updated")Timestamp updated);
+	public int editMilk(@Param("purchase_price")double purchase_price, @Param("selling_price")double selling_price, @Param("code")String code, @Param("updated")Timestamp updated);
 	
-	public int delete_milk(@Param("number")String number, @Param("updated")Timestamp updated);
+	public int deleteMilk(@Param("code")String code, @Param("updated")Timestamp updated);
 	
 	public List<Milk> getMilkByName(@Param("name")String name);
 }

@@ -9,7 +9,7 @@
 		<result column="summaryFirstThreeMilkName" property="summaryFirstThreeMilkName"  jdbcType="VARCHAR"/>
 	</resultMap>
 	
-	<resultMap id="reportPurchaseTableQueryMap" type="com.cy.milkms.db.query.ReportPurchaseTableQuery" extends="com.cy.milkms.db.dao.PurchaseMapper.totalPurchaseQueryMap">
+	<resultMap id="reportPurchaseTableQueryMap" type="com.cy.milkms.db.query.ReportPurchaseTableQuery" extends="com.cy.milkms.db.dao.PurchaseMapper.purchaseQueryMap">
 		<result column="totalNumber" property="totalNumber"  jdbcType="INTEGER"/>
 		<result column="totalPrice" property="totalPrice"  jdbcType="DOUBLE" />
 	</resultMap>
@@ -21,19 +21,14 @@
 		<result column="costPrice" property="costPrice"  jdbcType="DOUBLE" />
 	</resultMap>
 	
-	<select id="getPurchaseReportSummaryData" resultMap="reportPurchaseSummaryDataQueryMap" parameterMap="purchaseReportSummaryDataMap" statementType="CALLABLE">
-		CALL fc_purchase_report_summary_data(?,?,?,?,?,?,?)
+	<select id="getPurchaseReportSummaryData" resultType="com.cy.milkms.db.query.ReportPurchaseSummaryDataQuery" parameterType="com.cy.milkms.db.query.ReportPurchaseSummaryDataQuery" statementType="CALLABLE">
+		CALL fc_purchase_report_summary_data(#{summaryDataQuery.startTime, jdbcType=VARCHAR, mode=IN}, 
+			#{summaryDataQuery.endTime, jdbcType=VARCHAR, mode=IN}, #{summaryDataQuery.milkInfo, jdbcType=VARCHAR, mode=IN},
+			#{summaryDataQuery.summaryPurchaseOrderCount, jdbcType=INTEGER, mode=OUT},
+			#{summaryDataQuery.summaryPurchaseMilkNumber, jdbcType=INTEGER, mode=OUT},
+			#{summaryDataQuery.summaryPurchaseMilkPrice, jdbcType=DOUBLE, mode=OUT},
+			#{summaryDataQuery.summaryFirstThreeMilkName, jdbcType=VARCHAR, mode=OUT})
 	</select>
-	
-	<parameterMap type="java.util.Map" id="purchaseReportSummaryDataMap">
-		<parameter property="startTime" mode="IN" jdbcType="VARCHAR"/>
-		<parameter property="endTime" mode="IN" jdbcType="VARCHAR" />
-		<parameter property="milkInfo" mode="IN" jdbcType="VARCHAR"/>
-		<parameter property="summaryPurchaseOrderCount" mode="OUT" jdbcType="INTEGER"/>
-		<parameter property="summaryPurchaseMilkNumber" mode="OUT" jdbcType="INTEGER"/>
-		<parameter property="summaryPurchaseMilkPrice" mode="OUT" jdbcType="DOUBLE"/>
-		<parameter property="summaryFirstThreeMilkName" mode="OUT" jdbcType="VARCHAR"/>
-	</parameterMap>
 	
 	<select id="getPurchaseReportLimit" resultMap="reportPurchaseTableQueryMap">
 		SELECT

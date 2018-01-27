@@ -14,7 +14,7 @@ import com.cy.milkms.service.IDistributorService;
 import com.cy.milkms.util.Pager;
 import com.cy.milkms.util.ReturnJsonData;
 
-import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @Controller
 @RequestMapping("distributor")
@@ -27,13 +27,14 @@ public class DistributorController {
 	public String getDistributorByCondition(String distributorInfo, Pager pager){
 		List<Distributor> rows = service.getDistributorByCondition(distributorInfo, pager);
 		int total = service.getDistributorByConditionCount(distributorInfo);
-		return ReturnJsonData.currentJsonData(total, rows);
+		pager.setTotal(total);
+		return ReturnJsonData.returnJsonDataSigleList(pager, rows);
 	}
 	
 	@RequestMapping("addDistributor")
 	@ResponseBody
 	public String addDistributor(Distributor distributor){
-		Map result = new HashMap();
+		Map<String, Object> result = new HashMap<>();
 		boolean succ = false;
 		String message = "系统繁忙，请稍后再试";
 		
@@ -50,13 +51,13 @@ public class DistributorController {
 		}
 		result.put("succ", succ);
 		result.put("message", message);
-		return JSONArray.fromObject(result).toString();
+		return JSONObject.fromObject(result).toString();
 	}
 	
 	@RequestMapping("deleteDistributor")
 	@ResponseBody
 	public String deleteDistributor(String distributorID){
-		Map result = new HashMap();
+		Map<String, Object> result = new HashMap<>();
 		boolean succ = false;
 		String message = "系统繁忙，请稍后再试";
 		
@@ -70,13 +71,13 @@ public class DistributorController {
 		}
 		result.put("succ", succ);
 		result.put("message", message);
-		return JSONArray.fromObject(result).toString();
+		return JSONObject.fromObject(result).toString();
 	}
 	
 	@RequestMapping("updateDistributor")
 	@ResponseBody
 	public String updateDistributor(String address, String people, String phone, String name){
-		Map result = new HashMap();
+		Map<String, Object> result = new HashMap<>();
 		boolean succ = false;
 		String message = "系统繁忙，请稍后再试";
 		
@@ -90,6 +91,6 @@ public class DistributorController {
 		}
 		result.put("succ", succ);
 		result.put("message", message);
-		return JSONArray.fromObject(result).toString();
+		return JSONObject.fromObject(result).toString();
 	}
 }

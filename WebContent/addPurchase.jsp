@@ -180,8 +180,8 @@
 					                                                            			</tr>
 					                                                            		</thead>
 					                                                            		<tbody>
-					                                                            			<tr v-for="item in data_list" :key="item.number" @click="selectGoods($event, item)">
-					                                                            				<td v-text="item.number"></td>
+					                                                            			<tr v-for="item in data_list" :key="item.code" @click="selectGoods($event, item)">
+					                                                            				<td v-text="item.code"></td>
 					                                                            				<td v-text="item.milk_name"></td>
 					                                                            				<td v-text="item.specifications"></td>
 					                                                            			</tr>
@@ -267,8 +267,9 @@
     						data: {'name': name},
     						success:function(data){
     							data = eval("("+data+")");
-    							if(data.total>0){
-    								table_vue.data_list = data.data;
+    							pager = eval("("+data.pager+")")
+    							if(pager.total>0){
+    								table_vue.data_list = data.datas;
     								$(event.target).parent().find(".goods-list").show('slow');
     							}
     						}
@@ -341,8 +342,8 @@
         				return;
         			}
         			
-        			var number = $(tr.children()[2]).find("input").val();
-        			if(number == ''){
+        			var quantity = $(tr.children()[2]).find("input").val();
+        			if(quantity == ''){
         				layer.msg("请输入数量");
         				return;
         			}
@@ -357,27 +358,27 @@
         				return;
         			}
         			
-        			var totalPrice = $(tr.children()[4]).find("input").val();
-        			if(totalPrice == ''){
+        			var total_amount = $(tr.children()[4]).find("input").val();
+        			if(total_amount == ''){
         				layer.msg("请输入商品总价");
         				return;
         			}
-        			else if(totalPrice <= 0){
+        			else if(total_amount <= 0){
         				layer.msg("商品总价不能小于等于0");
         				return;
         			}
         			
         			var one = {
         				"milk_name": milk_name,
-        				'number': number,
+        				'quantity': quantity,
         				'price': price,
-        				'totalPrice': totalPrice
+        				'total_amount': total_amount
         			}
         			list.push(one);
         		}
         		var obj = {
         			'time': time,
-        			'totalPrice': table_vue.totalPrice,
+        			'total_price': table_vue.totalPrice,
         			'list': list
         		}
         		var list2 = new Array()

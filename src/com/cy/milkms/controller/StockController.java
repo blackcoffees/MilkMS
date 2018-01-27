@@ -23,7 +23,9 @@ public class StockController {
 	@ResponseBody
 	public String getStockByMilkName(String milkName){
 		List<StockQuery> rows = service.getStockByMilkName(milkName);
-		return ReturnJsonData.createReturnJsonData(rows.size(), rows);
+		Pager pager = new Pager();
+		pager.setTotal(rows.size());
+		return ReturnJsonData.returnJsonDataSigleList(pager, rows);
 	}
 	
 	@RequestMapping("getStockByCondition")
@@ -31,7 +33,8 @@ public class StockController {
 	public String getStockByCondition(String milkName, Pager pager){
 		List<StockQuery> list = service.getStockByCondition(milkName, pager);
 		int total = service.getStockByConditionCount(milkName);
-		return ReturnJsonData.createReturnJsonData(total, list);
+		pager.setTotal(total);
+		return ReturnJsonData.returnJsonDataSigleList(pager, list);
 	}
 	
 }

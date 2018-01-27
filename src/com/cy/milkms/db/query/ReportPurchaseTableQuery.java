@@ -1,6 +1,6 @@
 package com.cy.milkms.db.query;
 
-public class ReportPurchaseTableQuery extends TotalPurchaseQuery{
+public class ReportPurchaseTableQuery extends PurchaseQuery{
 	private int totalNumber;/*商品分组总数量*/
 	private double totalPrice;/*商品分组总金额*/
 	public int getTotalNumber() {

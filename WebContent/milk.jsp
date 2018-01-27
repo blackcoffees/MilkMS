@@ -119,7 +119,7 @@
                         			<div class="portlet-body flip-scroll">
                         				<div class="row table-tool">
 											<div class="col-md-12">
-												<input type="search" placeholder="牛奶名称 /商品编号" class="form-control input-small input-inline" v-model.lazy="milkName" onkeyup="if(event==13){init_table()}">
+												<input type="search" placeholder="商品名称 /商品编号" class="form-control input-small input-inline" style="width:165px!important" onchange="vue.milkName=this.value" onkeyup="if(event.keyCode==13){vue.milkName=this.value;init_table()}">
 												<button type="button" class="btn btn-success btn-search">搜索</button>
 												<button type="button" class="btn btn-danger btn-add">新增</button>
 											</div>
@@ -127,9 +127,8 @@
                         				<table class="table table-bordered table-striped table-condensed flip-content" id="table">
                         					<thead class="flip-content">
                         						<tr>
-                        							<th>商品号</th>
 													<th>商品编号</th>
-													<th>牛奶名称</th>
+													<th>商品名称</th>
 													<th>规格</th>
 													<th>进货价</th>
 													<th>销售价</th>
@@ -138,15 +137,14 @@
                         					</thead>
                         					<tbody>
                         						<tr v-for="(item, index) in data" :key="item.id">
-                        							<td v-text="item.id"></td>
-													<td v-text="item.number"></td>
+													<td v-text="item.code"></td>
 													<td v-text="item.milk_name"></td>
 													<td v-text="item.specifications"></td>
 													<td v-text="item.purchase_price"></td>
 													<td v-text="item.selling_price"></td>
 													<td>
 														<button class="btn btn-sm green btn-outline filter-submit margin-bottom" @click="edit(item)">编辑</button>
-														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.number)">删除</button>
+														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.code)">删除</button>
 													</td>
 												</tr>
                         					</tbody>
@@ -185,10 +183,10 @@
 						<template v-if="edit_data != null">
 							<tr>
 								<td width="70">商品编号</td>
-								<td><input name="number" id="number" v-model="edit_data.number" data-validat="false" readonly /><span class="red"> *</span></td>
+								<td><input name="code" id="code" v-model="edit_data.code" data-validat="false" readonly /><span class="red"> *</span></td>
 							</tr>
 							<tr>
-								<td width="70">牛奶名称</td>
+								<td width="70">商品名称</td>
 								<td><input name="milk_name" id="milk_name" v-model="edit_data.milk_name" data-validat="true" readonly/><span class="red"> *</span></td>
 							</tr>
 							<tr>
@@ -208,16 +206,16 @@
 							<tr>
 								<td width="70">商品编号</td>
 								<td>
-									<input name="number" type="number" id="number" data-parsley-type="integer" data-parsley-required="true" data-parsley-length="[4,4]"
+									<input name="code" type="number" id="code" data-parsley-type="integer" data-parsley-required="true" data-parsley-length="[4,4]"
 										data-parsley-error-message="商品编号只能是4位数字" data-parsley-required-message="商品编号必须填写" data-parsley-trigger="change" />
 									<span class="red"> *</span>
 								</td>
 							</tr>
 							<tr>
-								<td width="70">牛奶名称</td>
+								<td width="70">商品名称</td>
 								<td>
 									<input name="milk_name" id="milk_name" data-parsley-required="true"
-										data-parsley-required-message="牛奶名称必填" data-parsley-trigger="change"/>
+										data-parsley-required-message="商品名称必填" data-parsley-trigger="change"/>
 									<span class="red"> *</span>
 								</td>
 							</tr>
@@ -276,16 +274,16 @@
 					layer.open({
 						type: '1',
 						skin: 'layui-layer-molv',
-						title: '编辑牛奶',
+						title: '编辑商品',
 						area: ['362px', '368px'],
 						content: $('#layer-window')
 					})
 				},
-				deleted: function(number){
+				deleted: function(code){
 					$.ajax({
 						type:"post",
-						url:"milk/delete_milk.action",
-						data:{"number": number},
+						url:"milk/deleteMilk.action",
+						data:{"code": code},
 						success:function(data){
 							data = eval("("+data+")");
 							layer.msg(data.message);
@@ -331,8 +329,8 @@
 						$("form").parsley().on("form:success", function(){
 							$.ajax({
 								type:'post',
-								url:'milk/edit_milk.action',
 								data:$('.layer-form').serialize(),
+								url: 'milk/editMilk.action',
 								success:function(data){
 									data = eval("("+data+")");
 									layer.msg(data.message);
@@ -348,10 +346,9 @@
 						$("form").parsley().on("form:success", function(){
 							$.ajax({
 								type:'post',
-								url:'milk/add_milk.action',
+								url:'milk/addMilk.action',
 								data:$('.layer-form').serialize(),
 								success:function(data){
-									data = eval("("+data+")");
 									layer.msg(data.message);
 									if(data.succ){
 										layer.closeAll("page");
@@ -372,7 +369,7 @@
 				layer.open({
 					type: '1',
 					skin: 'layui-layer-molv',
-					title: '新增牛奶',
+					title: '新增商品',
 					area: ['362px', '368px'],
 					content: $('#layer-window')
 				})
@@ -392,9 +389,6 @@
 			})
 		})
 		
-		var g_rows = 10;
-        var g_page = 1;
-        
 		function init_add_layer(){
 			$("#number").val("");
 			$("#milk_name").val("");
@@ -403,19 +397,13 @@
 		}        
 		
 		function init_table(rows, page){
-			if(rows != '' && rows > 0)
-				g_rows = rows;
-			else
-				rows = g_rows;
-			
-			if(page != '' && page > 0)
-				g_page = page;
-			else
-				page = g_page;
-			
+			if(typeof(rows) == 'undefined')
+				rows = 10;
+			if(typeof(page) == 'undefined')
+				page = 1;
 			$.ajax({
 				type:'post',
-				url:'milk/get_milk_condition.action',
+				url:'milk/getMilkByCondition.action',
 				data:{
 					rows: rows,
 					page: page,
@@ -423,12 +411,10 @@
 				},
 				success:function(data){
 					data = eval("("+data+")");
-					
+					pager = eval("("+data.pager+")");
 					//一共生成多少页
-					page_total = get_page_total(data.total, g_rows);
-					paginate_tool.init("init_table", page_total, data.total, []);
-					
-					vue.data = data.data;
+					paginate_tool.init("init_table", pager, []);
+					vue.data = data.datas;
 					layer.closeAll('loading');
 				},
 				beforeSend:function(){

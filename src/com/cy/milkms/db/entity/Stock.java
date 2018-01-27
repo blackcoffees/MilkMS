@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 public class Stock {
 	private int milk_ID;
-	private int number;
+	private int quantity;
 	private double cost_price;
 	private Timestamp created;
 	private Timestamp updated;
@@ -14,12 +14,6 @@ public class Stock {
 	}
 	public void setMilk_ID(int milk_ID) {
 		this.milk_ID = milk_ID;
-	}
-	public int getNumber() {
-		return number;
-	}
-	public void setNumber(int number) {
-		this.number = number;
 	}
 	public Timestamp getCreated() {
 		return created;
@@ -38,6 +32,12 @@ public class Stock {
 	}
 	public void setCost_price(double cost_price) {
 		this.cost_price = cost_price;
+	}
+	public int getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 	
 }

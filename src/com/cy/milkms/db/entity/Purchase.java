@@ -1,19 +1,21 @@
 package com.cy.milkms.db.entity;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 public class Purchase {
 	private int id;
-	private Timestamp time;
-	private double total_amount;
+	private Timestamp time;/*采购时间*/
+	private double total_price;/*采购总价*/
 	private Timestamp created;
 	private Timestamp updated;
-	private int status;
+	private int status;/*1 启用，2废弃*/
 	
-	public static int PURCHASE_STATUS_ON = 1;
-	public static int PURCHASE_STATUS_OFF = 2;
-	
+	public double getTotal_price() {
+		return total_price;
+	}
+	public void setTotal_price(double total_price) {
+		this.total_price = total_price;
+	}
 	public int getStatus() {
 		return status;
 	}
@@ -35,15 +37,6 @@ public class Purchase {
 	public void setTime(Timestamp time) {
 		this.time = time;
 	}
-
-	public double getTotal_amount() {
-		return total_amount;
-	}
-
-	public void setTotal_amount(double total_amount) {
-		this.total_amount = total_amount;
-	}
-
 	public Timestamp getCreated() {
 		return created;
 	}
