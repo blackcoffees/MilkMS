@@ -121,8 +121,8 @@
                         				<div class="row table-tool">
 											<div class="col-md-12">
 												<input type="search" placeholder="商家名称/联系人 " class="form-control input-small input-inline" onchange="table_vue.distributorInfo=this.value" onkeyup="if(event.keyCode==13){table_vue.distributorInfo;init_table()}">
-												<button type="button" class="btn btn-success btn-search">搜索</button>
-												<button type="button" class="btn btn-danger btn-add">新增</button>
+												<button type="button" class="btn btn-success btn-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</button>
+												<button type="button" class="btn btn-danger btn-add"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增</button>
 											</div>
 										</div>
                         				<table class="table table-bordered table-striped table-condensed flip-content" id="table">
@@ -146,12 +146,12 @@
 													<td v-text="item.address"></td>
 													<td v-text="item.people"></td>
 													<td v-text="item.phone"></td>
-													<td v-text="item.total_price"></td>
-													<td v-text="item.paid_price"></td>
-													<td v-text="item.unpaid_price"></td>
+													<td>￥((item.total_price))</td>
+													<td>￥((item.paid_price))</td>
+													<td>￥((item.unpaid_price))</td>
 													<td>
-														<button class="btn btn-sm green btn-outline filter-submit margin-bottom" @click="edit(item)">编辑</button>
-														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.ID)">删除</button>
+														<button class="btn btn-sm green btn-outline filter-submit margin-bottom" @click="edit(item)"><i class="fa fa-edit"></i>&nbsp;&nbsp;编辑</button>
+														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.ID)"><i class="fa fa-times"></i>&nbsp;&nbsp;删除</button>
 													</td>
 												</tr>
                         					</tbody>
@@ -226,8 +226,8 @@
 						</template>
 					</table>
 					<div class="layer-button">
-						<input type="submit" class="btn btn-danger btn-submit" @click="current" value="确定"/>
-						<button type="button" class="btn grey-cascade btn-cancle" >取消</button>
+						<button type="button" class="btn btn-danger btn-submit" @click="current" ><i class="fa fa-check"></i>&nbsp;&nbsp;确定</button>
+						<button type="button" class="btn grey-cascade btn-cancle" ><i class="fa fa-times"></i>&nbsp;&nbsp;取消</button>
 					</div>
 				</form>
 			</div>
@@ -265,7 +265,7 @@
         	})
         	
         	var edit_vue = new Vue({
-        		delimeters:["(("+"))"],
+        		delimiters:['((', '))'],
         		el: "#layer-window",
         		data:{
         			edit_data: null
@@ -312,7 +312,7 @@
         	
         	
         	var table_vue = new Vue({
-        		delimeters:["(("+"))"],
+        		delimiters:['((', '))'],
         		el:"#table",
         		data:{
         			distributorInfo: '',

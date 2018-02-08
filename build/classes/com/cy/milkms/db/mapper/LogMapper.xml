@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.milkms.db.dao.LogMapper">
-	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Distributor">
-		<id column="ID" property="ID" jdbcType="VARCHAR"/>
-		<result column="time" property="time"  jdbcType="VARCHAR"/>
+	<resultMap id="baseResultMap" type="com.cy.milkms.db.entity.Log">
+		<id column="id" property="id" jdbcType="INTEGER"/>
+		<result column="time" property="time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="sql" property="sql"  jdbcType="VARCHAR"/>
 		<result column="data" property="data"  jdbcType="VARCHAR"/>
 	</resultMap>
 	
-	
+	<insert id="addLog" useGeneratedKeys="true" keyProperty="log.id">
+		insert into log(time, log.sql, data)
+		values(#{log.time}, #{log.sql}, #{log.data})
+	</insert>
 </mapper>

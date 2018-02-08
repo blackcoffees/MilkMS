@@ -1,5 +1,7 @@
 package com.cy.milkms.service.impl;
 
+import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cy.milkms.db.dao.MilkMapper;
 import com.cy.milkms.db.entity.Milk;
 import com.cy.milkms.db.entity.Stock;
+import com.cy.milkms.service.ILogService;
 import com.cy.milkms.service.IMilkService;
 import com.cy.milkms.service.IStockService;
 import com.cy.milkms.util.DateTool;
@@ -24,6 +27,9 @@ public class MilkService implements IMilkService{
 	
 	@Autowired
 	private IStockService stockService;
+	
+	@Autowired
+	private ILogService logService;
 	
 	@Override
 	public List<Milk> getMilkByCondition(Pager pager, String milkInfo) {
@@ -55,6 +61,8 @@ public class MilkService implements IMilkService{
 		if(addMilkResult <= 0){
 			throw new Exception("新增失败");
 		}
+		/*操作日志*/
+		logService.addLog(mapper, "addMilk", milk);
 		/*增加库存记录*/
 		Stock stock = new Stock();
 		stock.setMilk_ID(milk.getId());
@@ -78,13 +86,19 @@ public class MilkService implements IMilkService{
 	@Override
 	@Transactional
 	public int editMilk(double purchase_price, double selling_price, String code) {
-		return mapper.editMilk(purchase_price, selling_price, code, DateTool.getNowTime());
+		/*操作日志*/
+		Timestamp timestamp =  DateTool.getNowTime();
+		logService.addLog(mapper, "editMilk", new Object[]{purchase_price, selling_price, code, timestamp});
+		return mapper.editMilk(purchase_price, selling_price, code, timestamp);
 	}
 
 	@Override
 	@Transactional
 	public int deleteMilk(String code) {
-		return mapper.deleteMilk(code, DateTool.getNowTime());
+		/*操作日志*/
+		Timestamp timestamp =  DateTool.getNowTime();
+		logService.addLog(mapper, "deleteMilk",new Object[]{code, timestamp});
+		return mapper.deleteMilk(code, timestamp);
 	}
 
 	@Override

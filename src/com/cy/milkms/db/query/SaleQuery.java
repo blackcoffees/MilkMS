@@ -8,6 +8,9 @@ public class SaleQuery extends Sale{
 	private double price;/*商品单价*/
 	private double total_amount;/*商品总价*/
 	private String distributor_name;/*商家名称*/
+	private double cost_price;/*采购成本*/
+	private double total_cost_price; /*采购总成本*/
+	private double total_profit; /*利润*/
 	public double getPrice() {
 		return price;
 	}
@@ -38,5 +41,22 @@ public class SaleQuery extends Sale{
 	public void setDistributor_name(String distributor_name) {
 		this.distributor_name = distributor_name;
 	}
-	
+	public double getCost_price() {
+		return cost_price;
+	}
+	public void setCost_price(double cost_price) {
+		this.cost_price = cost_price;
+	}
+	public double getTotal_cost_price() {
+		return total_cost_price;
+	}
+	public void setTotal_cost_price(double total_cost_price) {
+		this.total_cost_price = total_cost_price;
+	}
+	public double getTotal_profit() {
+		return total_profit;
+	}
+	public void setTotal_profit(double total_profit) {
+		this.total_profit = total_profit;
+	}
 }

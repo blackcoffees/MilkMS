@@ -34,5 +34,9 @@ public class CommonTool {
 	}
 	
 	
-	
+	public static boolean isNull(String string){
+		if(string.equals("") || string == null || string == "")
+			return true;
+		return false;
+	}
 }

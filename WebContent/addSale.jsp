@@ -48,21 +48,25 @@
 				<div class="page-sidebar navbar-collapse collapse">
 
 					<!-- BEGIN SIDEBAR MENU -->
-					<ul class="page-sidebar-menu  page-header-fixed "
-						data-keep-expanded="false" data-auto-scroll="true"
-						data-slide-speed="200" style="padding-top: 20px">
-						<template v-for="(menu, i) in menu_list">
-						<li class="nav-item"
-							:class="{start: i == 1, active: menu.href=='sale.jsp', open: menu.href=='sale.jsp'}">
-							<a :href="menu.href" class="nav-link nav-toggle"> 
-								<i :class="menu.span_icon"></i> 
-								<span class="title" v-text="menu.title"></span> 
-								<span class="selected"></span> 
-								<span class="arrow open"></span>
-							</a>
-						</li>
-						</template>
-					</ul>
+					 <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
+                        	<template v-for="(menu, i) in menu_list">
+                        		<li class="nav-item" :class="{start: i == 1, active: menu.href=='sale.jsp', open: menu.href==now_href}">
+	                                <a :href="menu.href" class="nav-link nav-toggle">
+	                                    <i :class="menu.span_icon"></i>
+	                                    <span class="title" v-text="menu.title"></span>
+	                                    <span class="selected"></span>
+	                                    <span class="arrow"></span>
+	                                </a>
+	                                <ul v-if="menu.children" class="sub-menu" style="display: none;">
+										<li v-for="child in menu.children">
+											<a :href="child.href">
+												<i :class="child.span_icon" ></i>((child.title))
+											</a>
+										</li>
+									</ul>
+	                            </li>
+                        	</template>
+                        </ul>
 					<!-- END SIDEBAR MENU -->
 
 				</div>
@@ -189,7 +193,7 @@
 															<i class="fa fa-bell-o"></i>销售列表
 														</div>
 														<div class="tools">
-															<button type="button" class="btn btn-success" @click="addRow">新增一行</button>
+															<button type="button" class="btn btn-success" @click="addRow"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增一行</button>
 														</div>
 													</div>
 													<div class="portlet-body">
@@ -219,11 +223,11 @@
 																						</tr>
 																					</thead>
 																					<tbody>
-																						<tr v-for="item in data_list" :key="item.number"
+																						<tr v-for="item in data_list" :key="item.code" 
 																							@click="selectGoods($event, item)">
-																							<td v-text="item.number"></td>
+																							<td v-text="item.code"></td>
 																							<td v-text="item.milkName"></td>
-																							<td v-text="item.number"></td>
+																							<td>((item.quantity))</td>
 																						</tr>
 																					</tbody>
 																				</table>
@@ -233,7 +237,7 @@
 																		<td><input type="number" class="edit-input number" data-parsley-type="integer" @change="countTotalPrice" style="width: 70px" /></td>
 																		<td><input class="edit-input price" style="width: 100px" @change="check_price" @keyup="check_price_format" /></td>
 																		<td><input class="edit-input totalPrice" style="width: 100px" readonly /></td>
-																		<td><a href="javascript:;" class="btn btn-outline btn-circle btn-sm red" @click="deleteRow"> <i class="fa fa-trash-o"></i>&nbsp;删除</a></td>
+																		<td><a href="javascript:;" class="btn btn-outline btn-circle btn-sm red" @click="deleteRow"><i class="fa fa-times"></i>&nbsp;&nbsp;删除</a></td>
 																	</tr>
 																</tbody>
 															</table>
@@ -254,13 +258,9 @@
 							</div>
 							<div class="row" style="padding-bottom: 20px;">
 								<div class="col-md-12">
-									<button class="btn btn-danger btn-submit" onclick="add()"
-										style="margin-left: 200px; width: 150px;">确定并打印</button>
-									<button class="btn btn-info"
-										style="margin-left: 30px; width: 150px">预览</button>
-									<button class="btn btn-danger default"
-										onclick="window.location.href='purchase.jsp'"
-										style="margin-left: 30px; width: 150px;">取消</button>
+									<button class="btn btn-danger btn-submit" onclick="add()" style="margin-left: 200px; width: 150px;"> <i class="fa fa-check"></i>&nbsp;&nbsp;确定并打印</button>
+									<button class="btn btn-info" style="margin-left: 30px; width: 150px" onclick="preview()"><i class="fa fa-search"></i>&nbsp;&nbsp;预览</button>
+									<button class="btn btn-danger default" onclick="window.location.href='purchase.jsp'" style="margin-left: 30px; width: 150px;"><i class="fa fa-times"></i>&nbsp;&nbsp;取消</button>
 								</div>
 							</div>
 						</div>
@@ -282,118 +282,197 @@
 
 	</div>
 
-
+	<!-- BEGIN Layer -->
+	<div id="layer-window" style="display: none;overflow:hidden;">
+		<div class="row" style="margin:10px;">
+			<div class="row">
+				<div class="col-md-12" style="text-align:center;font-size:25px;"><b>重庆派派食品有限公司销货清单</b></div>
+			</div>
+			<div class="row" style="margin-top:10px">
+				<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-12" style="margin-bottom:2px;">
+							<span>购物单位（人）：<span>((disturName))</span></span>
+							<span style="float:right">((saleTime))</span>
+						</div>
+					</div>
+					<table class="printTable" border="1" text-align="center" style="width: 100%;">
+						<thead>
+							<tr>
+								<th>产品形码</th>
+								<th>产品名称</th>
+								<th>规格</th>
+								<th>生产日期</th>
+								<th>保质期</th>
+								<th>单位</th>
+								<th>单价（元）</th>
+								<th>数量</th>
+								<th>金额</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="item in view_list">
+								<td></td>
+								<td>((item.milkName))</td>
+								<td>((item.spe))</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td>((item.price))</td>
+								<td>((item.number))</td>
+								<td>((item.totalPrice))</td>
+							</tr>
+							<tr>
+								<td colspan="9">
+									<span>金 额 合 计（大写）</span>
+									<span>((sumOfMoney))</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="row">
+						<div class="col-md-12" style="margin-top:3px;">
+							购 货 者 声 明 ： 已 查 验 供 货 者 的 许 可 证 （ 编 号 ：   S P 5 0 0 1 0 9 1 6 1 0 0 6 7 1 0 2 ）
+						</div>
+						<div class="col-md-12" style="margin-top:7px;">
+							<span>营 业 执 照</span><span style="padding-left:50px;">注册号代码：91500109MA5U4CB32H。</span><span style="padding-left:50px;">和上述食品的合格证明</span>
+						</div>
+						<div class="col-md-12" style="margin-top:7px;">
+							供 货 商 地 址 ： 北 碚 区 辽 宁 路 7 3  号
+						</div>
+						<div class="col-md-12" style="margin-top:7px;">
+							<span>订货电话： 13368329389</span><span style="padding-left:50px;">68287903</span><span style="padding-left:50px;">13983205989</span>
+						</div>
+						<div class="col-md-12" style="margin-top:7px;">
+							<span>供货商（签章）： 李小君</span><span style="padding-left:200px;">收验货人（签章）：</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END Layer -->
 	<script src="static/js/common.js" type="text/javascript"></script>
 	<script>
-		var table_vue = new Vue(
-				{
-					delimiters : [ "((", "))" ],
-					el : ".form",
-					data : {
-						rows : 0,
-						data_list : [],
-						totalPrice : 0,
-						dis_list: []
-					},
-					methods : {
-						addRow : function() {
-							this.rows += 1;
-						},
-						change : function(event) {
-							var name = event.target.value;
-							if (name == '') {
-								return;
-							}
-							$.ajax({
-								type : 'post',
-								url : 'stock/getStockByMilkName.action',
-								data : {
-									'name' : name
-								},
-								success : function(data) {
-									data = eval("(" + data + ")");
-									if (data.total > 0) {
-										table_vue.data_list = data.data;
-										$(event.target).parent().find(".goods-list").show('slow');
-									}
-								}
-							});
-						},
-						selectGoods : function(event, item) {
-							var input = $(event.target).parent().parent().parent().parent().prev("input");
-							var td = $(event.target).parent().parent().parent().parent().parent();
-							td.next("td").text(item.specifications);
-							input.val(item.milkName);
-							td.next("td").next("td").next("td").val(item.selling_price);
-						},
-						check_price_format : function(event) {
-							var obj = event.target;
-							obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的  
-							obj.value = obj.value.replace(".", "$#$").replace(
-									/\./g, "").replace("$#$", ".");
-							obj.value = obj.value.replace(
-									/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数  
-							if (obj.value.indexOf(".") < 0 && obj.value != "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
-								obj.value = parseFloat(obj.value);
-							}
-						},
-						check_price : function(event) {
-							var obj = event.target;
-							if (obj.value > 20000) {
-								layer.tips('金额不能超过20000且只能保留两位小数', obj);
-								$(obj).css('color', 'red');
-								$(obj).attr('data-validat', 'false');
-							} else {
-								$(obj).css('color', 'black');
-								$(obj).attr('data-validat', 'true');
-								this.countTotalPrice(event);
-							}
-						},
-						countTotalPrice : function(event) {
-							var obj = event.target;
-							var totalInput = $(obj).parent().parent().find(
-									".totalPrice");
-							var number = $(obj).parent().parent().find(
-									".number").val();
-							var price = $(obj).parent().parent().find(".price")
-									.val();
-							if (number == '' || price == '')
-								return;
-							var totalPrice = (price * number);
-							totalInput.val(totalPrice);
-							this.totalPrice += totalPrice;
-						},
-						deleteRow : function(event) {
-							var tr = $(event.target).parent().parent();
-							this.rows -= 1;
-							tr.remove();
-							var amount = $(event.target).parent().prev().find("input").val();
-							this.totalPrice -= amount;
-						},
-						disChange: function(event){
-							/*商家选择*/
-							$.ajax({
-								type: 'get',
-								url: 'distributor/getDistributorByCondition.action',
-								data:{
-									'page': 0,
-									'rows': 100,
-									'distributorInfo': $(event.target).val()
-								},
-								success:function(data){
-									data = eval("("+data+")");
-									table_vue.dis_list = data.data;
-									$(event.target).parent().find(".goods-list").show('slow');
-								}
-							})
-						},
-						chooseDis: function(item, event){
-							$("#distributorName").val(item.name);
-							$("#distributorID").val(item.id);
-						}
+		var layer_vue = new Vue({
+			delimiters : [ "((", "))" ],
+			el: '#layer-window',
+			data:{
+				view_list: [],
+				saleTime: '',
+				disturName: '',
+				sumOfMoney: ''
+			}
+		})
+		var table_vue = new Vue({
+			delimiters : [ "((", "))" ],
+			el : ".form",
+			data : {
+				rows : 0,
+				data_list : [],
+				totalPrice : 0,
+				dis_list: []
+			},
+			methods : {
+				addRow : function() {
+					this.rows += 1;
+				},
+				change : function(event) {
+					var name = event.target.value;
+					if (name == '') {
+						return;
 					}
+					$.ajax({
+						type : 'post',
+						url : 'stock/getStockByMilkName.action',
+						data : {
+							'name' : name
+						},
+						success : function(data) {
+							data = eval("(" + data + ")");
+							pager = eval("("+data.pager+")");
+							if (pager.total > 0) {
+								table_vue.data_list = data.datas;
+								$(event.target).parent().find(".goods-list").show('slow');
+							}
+						}
+					});
+				},
+				selectGoods : function(event, item) {
+					var input = $(event.target).parent().parent().parent().parent().prev("input");
+					var td = $(event.target).parent().parent().parent().parent().parent();
+					td.next("td").text(item.specifications);
+					input.val(item.milkName);
+					td.next("td").next("td").next("td").val(item.selling_price);
+				},
+				check_price_format : function(event) {
+					var obj = event.target;
+					obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的  
+					obj.value = obj.value.replace(".", "$#$").replace(
+							/\./g, "").replace("$#$", ".");
+					obj.value = obj.value.replace(
+							/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3');//只能输入两个小数  
+					if (obj.value.indexOf(".") < 0 && obj.value != "") {//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
+						obj.value = parseFloat(obj.value);
+					}
+				},
+				check_price : function(event) {
+					var obj = event.target;
+					if (obj.value > 20000) {
+						layer.tips('金额不能超过20000且只能保留两位小数', obj);
+						$(obj).css('color', 'red');
+						$(obj).attr('data-validat', 'false');
+					} else {
+						$(obj).css('color', 'black');
+						$(obj).attr('data-validat', 'true');
+						this.countTotalPrice(event);
+					}
+				},
+				countTotalPrice : function(event) {
+					var obj = event.target;
+					var totalInput = $(obj).parent().parent().find(
+							".totalPrice");
+					var number = $(obj).parent().parent().find(
+							".number").val();
+					var price = $(obj).parent().parent().find(".price")
+							.val();
+					if (number == '' || price == '')
+						return;
+					var totalPrice = (price * number);
+					totalInput.val(totalPrice);
+					this.totalPrice += totalPrice;
+				},
+				deleteRow : function(event) {
+					var tr = $(event.target).parent().parent();
+					this.rows -= 1;
+					tr.remove();
+					var amount = $(event.target).parent().prev().find("input").val();
+					this.totalPrice -= amount;
+				},
+				disChange: function(event){
+					/*商家选择*/
+					$.ajax({
+						type: 'get',
+						url: 'distributor/getDistributorByCondition.action',
+						data:{
+							'page': 0,
+							'rows': 100,
+							'distributorInfo': $(event.target).val()
+						},
+						success:function(data){
+							data = eval("("+data+")");
+							table_vue.dis_list = data.datas;
+							$(event.target).parent().find(".goods-list").show('slow');
+						}
+					})
+				},
+				chooseDis: function(item, event){
+					$("#distributorName").val(item.name);
+					$("#distributorID").val(item.id);
+				}
+			}
 
-				})
+		})
 
 		function add() {
 			var time = $("input[name='datepicker']").val();
@@ -402,7 +481,6 @@
 				return;
 			}
 			var trs = $(".add-tr");
-			var list = new Array();
 			if (trs.length == 0) {
 				layer.msg("销售项不能为空");
 				return;
@@ -417,46 +495,7 @@
 				layer.msg("请选择支付状态");
 				return;
 			}
-			for (i = 0; i < trs.length; i++) {
-				var tr = $(trs[i]);
-				var milk_name = $(tr.children()[0]).find("input").val();
-				if (milk_name == '') {
-					layer.msg("请选择商品");
-					return;
-				}
-
-				var number = $(tr.children()[2]).find("input").val();
-				if (number == '') {
-					layer.msg("请输入数量");
-					return;
-				}
-
-				var price = $(tr.children()[3]).find("input").val();
-				if (price == '') {
-					layer.msg("请输入单价");
-					return;
-				} else if (price <= 0) {
-					layer.msg("商品单价不能小于等于0");
-					return;
-				}
-
-				var totalPrice = $(tr.children()[4]).find("input").val();
-				if (totalPrice == '') {
-					layer.msg("请输入商品总价");
-					return;
-				} else if (totalPrice <= 0) {
-					layer.msg("商品总价不能小于等于0");
-					return;
-				}
-
-				var one = {
-					"milkName" : milk_name,
-					'number' : number,
-					'price' : price,
-					'totalPrice' : totalPrice
-				}
-				list.push(one);
-			}
+			list = getRows();
 			var obj = {
 				'time' : time,
 				'totalPrice' : table_vue.totalPrice,
@@ -478,9 +517,7 @@
 					data = eval("(" + data + ")");
 					if (data.succ) {
 						layer.msg(data.message);
-						setTimeout(function() {
-							window.location.href = "sale.jsp";
-						}, 2000);
+						$("#layer-window").jqprint();
 					} else {
 						layer.msg(data.message);
 					}
@@ -527,7 +564,137 @@
 				$(this).parents(".dropdown-menu").prev("button").prev("button").text($(this).text());
 				$("#status").val($(this).attr("data-status"));
 			})
+			
+			$(".btn-close-layer").click(function(){
+				layer.closeAll("iframe");
+			})
 		})
+		
+		function preview(){
+			if(getRows()){
+				layer.open({
+				  type: 1,
+				  title: false,
+				  closeBtn: 0,
+				  area: '884px',
+				  shadeClose: true,
+				  content: $('#layer-window')
+				});
+			}
+		}
+		
+		function getRows(){
+			var trs = $(".add-tr");
+			list = new Array();
+			if(trs.length == 0){
+				layer.msg("请选择商品");
+				return false;
+			}
+			for (i = 0; i < trs.length; i++) {
+				var tr = $(trs[i]);
+				var milk_name = $(tr.children()[0]).find("input").val();
+				if (milk_name == '') {
+					layer.msg("请选择商品");
+					return false;
+				}
+
+				var number = $(tr.children()[2]).find("input").val();
+				if (number == '') {
+					layer.msg("请输入数量");
+					return false;
+				}
+
+				var price = $(tr.children()[3]).find("input").val();
+				if (price == '') {
+					layer.msg("请输入单价");
+					return false;
+				} else if (price <= 0) {
+					layer.msg("商品单价不能小于等于0");
+					return false;
+				}
+
+				var totalPrice = $(tr.children()[4]).find("input").val();
+				if (totalPrice == '') {
+					layer.msg("请输入商品总价");
+					return false;
+				} else if (totalPrice <= 0) {
+					layer.msg("商品总价不能小于等于0");
+					return false;
+				}
+				var one = {
+					"milkName" : milk_name,
+					'number' : number,
+					'price' : price,
+					'totalPrice' : totalPrice,
+					'spe': $(tr.children()[1]).html()
+				}
+				list.push(one);
+			}
+			var saleTime = $("input[name='datepicker']").val();
+			if(saleTime == 'undefined' || saleTime == ''){
+				layer.msg("请选择销售时间");
+				return false;
+			}
+			layer_vue.saleTime = saleTime.split("-")[0]+" 年 "+saleTime.split("-")[1]+" 月 "+saleTime.split("-")[2].split(" ")[0]+" 日"
+			var disturName = $("#distributorName").val();
+			if(typeof(disturName) == 'undefined' || disturName == "" || disturName == null){
+				layer.msg("请选择商家");
+				return false;
+			}
+			layer_vue.disturName = disturName;
+			layer_vue.view_list = list;
+			layer_vue.sumOfMoney = amountInWords(table_vue.totalPrice);
+			return true;
+		}
+		
+		function amountInWords(sumOfMoney){
+			/*大写金额*/
+			var string = '';
+			if(sumOfMoney >= 10000){
+				string += capitalMap(sumOfMoney / 10000) + " 万 ";
+				sumOfMoney = sumOfMoney % 10000;
+			}
+			if(sumOfMoney >= 1000){
+				string += capitalMap(sumOfMoney / 1000) + " 仟 ";
+				sumOfMoney = sumOfMoney % 1000;
+			}
+			if(sumOfMoney >= 100){
+				string += capitalMap(sumOfMoney / 100) + " 佰 ";
+				sumOfMoney = sumOfMoney % 100;
+			}
+			if(sumOfMoney >= 10){
+				string += capitalMap(sumOfMoney / 10) + " 拾 ";
+				sumOfMoney = sumOfMoney % 10;
+			}
+			if(sumOfMoney >= 1){
+				string += capitalMap(sumOfMoney / 1) + " 元 ";
+				sumOfMoney = sumOfMoney % 1;
+			}
+			if(sumOfMoney >= 0.1){
+				string += capitalMap(sumOfMoney / 0.1) + " 角 ";
+				sumOfMoney = sumOfMoney % 0.1;
+			}
+			if(sumOfMoney >= 0.01){
+				string += capitalMap(sumOfMoney / 0.01) + " 分 ";
+				sumOfMoney = sumOfMoney % 0.01;
+			}
+		}
+		
+		function capitalMap(number){
+			switch(number){
+				case 0: return '零';
+				case 1: return '壹';
+				case 2: return '贰';
+				case 3: return '叁';
+				case 4: return '肆';
+				case 5: return '伍';
+				case 6: return '陆';
+				case 7: return '柒';
+				case 8: return '捌';
+				case 9: return '玖';
+				
+			}
+		}
 	</script>
 </body>
 

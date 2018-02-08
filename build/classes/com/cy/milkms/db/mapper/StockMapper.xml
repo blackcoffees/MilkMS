@@ -11,7 +11,7 @@
 	
 	<resultMap id="stockQueryResultMap" type="com.cy.milkms.db.query.StockQuery">
 		<result column="milkName" property="milkName" jdbcType="VARCHAR"/>
-		<result column="milkquantity" property="milkquantity"  jdbcType="VARCHAR"/>
+		<result column="code" property="code"  jdbcType="VARCHAR"/>
 	</resultMap>
 	
 	<update id="updateStock">
@@ -28,17 +28,17 @@
 	</insert>
 	
 	<select id="getStockByMilkName" resultMap="stockQueryResultMap">
-		select stock.milk_id, stock.quantity, milk.milk_name as milkName, milk.quantity as milkquantity, milk.specifications from stock left join milk on 
+		select stock.milk_id, stock.quantity, milk.milk_name as milkName, milk.code, milk.specifications from stock left join milk on 
 		milk.id = stock.milk_id 
 		<if test="milkName != null and milkName != ''">
-			and (milk.milk_name like '%${milkName}%' or milk.quantity like '%${milkName}%') 
+			and (milk.milk_name like '%${milkName}%' or milk.code like '%${milkName}%') 
 		</if>
 	</select>
 	
 	<select id="getStockByCondition" resultMap="stockQueryResultMap">
-		select stock.quantity, milk.milk_name as milkName from stock, milk where stock.milk_id = milk.id
+		select stock.quantity, milk.milk_name as milkName, stock.cost_price from stock, milk where stock.milk_id = milk.id
 		<if test="milkName != null and milkName != ''">
-			and (milk.milk_name like '%${milkName}%' or milk.quantity like '%${milkName}%')
+			and (milk.milk_name like '%${milkName}%' or milk.code like '%${milkName}%')
 		</if>
 		order by stock.quantity desc
 		limit #{pager.start}, #{pager.rows}
@@ -47,7 +47,7 @@
 	<select id="getStockByConditionCount" resultType="int">
 		select count(stock.milk_id) from stock, milk where stock.milk_id = milk.id
 		<if test="milkName != null and milkName != ''">
-			and (milk.milk_name like '%${milkName}%' or milk.quantity like '%${milkName}%')
+			and (milk.milk_name like '%${milkName}%' or milk.code like '%${milkName}%')
 		</if>
 	</select>
 </mapper>

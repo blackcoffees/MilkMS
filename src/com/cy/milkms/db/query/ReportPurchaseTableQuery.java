@@ -1,19 +1,25 @@
 package com.cy.milkms.db.query;
 
 public class ReportPurchaseTableQuery extends PurchaseQuery{
-	private int totalNumber;/*商品分组总数量*/
-	private double totalPrice;/*商品分组总金额*/
-	public int getTotalNumber() {
-		return totalNumber;
+	private int totalPurchaseQuantity;/*商品分组总数量*/
+	private double totalPurchasePrice;/*商品分组总金额*/
+	private int code;/*商品编号*/
+	public int getTotalPurchaseQuantity() {
+		return totalPurchaseQuantity;
 	}
-	public void setTotalNumber(int totalNumber) {
-		this.totalNumber = totalNumber;
+	public void setTotalPurchaseQuantity(int totalPurchaseQuantity) {
+		this.totalPurchaseQuantity = totalPurchaseQuantity;
 	}
-	public double getTotalPrice() {
-		return totalPrice;
+	public double getTotalPurchasePrice() {
+		return totalPurchasePrice;
 	}
-	public void setTotalPrice(double totalPrice) {
-		this.totalPrice = totalPrice;
+	public void setTotalPurchasePrice(double totalPurchasePrice) {
+		this.totalPurchasePrice = totalPurchasePrice;
 	}
-	
+	public int getCode() {
+		return code;
+	}
+	public void setCode(int code) {
+		this.code = code;
+	}
 }

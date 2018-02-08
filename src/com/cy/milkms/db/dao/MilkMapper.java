@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
-import org.springframework.messaging.handler.annotation.Payload;
 
 import com.cy.milkms.db.entity.Milk;
 import com.cy.milkms.util.Pager;

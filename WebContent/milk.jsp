@@ -120,8 +120,8 @@
                         				<div class="row table-tool">
 											<div class="col-md-12">
 												<input type="search" placeholder="商品名称 /商品编号" class="form-control input-small input-inline" style="width:165px!important" onchange="vue.milkName=this.value" onkeyup="if(event.keyCode==13){vue.milkName=this.value;init_table()}">
-												<button type="button" class="btn btn-success btn-search">搜索</button>
-												<button type="button" class="btn btn-danger btn-add">新增</button>
+												<button type="button" class="btn btn-success btn-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</button>
+												<button type="button" class="btn btn-danger btn-add"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增</button>
 											</div>
 										</div>
                         				<table class="table table-bordered table-striped table-condensed flip-content" id="table">
@@ -140,11 +140,11 @@
 													<td v-text="item.code"></td>
 													<td v-text="item.milk_name"></td>
 													<td v-text="item.specifications"></td>
-													<td v-text="item.purchase_price"></td>
-													<td v-text="item.selling_price"></td>
+													<td>￥((item.purchase_price))</td>
+													<td>￥((item.selling_price))</td>
 													<td>
-														<button class="btn btn-sm green btn-outline filter-submit margin-bottom" @click="edit(item)">编辑</button>
-														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.code)">删除</button>
+														<button class="btn btn-sm green btn-outline filter-submit margin-bottom" @click="edit(item)"><i class="fa fa-edit"></i>&nbsp;&nbsp;编辑</button>
+														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.code)"><i class="fa fa-times"></i>&nbsp;&nbsp;删除</button>
 													</td>
 												</tr>
                         					</tbody>
@@ -250,8 +250,8 @@
 						</template>
 					</table>
 					<div class="layer-button">
-						<input type="submit" class="btn btn-danger btn-submit" @click="current" value="确定"/>
-						<button type="button" class="btn grey-cascade btn-cancle" >取消</button>
+						<button type="submit" class="btn btn-danger btn-submit" @click="current"><i class="fa fa-check"></i>&nbsp;&nbsp;确定</button>
+						<button type="button" class="btn grey-cascade btn-cancle"><i class="fa fa-times"></i>&nbsp;&nbsp;取消</button>
 					</div>
 				</form>
 			</div>
@@ -325,37 +325,47 @@
 					}
 				},
 				current:function(){
+					var once = false;
 					if(this.edit_data != null){
 						$("form").parsley().on("form:success", function(){
-							$.ajax({
-								type:'post',
-								data:$('.layer-form').serialize(),
-								url: 'milk/editMilk.action',
-								success:function(data){
-									data = eval("("+data+")");
-									layer.msg(data.message);
-									if(data.succ){
-										layer.closeAll("page");
-										init_table();
-									}						
-								}
-							});
+							if(!once){
+								$.ajax({
+									type:'post',
+									data:$('.layer-form').serialize(),
+									url: 'milk/editMilk.action',
+									success:function(data){
+										data = eval("("+data+")");
+										layer.msg(data.message);
+										if(data.succ){
+											layer.closeAll("page");
+											init_table();
+										}
+										return false;
+									}
+								});
+							}
+							once = true;							
 						});
 					}
 					else{
 						$("form").parsley().on("form:success", function(){
-							$.ajax({
-								type:'post',
-								url:'milk/addMilk.action',
-								data:$('.layer-form').serialize(),
-								success:function(data){
-									layer.msg(data.message);
-									if(data.succ){
-										layer.closeAll("page");
-										init_table();
-									}						
-								}
-							});
+							if(!once){
+								$.ajax({
+									type:'post',
+									url:'milk/addMilk.action',
+									data:$('.layer-form').serialize(),
+									success:function(data){
+										data = eval("("+data+")");
+										layer.msg(data.message);
+										if(data.succ){
+											layer.closeAll("page");
+											init_table();
+										}
+										return false;
+									}
+								});
+							}
+							once = true;
 						});
 					}
 				}

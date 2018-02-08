@@ -19,6 +19,7 @@ import com.cy.milkms.db.entity.Purchase_detailed;
 import com.cy.milkms.db.entity.Stock;
 import com.cy.milkms.db.entity.StockRecord;
 import com.cy.milkms.db.query.PurchaseQuery;
+import com.cy.milkms.service.ILogService;
 import com.cy.milkms.service.IMilkService;
 import com.cy.milkms.service.IPurchaseDetailedService;
 import com.cy.milkms.service.IPurchaseService;
@@ -49,6 +50,9 @@ public class PurchaseService implements IPurchaseService{
 	
 	@Autowired
 	private IStockRecordService stockRecordService;
+	
+	@Autowired
+	private ILogService logService;
 
 	@Override
 	public List<List<PurchaseQuery>> getPurchaseByConditon(String purchaseID, String startTime, String endTime, Pager pager) {
@@ -103,6 +107,8 @@ public class PurchaseService implements IPurchaseService{
 		int add_pur = mapper.addPurchase(purchase);
 		if(add_pur <= 0)
 			throw new BusinessException("新增采购单失败");
+		/*操作日志*/
+		logService.addLog(mapper, "addPurchase", purchase);
 		
 		/*采购分单*/
 		String listStr = jsonArray.getJSONObject(0).getString("list");
@@ -224,6 +230,8 @@ public class PurchaseService implements IPurchaseService{
 				throw new BusinessException("修改库存失败，请联系管理员");
 			}
 		}
+		/*操作日志*/
+		logService.addLog(mapper, "updatePurchaseOff", purchaseID);
 		return mapper.updatePurchaseOff(purchaseID);
 	}
 	

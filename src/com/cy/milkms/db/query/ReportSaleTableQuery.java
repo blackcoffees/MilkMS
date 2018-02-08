@@ -1,41 +1,26 @@
 package com.cy.milkms.db.query;
 
 public class ReportSaleTableQuery extends SaleQuery{
-	private int totalNumber;/*商品分组总数量*/
-	private double totalPrice;/*商品分组总金额*/
-	private double totalProfit;/*商品分组总利润*/
-	
-	private double totalCostPrice;/*加权平均总成本*/
-	private double costPrice;/*加权平均成本*/
-	public int getTotalNumber() {
-		return totalNumber;
+	public int totalSaleQuantity; /*分组销售总数量*/
+	public double totalSalePrice; /*分组销售总金额*/
+	public double totalSaleProfit; /*分组销售总利润*/
+	public int getTotalSaleQuantity() {
+		return totalSaleQuantity;
 	}
-	public void setTotalNumber(int totalNumber) {
-		this.totalNumber = totalNumber;
+	public void setTotalSaleQuantity(int totalSaleQuantity) {
+		this.totalSaleQuantity = totalSaleQuantity;
 	}
-	public double getTotalPrice() {
-		return totalPrice;
+	public double getTotalSalePrice() {
+		return totalSalePrice;
 	}
-	public void setTotalPrice(double totalPrice) {
-		this.totalPrice = totalPrice;
+	public void setTotalSalePrice(double totalSalePrice) {
+		this.totalSalePrice = totalSalePrice;
 	}
-	public double getTotalProfit() {
-		return totalProfit;
+	public double getTotalSaleProfit() {
+		return totalSaleProfit;
 	}
-	public void setTotalProfit(double totalProfit) {
-		this.totalProfit = totalProfit;
-	}
-	public double getCostPrice() {
-		return costPrice;
-	}
-	public void setCostPrice(double costPrice) {
-		this.costPrice = costPrice;
-	}
-	public double getTotalCostPrice() {
-		return totalCostPrice;
-	}
-	public void setTotalCostPrice(double totalCostPrice) {
-		this.totalCostPrice = totalCostPrice;
+	public void setTotalSaleProfit(double totalSaleProfit) {
+		this.totalSaleProfit = totalSaleProfit;
 	}
 	
 }

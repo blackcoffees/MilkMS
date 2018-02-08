@@ -38,6 +38,10 @@ var menu_vue = new Vue({
 				span_icon: 'icon-briefcase',
 				title: '  销售报表',
 				href: 'saleReport.jsp'
+			},{
+				span_icon: 'icon-paper-plane',
+				title: '  分析报表',
+				href: 'goodsAnalysisReport.jsp'
 			}]
 		}],
 		now_href: window.location.href.split("MilkMS/")[1]

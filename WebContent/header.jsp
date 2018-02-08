@@ -45,3 +45,6 @@
 <!-- highcharts插件 -->
 <link href="static/css/highcharts.css" rel="stylesheet" type="text/css" />
 <script src="static/js/highcharts.js" type="text/javascript"></script>
+
+<!-- 打印 -->
+<script src="static/js/jquery.jqprint-0.3.js" type="text/javascript"></script>

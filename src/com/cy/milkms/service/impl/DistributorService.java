@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cy.milkms.db.dao.DistributorMapper;
 import com.cy.milkms.db.entity.Distributor;
 import com.cy.milkms.service.IDistributorService;
+import com.cy.milkms.service.ILogService;
 import com.cy.milkms.util.DateTool;
 import com.cy.milkms.util.Enum;
 import com.cy.milkms.util.Pager;
@@ -20,22 +21,22 @@ public class DistributorService implements IDistributorService{
 	@Autowired
 	private DistributorMapper mapper;
 	
+	@Autowired
+	private ILogService logService;
+	
 	@Override
 	public List<Distributor> getDistributorByCondition(String distributorInfo, Pager pager) {
-		// TODO Auto-generated method stub
 		return mapper.getDistributorByCondition(distributorInfo, pager);
 	}
 
 	@Override
 	public int getDistributorByConditionCount(String distributorInfo) {
-		// TODO Auto-generated method stub
 		return mapper.getDistributorByConditionCount(distributorInfo);
 	}
 
 	@Override
 	@Transactional
 	public int addDistributor(Distributor distributor) {
-		// TODO Auto-generated method stub
 		int exit = this.getDistributorNameCount(distributor.getName());
 		if(exit > 0) return -1;
 		distributor.setPaid_price(0);
@@ -44,39 +45,42 @@ public class DistributorService implements IDistributorService{
 		distributor.setCreated(DateTool.getNowTime());
 		distributor.setUpdated(DateTool.getNowTime());
 		distributor.setStatus(Enum.DISTRIBUTOR_STATUS_ON);
+		/*操作日志*/
+		logService.addLog(mapper, "addDistributor", distributor);
 		return mapper.addDistributor(distributor);
 	}
 
 	@Override
 	public int getDistributorNameCount(String name) {
-		// TODO Auto-generated method stub
 		return mapper.getDistributorByNameCount(name);
 	}
 
 	@Override
 	public int deleteDistributor(String distributorID) {
-		// TODO Auto-generated method stub
 		Timestamp updated = DateTool.getNowTime();
+		/*操作日志*/
+		logService.addLog(mapper, "deleteDistributor", new Object[]{distributorID, updated});
 		return mapper.deleteDistributor(distributorID, updated);
 	}
 
 	@Override
 	@Transactional
 	public int updateDistributor(String address, String people, String phone, String name) {
-		// TODO Auto-generated method stub
 		Timestamp updated = DateTool.getNowTime(); 
+		/*操作日志*/
+		logService.addLog(mapper, "updateDistributor", new Object[]{address, people, phone, updated, name});
 		return mapper.updateDistributor(address, people, phone, updated, name);
 	}
 
 	@Override
 	public Distributor getDistributorByID(int distributorID) {
-		// TODO Auto-generated method stub
 		return mapper.getDistributorByID(distributorID);
 	}
 
 	@Override
 	public int updateDistributorAmount(Distributor distributor) {
-		// TODO Auto-generated method stub
+		/*操作日志*/
+		logService.addLog(mapper, "updateDistributorAmount", distributor);
 		return mapper.updateDistributorAmount(distributor);
 	}
 

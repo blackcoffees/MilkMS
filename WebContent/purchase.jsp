@@ -128,8 +128,9 @@
 												<input type="text" id="purchase_time" placeholder="采购时间" class="form-control input-inline" style="width: 340px;"/>
 												<input class="searchTime" id="startTime" />
 												<input class="searchTime" id="endTime" />
-												<button type="button" class="btn btn-success btn-search">搜索</button>
-												<button type="button" class="btn btn-danger btn-add">新增</button>
+												<button type="button" class="btn btn-success btn-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</button>
+												<button type="button" class="btn btn-danger btn-add"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增</button>
+												<button type="button" class="btn blue btn-export"><i class="fa fa-sign-in"></i>&nbsp;&nbsp;导出</button>
 											</div>
 										</div>
                         				<table class="table table-bordered table-striped dataTable table-condensed flip-content" id="table">
@@ -151,12 +152,12 @@
 	                        							</td>
 	                        							<td v-text="purchase[0].id"></td>
 														<td v-text="purchase[0].time"></td>
-														<td v-text="purchase[0].total_price"></td>
+														<td>￥((purchase[0].total_price))</td>
 														<td>
 															<span v-if="purchase[0].status == 2">废弃</span>
 														</td>
 														<td>
-															<button v-if="purchase[0].status==1" class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(purchase[0].id)">废弃</button>
+															<button v-if="purchase[0].status==1" class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(purchase[0].id)"><i class="fa fa-times"></i>&nbsp;&nbsp;废弃</button>
 														</td>
 													</tr>
 													<tr style="display: none;">
@@ -175,9 +176,9 @@
 																	<tr v-for="item in purchase">
 																		<td></td>
 																		<td>((item.milk_name))</td>
-																		<td>((item.quantity))</td>
-																		<td>((item.price))</td>
-																		<td>((item.total_amount))</td>
+																		<td>((item.quantity))件</td>
+																		<td>￥((item.price))</td>
+																		<td>￥((item.total_amount))</td>
 																	</tr>
 																</tbody>
 															</table>
@@ -211,7 +212,26 @@
             <!-- END FOOTER -->
             
         </div>
-		
+		<!-- BEGIN Layer -->
+		<div id="layer-export" style="display:none">
+			<div class="col-mid-6">
+				<form class="layer-form" data-parsley-validate onsubmit="return false">
+					<table>
+						<tr>
+							<td width="70">采购时间</td>
+							<td><input name="export_time" id="export_time"/><span class="red"> *</span></td>
+						</tr>
+					</table>
+					<input style="display:none" id="exportStartTime"/>
+					<input style="display:none" id="exportEndTime"/>
+					<div class="layer-button">
+						<input type="button" class="btn btn-danger btn-submit btn-export-sure" value="确定"/>
+					<button type="button" class="btn grey-cascade btn-cancle" >取消</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- END Layer -->
         <script src="static/js/common.js" type="text/javascript"></script>
         <script src="static/js/paginate_tool.js" type="text/javascript"></script>
         <script>
@@ -282,8 +302,110 @@
 					$(this).parents("tr").next("tr").hide(500);
 				}
 			});
-		})
-		
+			
+			/*导出*/
+			$(".btn-export").click(function(){
+				layer.open({
+					type: '1',
+					skin: 'layui-layer-molv',
+					title: '导出',
+					area: ['362px', '200px'],
+					content: $('#layer-export')
+				})
+			});
+			
+			$(".btn-export-sure").on("click",function(){
+				var startTime = $("#exportStartTime").val();
+				var endTime = $("#exportEndTime").val();
+				$.ajax({
+					type: 'post',
+					url: 'report/exportExcel.action',
+					data:{
+						'startTime': startTime,
+						'endTime': endTime,
+						'type': 1
+					},
+					beforeSend:function(){
+						layer.load(1, {
+							shade: [0.1, '#fff']
+						});
+					},
+					error: function(){
+						layer.closeAll("loading");
+					},
+					success:function(data){
+						layer.closeAll("loading");
+						data = eval("("+data+")");
+						layer.msg(data.message);
+					}
+				})
+			});
+			
+
+			$("#purchase_time").daterangepicker({
+                showDropdowns: true,
+				autoUpdateInput: false,
+				showWeekNumbers: false,
+				linkedCalendars: false,
+				drops: "down",
+				"locale": {
+                    format: 'YYYY-MM-DD',
+                    applyLabel: "应用",
+                    cancelLabel: "取消",
+                    daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ], 
+                    monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',  
+                                   '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                }
+			},
+            function(start, end, label){
+				if(!this.startDate)
+                	$("#purchase_time").val('');
+				else{
+					$("#purchase_time").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format("YYYY-MM-DD"));
+					$("#startTime").val(this.startDate.format(this.locale.format));
+					$("#endTime").val(this.endDate.format("YYYY-MM-DD"));
+				}
+            });
+			
+			$("#purchase_time").on('apply.daterangepicker', function(ev, picker) {
+				$("#purchase_time").val(picker.startDate.format('YYYY-MM-DD') + " 至 " + picker.endDate.format("YYYY-MM-DD"));
+				$("#startTime").val(picker.startDate.format('YYYY-MM-DD'));
+				$("#endTime").val(picker.endDate.format("YYYY-MM-DD"));
+            });
+			
+			
+			$("#export_time").daterangepicker({
+                showDropdowns: true,
+				autoUpdateInput: false,
+				showWeekNumbers: false,
+				linkedCalendars: false,
+				drops: "down",
+				"locale": {
+                    format: 'YYYY-MM-DD',
+                    applyLabel: "应用",
+                    cancelLabel: "取消",
+                    daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ], 
+                    monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',  
+                                   '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                }
+			},
+            function(start, end, label){
+				if(!this.startDate)
+                	$("#export_time").val('');
+				else{
+					$("#export_time").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format("YYYY-MM-DD"));
+					$("#exportStartTime").val(this.startDate.format(this.locale.format));
+					$("#exportEndTime").val(this.endDate.format("YYYY-MM-DD"));
+				}
+            });
+			
+			$("#export_time").on('apply.daterangepicker', function(ev, picker) {
+				$("#export_time").val(picker.startDate.format('YYYY-MM-DD') + " 至 " + picker.endDate.format("YYYY-MM-DD"));
+				$("#exportStartTime").val(picker.startDate.format('YYYY-MM-DD'));
+				$("#exportEndTime").val(picker.endDate.format("YYYY-MM-DD"));
+            });
+		});
+        
 		function init_add_layer(){
 			$("#number").val("");
 			$("#milk_name").val("");
@@ -327,37 +449,6 @@
 				}
 				
 			})
-			
-			$("#purchase_time").daterangepicker({
-                showDropdowns: true,
-				autoUpdateInput: false,
-				showWeekNumbers: false,
-				linkedCalendars: false,
-				drops: "down",
-				"locale": {
-                    format: 'YYYY-MM-DD',
-                    applyLabel: "应用",
-                    cancelLabel: "取消",
-                    daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ], 
-                    monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',  
-                                   '七月', '八月', '九月', '十月', '十一月', '十二月' ],
-                }
-			},
-            function(start, end, label){
-				if(!this.startDate)
-                	$("#purchase_time").val('');
-				else{
-					$("#purchase_time").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format("YYYY-MM-DD"));
-					$("#startTime").val(this.startDate.format(this.locale.format));
-					$("#endTime").val(this.endDate.format("YYYY-MM-DD"));
-				}
-            });
-			
-			$("#purchase_time").on('apply.daterangepicker', function(ev, picker) {
-				$("#purchase_time").val(picker.startDate.format('YYYY-MM-DD') + " 至 " + picker.endDate.format("YYYY-MM-DD"));
-				$("#startTime").val(picker.startDate.format('YYYY-MM-DD'));
-				$("#endTime").val(picker.endDate.format("YYYY-MM-DD"));
-            });
 		}
         </script>
     </body>

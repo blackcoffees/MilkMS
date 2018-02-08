@@ -68,6 +68,7 @@ public class MilkController {
 		try {
 			res = service.addMilk(milk);
 		} catch (Exception e) {
+			e.printStackTrace();
 			res.put("message", e.getMessage());
 		}
 		return JSONObject.fromObject(res).toString();

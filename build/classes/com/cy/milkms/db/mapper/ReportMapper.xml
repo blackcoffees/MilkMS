@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cy.milkms.db.dao.ReportMapper">
- 
+	
+	<!-- 采购：查询汇总数据 -->
 	<resultMap id="reportPurchaseSummaryDataQueryMap" type="com.cy.milkms.db.query.ReportPurchaseSummaryDataQuery">
 		<result column="summaryPurchaseOrderCount" property="summaryPurchaseOrderCount"  jdbcType="INTEGER"/>
 		<result column="summaryPurchaseMilkNumber" property="summaryPurchaseMilkNumber"  jdbcType="INTEGER"/>
 		<result column="summaryPurchaseMilkPrice" property="summaryPurchaseMilkPrice"  jdbcType="DOUBLE"/>
 		<result column="summaryFirstThreeMilkName" property="summaryFirstThreeMilkName"  jdbcType="VARCHAR"/>
-	</resultMap>
-	
-	<resultMap id="reportPurchaseTableQueryMap" type="com.cy.milkms.db.query.ReportPurchaseTableQuery" extends="com.cy.milkms.db.dao.PurchaseMapper.purchaseQueryMap">
-		<result column="totalNumber" property="totalNumber"  jdbcType="INTEGER"/>
-		<result column="totalPrice" property="totalPrice"  jdbcType="DOUBLE" />
-	</resultMap>
-	
-	<resultMap id="reportSaleTableQueryMap" type="com.cy.milkms.db.query.ReportSaleTableQuery" extends="com.cy.milkms.db.dao.SaleMapper.totalSaleQuery">
-		<result column="totalNumber" property="totalNumber"  jdbcType="INTEGER"/>
-		<result column="totalPrice" property="totalPrice"  jdbcType="DOUBLE" />
-		<result column="totalProfit" property="totalProfit"  jdbcType="DOUBLE" />
-		<result column="costPrice" property="costPrice"  jdbcType="DOUBLE" />
 	</resultMap>
 	
 	<select id="getPurchaseReportSummaryData" resultType="com.cy.milkms.db.query.ReportPurchaseSummaryDataQuery" parameterType="com.cy.milkms.db.query.ReportPurchaseSummaryDataQuery" statementType="CALLABLE">
@@ -30,115 +19,531 @@
 			#{summaryDataQuery.summaryFirstThreeMilkName, jdbcType=VARCHAR, mode=OUT})
 	</select>
 	
-	<select id="getPurchaseReportLimit" resultMap="reportPurchaseTableQueryMap">
+	<!-- 采购：查询表格数据 -->
+	<resultMap id="reportPurchaseTableQueryMap" type="com.cy.milkms.db.query.ReportPurchaseTableQuery" extends="com.cy.milkms.db.dao.PurchaseMapper.purchaseQueryMap">
+		<result column="totalPurchaseQuantity" property="totalPurchaseQuantity"  jdbcType="INTEGER"/>
+		<result column="totalPurchasePrice" property="totalPurchasePrice"  jdbcType="DOUBLE" />
+		<result column="code" property="code" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<select id="getPurchaseReportTableData" resultMap="reportPurchaseTableQueryMap">
 		SELECT
-			milk.milk_name as name,
+			milk.`code`,
+			milk.milk_name,
 			purchase.id,
 			purchase.time,
-			detailed.number,
-			detailed.purchase_price,
-			detailed.total_amount
+			detailed.quantity,
+			detailed.price,
+			detailed.total_price as total_amount
+		FROM
+			milk,
+			purchase,
+			purchase_detailed AS detailed
+		WHERE
+			milk.id = detailed.milk_id
+		AND purchase.id = detailed.purchase_id
+		AND detailed.milk_id IN (
+			SELECT
+				t.milk_id
+			FROM
+				(
+					SELECT DISTINCT
+						milk_id,
+						SUM(
+							purchase_detailed.total_price
+						) AS t_total_amount
+					FROM
+						purchase_detailed,
+						purchase,
+						milk
+					WHERE
+						purchase.id = purchase_detailed.purchase_id
+					AND milk.id = purchase_detailed.milk_id
+					AND purchase.`status` = 1
+					AND #{startTime} &lt;= time
+					AND time &lt;= #{endTime} 
+					<if test="milkInfo != null and milkInfo != ''">
+						AND (milk.milk_name like '%${milkInfo}%' or milk.code like '%${milkInfo}%')
+					</if>
+					GROUP BY
+						purchase_detailed.milk_id
+					ORDER BY
+						t_total_amount DESC
+					LIMIT #{pager.start}, #{pager.rows}
+				) AS t
+		)
+	</select>
+	
+	
+	<!-- 采购：查询折线图x轴日期数据 -->	
+	<resultMap id="reportLineDateQueryMap" type="com.cy.milkms.db.query.LineDateQuery">
+		<result column="time" property="time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+	</resultMap>
+	
+	<select id="getPurchaseReportDateData" resultMap="reportLineDateQueryMap">
+		SELECT DISTINCT
+			time
+		FROM
+			purchase,
+			purchase_detailed as detailed,
+			milk
+		WHERE
+			purchase.status = 1
+			AND purchase.id = detailed.purchase_id
+			AND milk.id = detailed.milk_id
+			AND #{startTime} &lt;= time 
+			AND time &lt;= #{endTime}
+			<if test="milkInfo != null and milkInfo != ''">
+				AND (milk.milk_name like '%${milkInfo}%' or milk.code like '%${milkInfo}%')
+			</if>
+		ORDER BY
+			time
+	</select>
+	
+	<!-- 采购：查询折线图y轴数据 -->
+	<resultMap id="reprotLineChartQueryMap" type="com.cy.milkms.db.query.LineChartQuery">
+		<result column="milk_name" property="milk_name" jdbcType="VARCHAR" />
+		<result column="distributor_name" property="distributor_name" jdbcType="VARCHAR" />
+		<result column="time" property="time" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+		<result column="total_price" property="total_price" jdbcType="DOUBLE"/>
+	</resultMap>
+	
+	<select id="getPurchaseReportLineData" resultMap="reprotLineChartQueryMap">
+		SELECT
+			milk.milk_name,
+			purchase.time,
+			detailed.total_price
+		FROM
+			purchase,
+			purchase_detailed AS detailed,
+			milk
+		WHERE
+			purchase.id = detailed.purchase_id
+			AND detailed.milk_id = milk.id
+			AND purchase.`status` = 1
+			AND #{startTime} &lt;= time 
+			AND time &lt;= #{endTime}
+			<if test="milkInfo != null and milkInfo != ''">
+				AND (milk.milk_name like '%${milkInfo}%' or milk.code like '%${milkInfo}%')
+			</if>
+		ORDER BY
+			milk_name, time
+	</select>
+	
+	<!-- 采购：查询饼状图数据 -->
+	<resultMap id="reprotPieChartQueryMap" type="com.cy.milkms.db.query.PieChartQuery">
+		<result column="milk_name" property="milk_name" jdbcType="VARCHAR" />
+		<result column="distributor_name" property="distributor_name" jdbcType="VARCHAR" />
+		<result column="total_price" property="total_price" jdbcType="DOUBLE"/>
+	</resultMap>
+	
+	<select id="getPurchaseReportPieData" resultMap="reprotPieChartQueryMap">
+		SELECT
+			milk.milk_name,
+			SUM(detailed.total_price) as total_price
+		FROM
+			purchase,
+			purchase_detailed AS detailed,
+			milk
+		WHERE
+			purchase.id = detailed.purchase_id
+			AND detailed.milk_id = milk.id
+			AND purchase.`status` = 1
+			AND #{startTime} &lt;= time 
+			AND time &lt;= #{endTime}
+			<if test="milkInfo != null and milkInfo != ''">
+				AND (milk.milk_name like '%${milkInfo}%' or milk.code like '%${milkInfo}%')
+			</if>
+		GROUP BY milk.milk_name
+	</select>
+	
+	
+	
+	<!-- 销售：汇总数据 -->
+	<select id="getSaleReportSummaryData" resultType="com.cy.milkms.db.query.ReportSaleSummaryDataQuery">
+		SELECT
+			COUNT(sale.id) AS summarySaleOrderCount,
+			SUM(detailed.quantity) AS summarySaleGoodsQuantity,
+			SUM(detailed.total_price) AS summarySaleGoodsPrice,
+			(
+				SUM(detailed.total_price) - SUM(
+					detailed.cost_price * detailed.quantity
+				)
+			) AS summarySaleGoodsProfit
+		FROM
+			sale,
+			sale_detailed AS detailed,
+			milk,
+			distributor
+		WHERE
+			sale.id = detailed.sale_id
+			AND sale.`status` = 1
+			AND milk.id = detailed.milk_id
+			AND distributor.id = sale.distributor_id
+			<if test="type == 1 and info != null and info != ''">
+				AND (milk.code like '%${info}%' or milk.milk_name like '%${info}%')
+			</if>
+			<if test="type == 2 and info != null and info != ''">
+				AND (distributor.name like '%${info}%')
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND #{startTime} &lt;= sale.sale_time
+			</if>
+			<if test="endTime != null and endTime != null">
+				AND sale.sale_time &lt;= #{endTime}
+			</if>
+	</select>
+	
+	<!-- 销售：表格数据 -->
+	<resultMap id="reportSaleTableQueryMap" type="com.cy.milkms.db.query.ReportSaleTableQuery" extends="com.cy.milkms.db.dao.SaleMapper.saleQuery">
+		<result column="totalSaleQuantity" property="totalSaleQuantity"  jdbcType="INTEGER"/>
+		<result column="totalSalePrice" property="totalSalePrice"  jdbcType="DOUBLE" />
+		<result column="totalSaleProfit" property="totalSaleProfit"  jdbcType="DOUBLE" />
+	</resultMap>
+	
+	<select id="getSaleReportTableData" resultMap="reportSaleTableQueryMap">
+		SELECT
+			milk.milk_name,
+			SUM(detailed.quantity) AS totalSaleQuantity,
+			SUM(detailed.total_price) AS totalSalePrice,
+			(
+				SUM(detailed.total_price) - SUM(
+					detailed.cost_price * detailed.quantity
+				)
+			) AS totalSaleProfit,
+			sale.id,
+			sale.sale_time,
+			distributor.`name` AS distributor_name,
+			detailed.quantity,
+			detailed.price,
+			detailed.total_price AS total_amount,
+			detailed.cost_price,
+			detailed.cost_price * detailed.quantity AS total_cost_price,
+			detailed.total_price - detailed.cost_price * detailed.quantity AS total_profit
+		FROM
+			sale,
+			sale_detailed AS detailed,
+			milk,
+			distributor
+		WHERE
+			sale.id = detailed.sale_id
+		AND milk.id = detailed.milk_id
+		AND sale.distributor_id = distributor.id
+		AND detailed.milk_id IN (
+			SELECT
+				t.milk_id
+			FROM
+				(
+					SELECT DISTINCT
+						milk_id,
+						SUM(sale_detailed.total_price) AS t_total_amount
+					FROM
+						sale_detailed,
+						sale,
+						milk,
+						distributor
+					WHERE
+						sale.id = sale_detailed.sale_id
+					AND milk.id = sale_detailed.milk_id
+					AND sale.status = 1
+					AND sale.distributor_id = distributor.id
+					<if test="startTime != null and startTime != ''">
+						AND #{startTime} &lt;= sale.sale_time
+					</if>
+					<if test="endTime != null and endTime != ''">
+						AND sale.sale_time &lt;= #{endTime}
+					</if>
+					<if test="type == 1 and info != null and info != ''">
+						AND (milk.code like '%${info}%' or milk.milk_name like '%${info}%')
+					</if>
+					<if test="type == 2 and info != null and info != ''">
+						AND (distributor.name like '%${info}%')
+					</if>
+					GROUP BY
+						<if test="type == 1">
+							sale_detailed.milk_id
+						</if>
+						<if test="type == 2">
+							sale.distributor_id
+						</if>
+					ORDER BY
+						t_total_amount DESC
+					LIMIT #{pager.start}, #{pager.rows}
+				) AS t
+		)
+		GROUP BY
+		<if test="type == 1">
+			detailed.milk_id
+		</if>
+		<if test="type == 2">
+			sale.distributor_id
+		</if>
+	</select>
+	
+	<!-- 销售：查询折线图x轴日期数据 -->	
+	<select id="getSaleReportDateData" resultMap="reportLineDateQueryMap">
+		SELECT DISTINCT
+			sale_time as time
+		FROM
+			sale,
+			sale_detailed as detailed,
+			milk,
+			distributor
+		WHERE
+			sale.status = 1
+			AND sale.id = detailed.sale_id
+			AND detailed.milk_id = milk.id
+			AND distributor.id = sale.distributor_id
+			AND #{startTime} &lt;= sale_time 
+			AND sale_time &lt;= #{endTime}
+			<if test="type == 1 and info != null and info != ''">
+				AND (milk.code like '%${info}%' or milk.milk_name like '%${info}%')
+			</if>
+			<if test="type == 2 and info != null and info != ''">
+				AND (distributor.name like '%${info}%')
+			</if>
+		ORDER BY
+			sale_time
+	</select>
+	
+	<!-- 销售：查询折线图y轴数据 -->
+	<select id="getSaleReportLineData" resultMap="reprotLineChartQueryMap">
+		SELECT
+			milk.milk_name,
+			sale.sale_time as time,
+			detailed.total_price,
+			distributor.name as distributor_name
+		FROM
+			sale,
+			sale_detailed AS detailed,
+			milk,
+			distributor
+		WHERE
+			sale.id = detailed.sale_id
+			AND detailed.milk_id = milk.id
+			AND sale.`status` = 1
+			AND distributor.id = sale.distributor_id
+			AND #{startTime} &lt;= sale.sale_time 
+			AND sale.sale_time &lt;= #{endTime}
+			<if test="type == 1 and info != null and info != ''">
+				AND (milk.code like '%${info}%' or milk.milk_name like '%${info}%')
+			</if>
+			<if test="type == 2 and info != null and info != ''">
+				AND (distributor.name like '%${info}%')
+			</if>
+		<if test="type == 1">
+			ORDER BY
+				milk_name, sale.sale_time
+		</if>
+		<if test="type == 2">
+			ORDER BY
+				distributor_name, sale.sale_time
+		</if>
+	</select>
+	
+	<!-- 销售：查询饼状图数据 -->
+	<select id="getSaleReportPieData" resultMap="reprotPieChartQueryMap">
+		SELECT
+			milk.milk_name,
+			SUM(detailed.total_price) as total_price,
+			distributor.name as distributor_name
+		FROM
+			sale,
+			sale_detailed AS detailed,
+			milk,
+			distributor
+		WHERE
+			sale.id = detailed.sale_id
+			AND detailed.milk_id = milk.id
+			AND sale.distributor_id = distributor.id
+			AND sale.`status` = 1
+			AND #{startTime} &lt;= sale.sale_time 
+			AND sale.sale_time &lt;= #{endTime}
+			<if test="type == 1 and info != null and info != ''">
+				AND (milk.code like '%${info}%' or milk.milk_name like '%${info}%')
+			</if>
+			<if test="type == 2 and info != null and info != ''">
+				AND (distributor.name like '%${info}%')
+			</if>
+		<if test="type == 1">
+			GROUP BY milk.milk_name
+		</if>
+		<if test="type == 2">
+			GROUP BY distributor.name
+		</if>
+	</select>
+	
+	
+	<!-- 分析：汇总数据 -->
+	<select id="getAnalysisSummaryData" resultType="com.cy.milkms.db.query.ReportSaleSummaryDataQuery">
+		SELECT
+			COUNT(sale.id) as summarySaleOrderCount,
+			SUM(detailed.quantity) as summarySaleGoodsQuantity,
+			SUM(detailed.total_price) as summarySaleGoodsPrice
+		FROM
+			sale,
+			sale_detailed AS detailed,
+			milk,
+			distributor
+		WHERE
+			sale.id = detailed.sale_id
+		AND milk.id = detailed.milk_id
+		AND sale.distributor_id = distributor.id
+		AND sale.`status` = 1
+		<if test="startTime != null and startTime != ''">
+			AND #{startTime} &lt;= sale.sale_time
+		</if>
+		<if test="endTime != null and endTime != ''">
+			AND sale.sale_time &lt;= #{endTime}
+		</if>
+		<if test="type == 1">
+			AND (milk.milk_name like '%${info}%' or milk.code like '%{info}%')
+		</if>
+		<if test="type == 2">
+			AND distributor.name like '%${info}%'
+		</if>
+	</select>
+	
+	<!-- 分析：涨幅数据 -->
+	<select id="getAnalysisRoseData" resultMap="reprotLineChartQueryMap">
+		SELECT
+			milk.milk_name,
+			SUM(detailed.total_price) as total_price,
+			distributor.name as distributor_name
+		FROM
+			sale,
+			sale_detailed AS detailed,
+			milk,
+			distributor
+		WHERE
+			sale.id = detailed.sale_id
+		AND detailed.milk_id = milk.id
+		AND distributor.id = sale.distributor_id
+		AND sale.`status` = 1
+		<if test="startTime != null and startTime != ''">
+			AND #{startTime} &lt;= sale.sale_time
+		</if>
+		<if test="endTime != null and endTime != ''">
+			AND sale.sale_time &lt;= #{endTime}
+		</if>
+		<if test="type == 1">
+			AND (milk.milk_name like '%${info}%' or milk.code like '%{info}%')
+			GROUP BY detailed.milk_id
+		</if>
+		<if test="type == 2">
+			AND distributor.name like '%${info}%'
+			GROUP BY sale.distributor_id
+		</if>
+	</select>
+	
+	<!-- 分析：查询折线图y轴数据 -->
+	<select id="getAnalysisReportLineData" resultMap="reprotLineChartQueryMap">
+		SELECT
+			milk.milk_name,
+			sale.sale_time as time,
+			detailed.total_price,
+			distributor.name as distributor_name
+		FROM
+			sale,
+			sale_detailed AS detailed,
+			milk,
+			distributor
+		WHERE
+			sale.id = detailed.sale_id
+			AND detailed.milk_id = milk.id
+			AND sale.`status` = 1
+			AND distributor.id = sale.distributor_id
+			AND #{startTime} &lt;= sale.sale_time 
+			AND sale.sale_time &lt;= #{endTime}
+			<if test="type == 1 and info != null and info != ''">
+				AND (milk.code = #{info} or milk.milk_name = #{info})
+			</if>
+			<if test="type == 2 and info != null and info != ''">
+				AND (distributor.name = #{info})
+			</if>
+		<if test="type == 1">
+			ORDER BY
+				milk_name, sale.sale_time
+		</if>
+		<if test="type == 2">
+			ORDER BY
+				distributor_name, sale.sale_time
+		</if>
+	</select>
+	
+	<!-- 分析：查询折线图x轴日期数据 -->	
+	<select id="getAnalysisReportDateData" resultMap="reportLineDateQueryMap">
+		SELECT DISTINCT
+			sale_time as time
+		FROM
+			sale,
+			sale_detailed as detailed,
+			milk,
+			distributor
+		WHERE
+			sale.status = 1
+			AND sale.id = detailed.sale_id
+			AND detailed.milk_id = milk.id
+			AND distributor.id = sale.distributor_id
+			AND #{startTime} &lt;= sale_time 
+			AND sale_time &lt;= #{endTime}
+			<if test="type == 1 and info != null and info != ''">
+				AND (milk.code = #{info} or milk.milk_name = #{info})
+			</if>
+			<if test="type == 2 and info != null and info != ''">
+				AND (distributor.name = #{info})
+			</if>
+		ORDER BY
+			sale_time
+	</select>
+	
+	
+	<!-- 导出：采购 -->
+	<select id="getExportDatasByPurchase" resultMap="com.cy.milkms.db.dao.PurchaseMapper.purchaseQueryMap">
+		select 
+			purchase.id as id, purchase.time as time, purchase.total_price as total_price, purchase.status as status, milk.milk_name as milk_name, detailed.quantity as quantity, detailed.price as price, detailed.total_price as total_amount
 		from purchase, purchase_detailed as detailed, milk
 		where
 			purchase.id = detailed.purchase_id and milk.id = detailed.milk_id
-			and purchase.status = 1
-			AND detailed.milk_id IN (
-				SELECT
-					t.milk_id
-				FROM
-					(
-						SELECT DISTINCT
-							milk_id,
-							SUM(purchase_detailed.total_amount) AS t_total_amount
-						FROM
-							purchase_detailed, purchase, milk
-						WHERE
-							purchase.id = purchase_detailed.purchase_id and milk.id = purchase_detailed.milk_id
-							<if test="startTime != null and startTime != ''">
-								and #{startTime} &gt; time
-							</if>
-							<if test="endTime != null and endTime != ''">
-								and #{endTime} &lt; time
-							</if>
-							<if test="milkInfo != null and milkInfo != ''">
-								and (milk.milk_name like '%${milkInfo}%' or milk.number like '%${milkInfo}%')
-							</if>
-						GROUP BY
-							purchase_detailed.milk_id
-						ORDER BY
-							t_total_amount DESC
-						LIMIT #{pager.start}, #{pager.rows}
-					) AS t
-			)
+			and #{startTime} &lt;= purchase.time
+			and purchase.time &lt;= #{endTime}
 	</select>
-	
-	
-	<select id="getSaleReportTotalNumber" resultMap="reportPurchaseSummaryDataQueryMap">
-		select 
-			detailed.id,milk.milk_name as milkName, sum(detailed.number) as milkTotalNumber, sum(detailed.total_amount) as milkTotalPrice
-		from sale, sale_detailed as detailed, milk, distributor
+	<!-- 导出：销售 -->
+	<select id="getExportDatasBySale" resultMap="com.cy.milkms.db.dao.SaleMapper.saleQuery">
+		select
+			sale.id, sale.sale_time, sale.paid_time, sale.status, sale.receivables_price, sale.paid_price, sale.unpaid_price,
+			detailed.quantity, detailed.price, detailed.total_price as total_amount,
+			milk.milk_name, distributor.name as distributor_name
+		from 
+			milk, sale, sale_detailed as detailed, distributor
 		where
-			sale.id = detailed.sale_id and detailed.milk_id = milk.id and sale.distributor_id = distributor.id
-			and sale.status = 1
-			<if test="startTime != null and startTime != ''">
-				and #{startTime} &gt; time
-			</if>
-			<if test="endTime != null and endTime != ''">
-				and #{endTime} &lt; time
-			</if>
-			<if test="type == 1 and info != null and info != ''">
-				and (milk.milk_name like '%${info}%' or milk.number like '%${info}%')
-			</if>
-			<if test="type == 2 and info != null and info != ''">
-				and (distributor.name like '%${info}%')
-			</if>
-		group by detailed.milk_id
-		order by milkTotalPrice desc
+			detailed.sale_id = sale.id
+			and detailed.milk_id = milk.id
+			and sale.distributor_id = distributor.id
+		 	and #{startTime} &lt;= sale.sale_time
+			and sale.sale_time &lt;= #{endTime}
 	</select>
 	
-	<select id="getSaleReportLimit" resultMap="reportSaleTableQueryMap">
+	<!-- 查询今天的销售数据 -->
+	<select id="getSaleToday" resultType="com.cy.milkms.db.query.SaleTodayQuery">
 		SELECT
-			milk.milk_name as milk_name,
-			sale.id,
-			sale.sale_time,
-			distributor.name as name,
-			detailed.number,
-			detailed.price,
-			detailed.total_amount,
-			detailed.cost_price as costPrice
-		from sale, sale_detailed as detailed, milk, distributor
-		where
-			sale.id = detailed.sale_id and milk.id = detailed.milk_id and sale.distributor_id = distributor.id
-			AND detailed.milk_id IN (
-				SELECT
-					t.milk_id
-				FROM
-					(
-						SELECT DISTINCT
-							milk_id,
-							SUM(sale_detailed.total_amount) AS t_total_amount
-						FROM
-							sale_detailed, sale, milk, distributor
-						WHERE
-							sale.id = sale_detailed.sale_id and milk.id = sale_detailed.milk_id and sale.distributor_id = distributor.id
-							<if test="startTime != null and startTime != ''">
-								and #{startTime} &gt; time
-							</if>
-							<if test="endTime != null and endTime != ''">
-								and #{endTime} &lt; time
-							</if>
-							<if test="type == 1 and info != null and info != ''">
-								and (milk.milk_name like '%${info}%' or milk.number like '%${info}%')
-							</if>
-							<if test="type == 2 and info != null and info != ''">
-								and distributor.name like '%{info}%'
-							</if>
-						GROUP BY
-							sale_detailed.milk_id
-						ORDER BY
-							t_total_amount DESC
-						LIMIT #{pager.start}, #{pager.rows}
-					) AS t
-			)
+			COUNT(sale.id) AS saleCount,
+			SUM(detailed.quantity) AS saleQuantity,
+			SUM(detailed.total_price) AS saleTotalPrice,
+			milk.milk_name AS saleGoodsName
+		FROM
+			sale,
+			sale_detailed AS detailed,
+			milk
+		WHERE
+			sale.id = detailed.sale_id
+		AND milk.id = detailed.milk_id
+		AND sale.`status` IN (1, 2)
+		AND sale.sale_time = #{time}
+		GROUP BY
+			detailed.milk_id
+		ORDER BY
+			saleTotalPrice DESC
+		LIMIT 1;
 	</select>
 </mapper>

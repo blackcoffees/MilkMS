@@ -1,5 +1,9 @@
 package com.cy.milkms.db.dao;
 
-public class LogMapper {
+import org.apache.ibatis.annotations.Param;
 
+import com.cy.milkms.db.entity.Log;
+
+public interface LogMapper {
+	public int addLog(@Param("log")Log log);
 }

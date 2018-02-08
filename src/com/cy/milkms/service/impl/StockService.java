@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.cy.milkms.db.dao.StockMapper;
 import com.cy.milkms.db.entity.Stock;
 import com.cy.milkms.db.query.StockQuery;
+import com.cy.milkms.service.ILogService;
 import com.cy.milkms.service.IStockService;
 import com.cy.milkms.util.Pager;
 
@@ -17,33 +18,35 @@ public class StockService implements IStockService{
 	@Autowired
 	private StockMapper mapper;
 	
+	@Autowired
+	private ILogService logService;
+	
 	@Override
 	public int updateStock(Stock stock) {
-		// TODO Auto-generated method stub
+		/*操作日志*/
+		logService.addLog(mapper, "updateStock", stock);
 		return mapper.updateStock(stock);
 	}
 
 	@Override
 	public Stock getStockByMilkID(int milkID) {
-		// TODO Auto-generated method stub
 		return mapper.getStockByMilkID(milkID);
 	}
 
 	@Override
 	public int addStock(Stock stock) {
-		// TODO Auto-generated method stub
+		/*操作日志*/
+		logService.addLog(mapper, "addStock", stock);
 		return mapper.addStock(stock);
 	}
 
 	@Override
 	public List<StockQuery> getStockByMilkName(String milkName) {
-		// TODO Auto-generated method stub
 		return mapper.getStockByMilkName(milkName);
 	}
 
 	@Override
 	public List<StockQuery> getStockByCondition(String milkName, Pager pager) {
-		// TODO Auto-generated method stub
 		return mapper.getStockByCondition(milkName, pager);
 	}
 

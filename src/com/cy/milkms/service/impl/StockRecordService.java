@@ -15,7 +15,6 @@ public class StockRecordService implements IStockRecordService{
 	
 	@Override
 	public int addStockRecord(StockRecord stockRecord) {
-		// TODO Auto-generated method stub
 		return mapper.addStockRecord(stockRecord);
 	}
 

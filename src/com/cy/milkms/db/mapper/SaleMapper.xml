@@ -32,7 +32,7 @@
 		select
 			sale.id, sale.sale_time, sale.paid_time, sale.status, sale.receivables_price, sale.paid_price, sale.unpaid_price,
 			detailed.quantity, detailed.price, detailed.total_price as total_amount,
-			milk.milk_name, distributor.distributor_name
+			milk.milk_name, distributor.name as distributor_name
 		from 
 			milk, sale, sale_detailed as detailed, distributor
 		where

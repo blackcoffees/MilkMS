@@ -47,15 +47,22 @@
                     <div class="page-sidebar navbar-collapse collapse">
                         
                         <!-- BEGIN SIDEBAR MENU -->
-                        <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
+                         <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
                         	<template v-for="(menu, i) in menu_list">
-                        		<li class="nav-item" :class="{start: i == 1, active: menu.href=='purchase.jsp', open: menu.href=='purchase.jsp'}">
+                        		<li class="nav-item" :class="{start: i == 1, active: menu.href=='purchase.jsp', open: menu.href==now_href}">
 	                                <a :href="menu.href" class="nav-link nav-toggle">
 	                                    <i :class="menu.span_icon"></i>
 	                                    <span class="title" v-text="menu.title"></span>
 	                                    <span class="selected"></span>
-	                                    <span class="arrow open"></span>
+	                                    <span class="arrow"></span>
 	                                </a>
+	                                <ul v-if="menu.children" class="sub-menu" style="display: none;">
+										<li v-for="child in menu.children">
+											<a :href="child.href">
+												<i :class="child.span_icon" ></i>((child.title))
+											</a>
+										</li>
+									</ul>
 	                            </li>
                         	</template>
                         </ul>
@@ -138,7 +145,7 @@
 					                                        <div class="caption">
 					                                            <i class="fa fa-bell-o"></i>采购列表</div>
 					                                        <div class="tools">
-					                                        	<button type="button" class="btn btn-success" @click="addRow">新增一行</button>
+					                                        	<button type="button" class="btn btn-success" @click="addRow"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增一行</button>
 					                                        </div>
 					                                    </div>
 					                                    <div class="portlet-body">
@@ -195,7 +202,7 @@
 					                                                        <td><input class="edit-input totalPrice" style="width: 100px" readonly/></td>
 					                                                        <td>
 					                                                        	<a href="javascript:;" class="btn btn-outline btn-circle btn-sm red" @click="deleteRow">
-					                                                                <i class="fa fa-trash-o"></i> 删除
+					                                                                <i class="fa fa-times"></i>&nbsp;&nbsp; 删除
 																				</a>
 					                                                        </td>
 					                                                    </tr>
@@ -217,8 +224,8 @@
 								</div>
 								<div class="row" style="padding-bottom:20px;">
 									<div class="col-md-12">
-										<button class="btn btn-danger btn-submit" onclick="add()" style="margin-left:270px;width:150px;">确定</button>
-										<button class="btn btn-danger default" onclick="window.location.href='purchase.jsp'" style="margin-left:30px;width:150px;">取消</button>
+										<button class="btn btn-danger btn-submit" onclick="add()" style="margin-left:270px;width:150px;"><i class="fa fa-check"></i>&nbsp;&nbsp;确定</button>
+										<button class="btn btn-danger default" onclick="window.location.href='purchase.jsp'" style="margin-left:30px;width:150px;"><i class="fa fa-times"></i>&nbsp;&nbsp;取消</button>
 									</div>
 								</div>
 							</div>

@@ -21,6 +21,7 @@ import com.cy.milkms.db.entity.Stock;
 import com.cy.milkms.db.entity.StockRecord;
 import com.cy.milkms.db.query.SaleQuery;
 import com.cy.milkms.service.IDistributorService;
+import com.cy.milkms.service.ILogService;
 import com.cy.milkms.service.IMilkService;
 import com.cy.milkms.service.ISaleDetailedService;
 import com.cy.milkms.service.ISaleService;
@@ -54,6 +55,9 @@ public class SaleService implements ISaleService{
 	
 	@Autowired
 	private IStockRecordService stockRecordService;
+	
+	@Autowired
+	private ILogService logService;
 
 	@Override
 	public Map<String, Object> addSale(String saleTime, int distributorID, double totalPrice, String list, int status) throws Exception {
@@ -128,6 +132,9 @@ public class SaleService implements ISaleService{
 		if(addResult <= 0){
 			throw new Exception("新增失败");
 		}
+		/*操作日志*/
+		logService.addLog(mapper, "addSale", sale);
+		
 		/*销售分单保存*/
 		for(int i=0;i<detailedList.size();i++){
 			Sale_detailed detailed = detailedList.get(i);
@@ -208,7 +215,8 @@ public class SaleService implements ISaleService{
 
 	@Override
 	public int updateSaleStatus(int status, int saleID, Timestamp updated) {
-		// TODO Auto-generated method stub
+		/*操作日志*/
+		logService.addLog(mapper, "updateSaleStatus", new Object[]{status, saleID, updated});
 		return mapper.updateSaleStatus(status, saleID, updated);
 	}
 	
@@ -334,7 +342,8 @@ public class SaleService implements ISaleService{
 
 	@Override
 	public int updateBalanceSale(Sale sale) {
-		// TODO Auto-generated method stub
+		/*操作日志*/
+		logService.addLog(mapper, "updateBalanceSale", sale);
 		return mapper.updateBalanceSale(sale);
 	}
 

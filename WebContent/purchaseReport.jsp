@@ -9,6 +9,11 @@
         <meta content="" name="author" />
         <%@include file="header.jsp"%>
         <link rel="shortcut icon" href="favicon.ico" />
+        <style type="text/css">
+        	.searchDateInput{
+        		display:none;
+        	}
+        </style>
 	</head>
 
     <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
@@ -54,7 +59,7 @@
 	                                    <i :class="menu.span_icon"></i>
 	                                    <span class="title" v-text="menu.title"></span>
 	                                    <span class="selected"></span>
-	                                    <span class="arrow open"></span>
+	                                    <span class="arrow" :class="{open: menu.href=='javascript:void(0)'}"></span>
 	                                </a>
 	                                <ul v-if="menu.children" class="sub-menu" style="display: block;">
 										<li v-for="child in menu.children"  :class="child.href==now_href ? 'nav-sub-menu-hover': ''">
@@ -113,9 +118,9 @@
 								<div class="note note-info">
 									<input type="text" placeholder="商品名称/商品编号" class="form-control input-inline" id="milkName" style="width:150px;" />
 									<input type="text" placeholder="采购时间" class="form-control input-inline" id="purchaseTime" style="width:300px" />
-									<button type="button" class="btn btn-success btn-search">搜索</button>
-									<input id="startTime" style="display:none;" />
-									<input id="endTime" style="display:none" />
+									<button type="button" class="btn btn-success btn-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</button>
+									<input id="startTime" class="searchDateInput"/>
+									<input id="endTime" class="searchDateInput" />
 									<p>
 										NOTE: 采购时间默认为当月
 									</p>
@@ -185,7 +190,7 @@
 												<i class="fa fa-globe"></i>
 											</div>
 											<div class="details">
-												<div class="number" id="firstThreeGoods">
+												<div class="number" id="firstThreeGoods" style="font-size:28px;">
 												</div>
 												<div class="desc">
 													 采购前三商品
@@ -226,10 +231,10 @@
 	                        							<td style="vertical-align: inherit;text-align: center;">
 	                        								<span class="row-detail row-detail-close"></span>
 	                        							</td>
-	                        							<td v-text="$index+1"></td>
-														<td v-text="purchase[0].name"></td>
-														<td v-text="purchase[0].totalNumber"></td>
-														<td v-text="purchase[0].totalPrice"></td>
+	                        							<td v-text="purchase[0].code"></td>
+														<td v-text="purchase[0].milk_name"></td>
+														<td>((purchase[0].totalPurchaseQuantity))件</td>
+														<td>￥((purchase[0].totalPurchasePrice))</td>
 													</tr>
 													<tr style="display: none;">
 														<td colspan="6">
@@ -247,9 +252,9 @@
 																	<tr v-for="item in purchase">
 																		<td>((item.id))</td>
 																		<td>((item.time))</td>
-																		<td>((item.number))</td>
-																		<td>((item.purchase_price))</td>
-																		<td>((item.total_amount))</td>
+																		<td>((item.quantity))件</td>
+																		<td>￥((item.price))</td>
+																		<td>￥((item.total_amount))</td>
 																	</tr>
 																</tbody>
 															</table>
@@ -403,59 +408,55 @@
 			})
 		})
 		
-		var g_rows = 10;
-        var g_page = 1;
         
 		function init_table(rows, page){
-			if(rows != '' && rows > 0)
-				g_rows = rows;
-			else
-				rows = g_rows;
-			
-			if(page != '' && page > 0)
-				g_page = page;
-			else
-				page = g_page;
-			
-			var milkName = $("#milkName").val();
-			
+			if(typeof(rows) == 'undefined')
+				rows = 10;
+			if(typeof(page) == 'undefined')
+				page = 1;
+
 			$.ajax({
 				type:'get',
 				url:'report/getPurchaseReport.action',
 				data:{
 					rows: rows,
 					page: page,
-					milkInfo: milkName
+					milkInfo: $("#milkName").val(),
+					startTime: $("#startTime").val(),
+					endTime: $("#endTime").val()
 				},
 				success:function(data){
 					layer.closeAll('loading');
 					data = eval("("+data+")");
-					//分页
-					page_total = get_page_total(data.tableTotal, g_rows);
-					paginate_tool.init("init_table", page_total, data.tableTotal, []);
-					
-					vue.data = data.tableDatas;
-					$("#totalPurchaseOrderNumber").html(data.purchaseOrderTotalNumber);
-					$("#totalPurchaseNumber").html(data.purchaseTotalNumber);
-					$("#totalPurchasePrice").html("￥" + data.purchaseTotalAmout);
-					$("#firstThreeGoods").html(data.firstThreeMilkName);
-					
-					/*折线图数据*/
-					lineChart.xAxis.categories = data.lineXData;
-					data.lineYData = data.lineYData.replace(/\"/g, "");
-					lineChart.series = eval(data.lineYData);
-					lineChartVar = new Highcharts.Chart(lineChart);
-					
-					/*饼状图数据*/
-					var pieDataArray = new Array();
-					
-					for(i in data.pieData){
-						var value = [data.pieData[i].title, parseFloat(data.pieData[i].number)];
-						pieDataArray.push(value);
+					if(!data.succ){
+						layer.msg(data.message);
 					}
-					pieChartVar = $("#pieChart").highcharts();
-					pieChartVar.series[0].setData(pieDataArray);
-					
+					else{
+						//分页
+						paginate_tool.init("init_table", data.pager, []);
+						
+						vue.data = data.tableDatas;
+						$("#totalPurchaseOrderNumber").html(data.summaryPurchaseOrderCount);
+						$("#totalPurchaseNumber").html(data.summaryPurchaseMilkNumber+" 件");
+						$("#totalPurchasePrice").html("￥" + data.summaryPurchaseMilkPrice);
+						$("#firstThreeGoods").html(data.summaryFirstThreeMilkName);
+						
+						/*折线图数据*/
+						lineChart.xAxis.categories = data.lineXData;
+						data.lineYData = data.lineYData.replace(/\"/g, "");
+						lineChart.series = eval(data.lineYData);
+						lineChartVar = new Highcharts.Chart(lineChart);
+						
+						/*饼状图数据*/
+						var pieDataArray = new Array();
+						
+						for(i in data.pieData){
+							var value = [data.pieData[i].milk_name, parseFloat(data.pieData[i].total_price)];
+							pieDataArray.push(value);
+						}
+						pieChartVar = $("#pieChart").highcharts();
+						pieChartVar.series[0].setData(pieDataArray);
+					}
 				},
 				beforeSend:function(){
 					layer.load(1, {
@@ -470,25 +471,36 @@
 		}
 		
 		$("#purchaseTime").daterangepicker({
+			opens: 'right',
+			alwaysShowCalendars: true,
             showDropdowns: true,
 			autoUpdateInput: false,
 			showWeekNumbers: false,
 			linkedCalendars: false,
 			drops: "down",
-			"locale": {
+			locale: {
                 format: 'YYYY-MM-DD',
                 applyLabel: "应用",
                 cancelLabel: "取消",
                 daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ], 
                 monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',  
                                '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+				customRangeLabel : '自定义', 
+            },
+            ranges: {
+            	"本周": [moment().days(1), moment().add(7-moment().days(), 'days')],
+            	"上周": [moment().subtract(7+(moment().days()-1), "days"), moment().days(0)],
+            	"本月": [moment().startOf("month"), moment().endOf("month")],
+            	"上月": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")],
+            	"本季度": [moment().quarter(moment().quarter()).startOf("quarter"), moment().quarter(moment().quarter()).endOf("quarter")],
+            	"上季度": [moment().quarter(moment().quarter()-1).startOf("quarter"), moment().quarter(moment().quarter()-1).endOf("quarter")]
             }
 		},
         function(start, end, label){
 			if(!this.startDate)
             	$("#purchaseTime").val('');
 			else{
-				$("#purchaseTime").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format(this.locale.formate));
+				$("#purchaseTime").val(this.startDate.format(this.locale.format) + " 至 " + this.endDate.format("YYYY-MM-DD"));
 				$("#startTime").val(this.startDate.format(this.locale.format));
 				$("#endTime").val(this.endDate.format(this.locale.formate));
 			}

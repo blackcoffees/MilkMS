@@ -119,8 +119,8 @@
                         			<div class="portlet-body flip-scroll">
                         				<div class="row table-tool">
 											<div class="col-md-12">
-												<input type="search" id="search" placeholder="商品名称/商品编号" class="form-control input-small input-inline" onkeyup="if(event==13){init_table()}">
-												<button type="button" class="btn btn-success btn-search">搜索</button>
+												<input type="search" placeholder="商品名称/商品编号" class="form-control input-small input-inline" onchange="vue.milkName=this.value" onkeyup="if(event.keyCode==13){vue.milkName=this.value;init_table()}">
+												<button type="button" class="btn btn-success btn-search" onclick="init_table()"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</button>
 											</div>
 										</div>
                         				<table class="table table-bordered table-striped dataTable table-condensed flip-content" id="table">
@@ -129,6 +129,7 @@
                         							<th>编号</th>
                         							<th>商品名称</th>
 													<th>库存数量</th>
+													<th>平均成本</th>
 												</tr>
                         					</thead>
                         					<tbody>
@@ -136,7 +137,8 @@
 	                        						<tr :key="stock.id">
 	                        							<td>(($index+1))</td>
 	                        							<td v-text="stock.milkName"></td>
-														<td v-text="stock.number"></td>
+														<td>((stock.quantity))件</td>
+														<td>￥((stock.cost_price))</td>
 													</tr>
 												</template>
                         					</tbody>
@@ -187,32 +189,18 @@
 		$(function(){
 			init_table();
 			
-			$('.btn-search').on('click', function(){
-				vue.milkName = $("#search").val();
-				init_table();
-			})
-			
 			$('.btn-refresh').on('click', function(){
 				init_table();
 			})
 		})
 		
-		var g_rows = 10;
-        var g_page = 1;
         
 		function init_table(rows, page){
-			if(rows != '' && rows > 0)
-				g_rows = rows;
-			else
-				rows = g_rows;
-			
-			if(page != '' && page > 0)
-				g_page = page;
-			else
-				page = g_page;
-			
+        	if(typeof(rows) == 'undefined')
+        		rows = 10;
+        	if(typeof(page) == 'undefined')
+        		page = 1;
 			var milkName = vue.milkName;
-			
 			$.ajax({
 				type:'get',
 				url:'stock/getStockByCondition.action',
@@ -224,15 +212,14 @@
 				success:function(data){
 					layer.closeAll('loading');
 					data = eval("("+data+")");
+					pager = eval("("+data.pager+")");
 					if(!data.succ){
 						layer.msg(data.message);
 					}
 					else{
 						//一共生成多少页
-						page_total = get_page_total(data.total, g_rows);
-						console.info(page_total);
-						paginate_tool.init("init_table", page_total, data.total, []);
-						vue.data = data.data;
+						paginate_tool.init("init_table", pager, []);
+						vue.data = data.datas;
 					}
 				},
 				beforeSend:function(){

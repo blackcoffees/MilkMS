@@ -6,7 +6,7 @@ public class PurchaseQuery extends Purchase{
 	private String milk_name;/*商品名称*/
 	private int quantity;/*商品数量*/
 	private double price;/*商品采购单价*/
-	private double total_amount;/*商品采购总价*/
+	private double total_amount;/*商品分单采购总价*/
 	
 	public int getQuantity() {
 		return quantity;
