@@ -131,7 +131,7 @@ paginate_tool.init = function (method_name, pager, rows_list){
 		page_total += 1;
 	this.method_name = method_name;
 	paginate_vue.$children[0].page_total = page_total;
-	paginate_vue.$children[0].row_total = pager.rows;
+	paginate_vue.$children[0].row_total = pager.total;
 	
 	if(paginate_vue.$children[0].page == 1)
 		paginate_vue.$children[0].change_page(1);

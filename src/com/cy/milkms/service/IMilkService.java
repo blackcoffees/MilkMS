@@ -3,6 +3,8 @@ package com.cy.milkms.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.cy.milkms.db.entity.Milk;
 import com.cy.milkms.util.Pager;
 
@@ -20,4 +22,6 @@ public interface IMilkService {
  	public int deleteMilk(String code);
  	
  	public List<Milk> getMilkByName(String name);
+ 	
+ 	public List<Milk> getMilkFron(String milkInfo);
 }

@@ -69,7 +69,7 @@ public class MilkController {
 			res = service.addMilk(milk);
 		} catch (Exception e) {
 			e.printStackTrace();
-			res.put("message", e.getMessage());
+			res.put("message", "系统繁忙，请稍后再试");
 		}
 		return JSONObject.fromObject(res).toString();
 		
@@ -84,13 +84,13 @@ public class MilkController {
 		
 		String pattern = "^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$";
 		boolean isValidat = Pattern.matches(pattern, purchase_price);
-		if(!isValidat || Double.parseDouble(purchase_price) > 2000){
-			result.put("message", "进货价格式错误");
+		if(!isValidat){
+			result.put("message", "进货价,格式错误");
 			return JSONObject.fromObject(result).toString();
 		}
 		isValidat = Pattern.matches(pattern, selling_price);
-		if(!isValidat || Double.parseDouble(selling_price) > 2000){
-			result.put("message", "销售价格式错误");
+		if(!isValidat){
+			result.put("message", "销售价,格式错误");
 			return JSONObject.fromObject(result).toString();
 		}
 		
@@ -134,6 +134,15 @@ public class MilkController {
 		List<Milk> list = service.getMilkByName(name);
 		Pager pager = new Pager();
 		pager.setTotal(list.size());
+		return ReturnJsonData.returnJsonDataSigleList(pager, list);
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping("getMilkFront")
+	public String getMilkFron(String milkInfo){
+		Pager pager = new Pager();
+		List<Milk> list = service.getMilkFron(milkInfo);
 		return ReturnJsonData.returnJsonDataSigleList(pager, list);
 	}
 }

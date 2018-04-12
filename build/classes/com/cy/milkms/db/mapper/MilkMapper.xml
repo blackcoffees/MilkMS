@@ -11,6 +11,7 @@
 		<result column="status" property="status" jdbcType="INTEGER"/>
 		<result column="created" property="created" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
 		<result column="updated" property="updated" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp"/>
+		<result column="bar_code" property="bar_code" jdbcType="VARCHAR" />
 	</resultMap>
 	
 	<select id="getMilkByCondition" resultMap="baseResultMap">
@@ -18,7 +19,7 @@
 		where
 			status = 1
 			<if test="milkInfo != '' and milkInfo != null">
-				and ( milk_name like '%${milkInfo}%' or code like '%${milkInfo}%' )
+				and ( milk_name like '%${milkInfo}%' or code like '%${milkInfo}%')
 			</if>
 		limit #{pager.start}, #{pager.rows}
 	</select>
@@ -33,8 +34,8 @@
 	</select>
 	
 	<insert id="addMilk" useGeneratedKeys="true" keyProperty="milk.id">
-		insert into milk(code, milk_name, specifications, purchase_price, selling_price, status, created, updated)
-		values(#{milk.code}, #{milk.milk_name}, #{milk.specifications}, #{milk.purchase_price}, #{milk.selling_price}, #{milk.status}, #{milk.created}, #{milk.updated})
+		insert into milk(code, milk_name, specifications, purchase_price, selling_price, status, created, updated, bar_code)
+		values(#{milk.code}, #{milk.milk_name}, #{milk.specifications}, #{milk.purchase_price}, #{milk.selling_price}, #{milk.status}, #{milk.created}, #{milk.updated}, #{milk.bar_code})
 	</insert>
 	
 	<select id="getMilkByNameOrCode" resultType="com.cy.milkms.db.entity.Milk">
@@ -67,6 +68,20 @@
 	
 	<select id="getMilkByName" resultMap="baseResultMap">
 		select * from milk where (milk_name like '%${name}%' or code like '%{name}%') and status = 1
+	</select>
+	
+	<select id="getMilkFrontBarCode" resultMap="baseResultMap">
+		select * from milk where bar_code=#{milkInfo} limit 1;
+	</select>
+	
+	<select id="getMilkFrontByCondition" resultMap="baseResultMap">
+		select milk.* from milk, stock
+		where
+			status = 1
+			and stock.quantity > 0
+			<if test="milkInfo != '' and milkInfo != null">
+				and ( milk_name like '%${milkInfo}%' or code like '%${milkInfo}%')
+			</if>
 	</select>
 </mapper>
 

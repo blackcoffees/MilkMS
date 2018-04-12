@@ -23,4 +23,8 @@ public interface MilkMapper {
 	public int deleteMilk(@Param("code")String code, @Param("updated")Timestamp updated);
 	
 	public List<Milk> getMilkByName(@Param("name")String name);
+	
+	public List<Milk> getMilkFrontByCondition(@Param("milkInfo")String milkInfo);
+	
+	public List<Milk> getMilkFrontBarCode(@Param("milkInfo")String milkInfo);
 }

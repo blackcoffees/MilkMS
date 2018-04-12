@@ -105,7 +105,21 @@ public class MilkService implements IMilkService{
 	public List<Milk> getMilkByName(String name) {
 		return mapper.getMilkByName(name);
 	}
-	
-	
+
+	@Override
+	public List<Milk> getMilkFron(String milkInfo) {
+		// TODO Auto-generated method stub
+		List<Milk> result;
+		if(milkInfo != ""){
+			result = mapper.getMilkFrontBarCode(milkInfo);
+			if(result.size() == 0){
+				result = mapper.getMilkFrontByCondition(milkInfo);
+			}
+		}
+		else{
+			result = mapper.getMilkFrontByCondition(milkInfo);
+		}
+		return result;
+	}
 	
 }

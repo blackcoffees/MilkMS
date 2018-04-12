@@ -51,7 +51,7 @@ public class SaleController {
 				return JSONObject.fromObject(result).toString();
 			}
 			String distributorIDStr = jsonArray.getJSONObject(0).getString("distributorID");
-			if(!CommonTool.isNumber(distributorIDStr)){
+			if(!CommonTool.isNumber(distributorIDStr) || !distributorIDStr.equals("1")){
 				result.put("message", "店铺选择错误");
 				return JSONObject.fromObject(result).toString();
 			}

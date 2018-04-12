@@ -27,7 +27,7 @@
                     <!-- BEGIN LOGO -->
                     <div class="page-logo">
                         <a href="index.jsp">
-                        	<label class="logo-default">xxxx</label>
+                        	<label class="logo-default" style="font-size:25px;margin-top:7px;color:white;font-family:'仿宋'">超市管理系统</label>
 						</a>
                         <div class="menu-toggler sidebar-toggler">
                             <span></span>
@@ -36,10 +36,11 @@
                     <!-- END LOGO -->
                     
                     <!-- BEGIN TOP NAVIGATION MENU -->
-                    <div class="top-menu">
-                        <ul class="nav navbar-nav pull-right">
-                        	<li>xxx</li>
-                        </ul>
+                    <div class="page-logo" style="float:right;">
+                        <a href="settle.jsp">
+                        	<i class="icon-login"></i>
+                        	<label class="logo-default">进入收银</label>
+						</a>
                     </div>
                     <!-- END TOP NAVIGATION MENU -->
                     
@@ -117,9 +118,9 @@
 								<li class="active">
 									<a href="javascript:void(0)" data-toggle="tab">商品销售报表</a>
 								</li>
-								<li class="">
-									<a href="disAnalysisReport.jsp" data-toggle="tab">商家销售报表</a>
-								</li>
+<!-- 								<li class=""> -->
+<!-- 									<a href="disAnalysisReport.jsp" data-toggle="tab">商家销售报表</a> -->
+<!-- 								</li> -->
 							</ul>
                         </div>
                         <!-- BEGIN PAGE MAIN-->

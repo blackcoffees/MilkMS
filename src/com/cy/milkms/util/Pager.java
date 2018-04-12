@@ -5,7 +5,12 @@ public class Pager {
 	private int rows;/*每一页展示多少行*/
 	private int start;/*查询开始的行数*/
 	private int total;/*总行数*/
-	
+	public Pager() {
+		this.page = 0;
+		this.rows = 0;
+		this.start = 0;
+		this.total = 0;
+	}
 	public int getTotal() {
 		return total;
 	}

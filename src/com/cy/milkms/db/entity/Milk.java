@@ -11,7 +11,7 @@ public class Milk {
 	private int status;/*状态*/
 	private Timestamp created;
 	private Timestamp updated;
-	
+	private String bar_code;
 	public int getId() {
 		return id;
 	}
@@ -69,6 +69,14 @@ public class Milk {
 	}
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public String getBar_code() {
+		return bar_code;
+	}
+
+	public void setBar_code(String bar_code) {
+		this.bar_code = bar_code;
 	}	
 	
 }

@@ -20,7 +20,7 @@
                     <!-- BEGIN LOGO -->
                     <div class="page-logo">
                         <a href="index.jsp">
-                        	<label class="logo-default">xxxx</label>
+                        	<label class="logo-default" style="font-size:25px;margin-top:7px;color:white;font-family:'仿宋'">超市管理系统</label>
 						</a>
                         <div class="menu-toggler sidebar-toggler">
                             <span></span>
@@ -29,10 +29,11 @@
                     <!-- END LOGO -->
                     
                     <!-- BEGIN TOP NAVIGATION MENU -->
-                    <div class="top-menu">
-                        <ul class="nav navbar-nav pull-right">
-                        	<li>xxx</li>
-                        </ul>
+                    <div class="page-logo" style="float:right;">
+                        <a href="settle.jsp">
+                        	<i class="icon-login"></i>
+                        	<label class="logo-default">进入收银</label>
+						</a>
                     </div>
                     <!-- END TOP NAVIGATION MENU -->
                     
@@ -151,7 +152,7 @@
 													<td>￥((item.unpaid_price))</td>
 													<td>
 														<button class="btn btn-sm green btn-outline filter-submit margin-bottom" @click="edit(item)"><i class="fa fa-edit"></i>&nbsp;&nbsp;编辑</button>
-														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.ID)"><i class="fa fa-times"></i>&nbsp;&nbsp;删除</button>
+														<button class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(item.id)"><i class="fa fa-times"></i>&nbsp;&nbsp;删除</button>
 													</td>
 												</tr>
                         					</tbody>

@@ -20,7 +20,7 @@
                     <!-- BEGIN LOGO -->
                     <div class="page-logo">
                         <a href="index.jsp">
-                        	<label class="logo-default">xxxx</label>
+                        	<label class="logo-default" style="font-size:25px;margin-top:7px;color:white;font-family:'仿宋'">超市管理系统</label>
 						</a>
                         <div class="menu-toggler sidebar-toggler">
                             <span></span>
@@ -29,10 +29,11 @@
                     <!-- END LOGO -->
                     
                     <!-- BEGIN TOP NAVIGATION MENU -->
-                    <div class="top-menu">
-                        <ul class="nav navbar-nav pull-right">
-                        	<li>xxx</li>
-                        </ul>
+                    <div class="page-logo" style="float:right;">
+                        <a href="settle.jsp">
+                        	<i class="icon-login"></i>
+                        	<label class="logo-default">进入收银</label>
+						</a>
                     </div>
                     <!-- END TOP NAVIGATION MENU -->
                     
@@ -184,16 +185,16 @@
                        		<div class="row">
                        			<div class="tiles col-md-12">
                        				<!-- BEGIN tiles list -->
-									<a class="tile bg-purple-studio" href="addSale.jsp">
-										<div class="tile-body">
-											<i class="fa fa-shopping-cart"></i>
-										</div>
-										<div class="tile-object">
-											<div class="name">
-												  新增销售单
-											</div>
-										</div>
-									</a>
+<!-- 									<a class="tile bg-purple-studio" href="addSale.jsp"> -->
+<!-- 										<div class="tile-body"> -->
+<!-- 											<i class="fa fa-shopping-cart"></i> -->
+<!-- 										</div> -->
+<!-- 										<div class="tile-object"> -->
+<!-- 											<div class="name"> -->
+<!-- 												  新增销售单 -->
+<!-- 											</div> -->
+<!-- 										</div> -->
+<!-- 									</a> -->
 									<a class="tile double bg-red-sunglo" href="addPurchase.jsp">
 										<div class="tile-body">
 											<i class="fa fa-truck"></i>

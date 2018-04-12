@@ -13,14 +13,12 @@
 
     <body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white">
         <div class="page-wrapper">
-        
             <div class="page-header navbar navbar-fixed-top">
                 <div class="page-header-inner ">
-                    
                     <!-- BEGIN LOGO -->
                     <div class="page-logo">
                         <a href="index.jsp">
-                        	<label class="logo-default">xxxx</label>
+                        	<label class="logo-default" style="font-size:25px;margin-top:7px;color:white;font-family:'仿宋'">超市管理系统</label>
 						</a>
                         <div class="menu-toggler sidebar-toggler">
                             <span></span>
@@ -29,16 +27,15 @@
                     <!-- END LOGO -->
                     
                     <!-- BEGIN TOP NAVIGATION MENU -->
-                    <div class="top-menu">
-                        <ul class="nav navbar-nav pull-right">
-                        	<li>xxx</li>
-                        </ul>
+                    <div class="page-logo" style="float:right;">
+                        <a href="settle.jsp">
+                        	<i class="icon-login"></i>
+                        	<label class="logo-default">进入收银</label>
+						</a>
                     </div>
                     <!-- END TOP NAVIGATION MENU -->
-                    
                 </div>
             </div>
-            
             <!-- BEGIN CONTAINER -->
             <div class="page-container">
                 
@@ -195,11 +192,11 @@
 							</tr>
 							<tr>
 								<td width="70">进货价</td>
-								<td><input name="purchase_price" id="purchase_price" :value="edit_data.purchase_price" @blur="check_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
+								<td><input name="purchase_price" id="purchase_price" :value="edit_data.purchase_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
 							</tr>
 							<tr>
 								<td width="70">销售价</td>
-								<td><input name="selling_price" id="selling_price" :value="edit_data.selling_price" @blur="check_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
+								<td><input name="selling_price" id="selling_price" :value="edit_data.selling_price" @keyup="check_price_format" data-validat="false"/> 元<span class="red"> *</span></td>
 							</tr>
 						</template>
 						<template v-else>
@@ -208,6 +205,14 @@
 								<td>
 									<input name="code" type="number" id="code" data-parsley-type="integer" data-parsley-required="true" data-parsley-length="[4,4]"
 										data-parsley-error-message="商品编号只能是4位数字" data-parsley-required-message="商品编号必须填写" data-parsley-trigger="change" />
+									<span class="red"> *</span>
+								</td>
+							</tr>
+							<tr>
+								<td width="70">条形码</td>
+								<td>
+									<input name="bar_code" type="number" id="bar_code" data-parsley-type="integer" data-parsley-required="true" 
+										data-parsley-required-message="条形码必须填写" data-parsley-trigger="change" />
 									<span class="red"> *</span>
 								</td>
 							</tr>
@@ -227,6 +232,11 @@
 										<option>件</option>
 										<option>提</option>
 										<option>个</option>
+										<option>支</option>
+										<option>盒</option>
+										<option>箱</option>
+										<option>瓶</option>
+										<option>包</option>
 									</select>
 									<span class="red"> *</span>
 								</td>
@@ -380,7 +390,7 @@
 					type: '1',
 					skin: 'layui-layer-molv',
 					title: '新增商品',
-					area: ['362px', '368px'],
+					area: ['362px', '420px'],
 					content: $('#layer-window')
 				})
 			})

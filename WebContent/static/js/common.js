@@ -10,11 +10,11 @@ var menu_vue = new Vue({
 			span_icon:'icon-diamond',
 			title:'商品管理',
 			href:'milk.jsp'
-		},{
+		},/*{
 			span_icon: 'icon-user',
 			title:'商家管理',
 			href:'distributor.jsp'
-		},{
+		},*/{
 			span_icon: 'icon-basket',
 			title: '采购管理',
 			href: 'purchase.jsp'
