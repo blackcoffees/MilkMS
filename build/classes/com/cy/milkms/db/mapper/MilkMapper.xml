@@ -67,7 +67,7 @@
 	</update>
 	
 	<select id="getMilkByName" resultMap="baseResultMap">
-		select * from milk where (milk_name like '%${name}%' or code like '%{name}%') and status = 1
+		select * from milk where (milk_name like '%${name}%' or code like '%${name}%') and status = 1
 	</select>
 	
 	<select id="getMilkFrontBarCode" resultMap="baseResultMap">

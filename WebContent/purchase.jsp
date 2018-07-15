@@ -155,7 +155,8 @@
 														<td v-text="purchase[0].time"></td>
 														<td>￥((purchase[0].total_price))</td>
 														<td>
-															<span v-if="purchase[0].status == 2">废弃</span>
+															<span v-if="purchase[0].status == 2" style="color:red">废弃</span>
+															<span v-else>生效</span>
 														</td>
 														<td>
 															<button v-if="purchase[0].status==1" class="btn btn-sm red btn-outline filter-submit margin-bottom" @click="deleted(purchase[0].id)"><i class="fa fa-times"></i>&nbsp;&nbsp;废弃</button>
@@ -219,8 +220,8 @@
 				<form class="layer-form" data-parsley-validate onsubmit="return false">
 					<table>
 						<tr>
-							<td width="70">采购时间</td>
-							<td><input name="export_time" id="export_time"/><span class="red"> *</span></td>
+							<td width="70" style="padding-left:10px;">采购时间</td>
+							<td><input name="export_time" id="export_time" style="width:211px;margin-left:13px;"/><span class="red"> *</span></td>
 						</tr>
 					</table>
 					<input style="display:none" id="exportStartTime"/>
@@ -318,6 +319,10 @@
 			$(".btn-export-sure").on("click",function(){
 				var startTime = $("#exportStartTime").val();
 				var endTime = $("#exportEndTime").val();
+				if (startTime == "" || startTime == null || endTime == "" || endTime == null){
+					layer.msg("导出请选择采购时间段");
+					return;
+				}
 				$.ajax({
 					type: 'post',
 					url: 'report/exportExcel.action',
@@ -356,6 +361,14 @@
                     daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ], 
                     monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',  
                                    '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                },
+                ranges: {
+                	"本周": [moment().days(1), moment().add(7-moment().days(), 'days')],
+                	"上周": [moment().subtract(7+(moment().days()-1), "days"), moment().days(0)],
+                	"本月": [moment().startOf("month"), moment().endOf("month")],
+                	"上月": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")],
+                	"本季度": [moment().quarter(moment().quarter()).startOf("quarter"), moment().quarter(moment().quarter()).endOf("quarter")],
+                	"上季度": [moment().quarter(moment().quarter()-1).startOf("quarter"), moment().quarter(moment().quarter()-1).endOf("quarter")]
                 }
 			},
             function(start, end, label){
@@ -388,6 +401,14 @@
                     daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ], 
                     monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',  
                                    '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                },
+                ranges:{
+                	"本月": [moment().startOf("month"), moment().endOf("month")],
+                	"上月": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")],
+                	"本季度": [moment().quarter(moment().quarter()).startOf("quarter"), moment().quarter(moment().quarter()).endOf("quarter")],
+                	"上季度": [moment().quarter(moment().quarter()-1).startOf("quarter"), moment().quarter(moment().quarter()-1).endOf("quater")],
+                	"本年": [moment().year(moment().year()).startOf("year"), moment().year(moment().year()).endOf("year")],
+                	"去年": [moment().year(moment().year()-1).startOf("year"), moment().year(moment().year()-1).endOf("year")]
                 }
 			},
             function(start, end, label){

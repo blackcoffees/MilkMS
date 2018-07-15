@@ -106,6 +106,10 @@ public class ReportController {
 		Map<String, Object> result = new HashMap<>();
 		result.put("succ", false);
 		result.put("message", "系统繁忙，请稍后再试");
+		if (startTime == "" || startTime == null || endTime == "" || endTime == null){
+			result.put("message", "请选择导出采购时间段");
+			return JSONObject.fromObject(result).toString();
+		}
 		result = service.exportExcel(path, startTime, endTime, type);
 		return JSONObject.fromObject(result).toString();
 	}

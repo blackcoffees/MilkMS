@@ -203,7 +203,7 @@
 							<tr>
 								<td width="70">商品编号</td>
 								<td>
-									<input name="code" type="number" id="code" data-parsley-type="integer" data-parsley-required="true" data-parsley-length="[4,4]"
+									<input name="code" type="text" id="code" data-parsley-type="integer" data-parsley-required="true" data-parsley-length="[4,4]"
 										data-parsley-error-message="商品编号只能是4位数字" data-parsley-required-message="商品编号必须填写" data-parsley-trigger="change" />
 									<span class="red"> *</span>
 								</td>
@@ -211,8 +211,8 @@
 							<tr>
 								<td width="70">条形码</td>
 								<td>
-									<input name="bar_code" type="number" id="bar_code" data-parsley-type="integer" data-parsley-required="true" 
-										data-parsley-required-message="条形码必须填写" data-parsley-trigger="change" />
+									<input name="bar_code" type="text" id="bar_code" data-parsley-type="integer" data-parsley-required="true" 
+										data-parsley-required-message="条形码必须填写" data-parsley-trigger="change" data-parsley-error-message="条形码只允许数字"/>
 									<span class="red"> *</span>
 								</td>
 							</tr>
@@ -227,7 +227,8 @@
 							<tr>
 								<td width="70">规格</td>
 								<td>
-									<select name="specifications" id="specifications" data-parsley-required="true" data-parsley-required-message="规格必填">
+									<select name="specifications" id="specifications" data-parsley-required="true" 
+											data-parsley-required-message="规格必填" style="width:157px;height:25px;">
 										<option></option>
 										<option>件</option>
 										<option>提</option>
@@ -385,7 +386,12 @@
 			init_table();
 			$('.btn-add').on('click', function(){
 				edit_vue.edit_data = null;
-				
+				$("#code").val("");
+				$("#bar_code").val("");
+				$("#milk_name").val("");
+				$("#specifications").val("");
+				$("#purchase_price").val("");
+				$("#selling_price").val("");
 				layer.open({
 					type: '1',
 					skin: 'layui-layer-molv',

@@ -198,7 +198,7 @@
 					                                                            </div>
 					                                                        </td>
 					                                                        <td></td>
-					                                                        <td><input type="number" class="edit-input number" data-parsley-type="integer" @change="countTotalPrice" style="width:70px"/></td>
+					                                                        <td><input type="number" class="edit-input number" data-parsley-type="integer" @input="countTotalPrice" style="width:70px"/></td>
 					                                                        <td><input class="edit-input price" style="width:100px" @change="check_price" @keyup="check_price_format"/></td>
 					                                                        <td><input class="edit-input totalPrice" style="width: 100px" readonly/></td>
 					                                                        <td>
@@ -287,16 +287,18 @@
         				var input = $(event.target).parent().parent().parent().parent().prev("input");
         				var td = $(event.target).parent().parent().parent().parent().parent();
         				td.next("td").text(item.specifications);
+        				td.next().next().next().find("input").val(item.purchase_price);
         				input.val(item.milk_name);
         			},
         			check_price_format:function(event){
     					var obj = event.target;
-    				    obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的  
-    				    obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$","."); 
-    				    obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数  
-    				    if(obj.value.indexOf(".")< 0 && obj.value !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
-    				        obj.value= parseFloat(obj.value);
-    				    } 
+   						var rep = /^([1-9]*)\.{0,1}(\d){0,2}$/;
+    					if (rep.test(obj.value)){
+    						obj.value = obj.value;
+    					}
+    					else{
+    						obj.value = obj.value.substring(0, obj.value.length-1);
+    					}
     				},
     				check_price:function(event){
     					var obj = event.target;
@@ -316,6 +318,11 @@
     					var totalInput = $(obj).parent().parent().find(".totalPrice");
     					var number = $(obj).parent().parent().find(".number").val();
     					var price = $(obj).parent().parent().find(".price").val();
+    					if (parseInt(number) <= 0) {
+    						$(obj).parent().parent().find(".number").val(1);
+    						layer.msg("采购数量不能小于零");
+    						return;
+    					}
     					if(number == '' || price == '') return;
     					var totalPrice = (price * number);
     					totalInput.val(totalPrice);
@@ -421,9 +428,10 @@
 	                timePicker : true,
 	                drops: "down",
 	                autoUpdateInput: false,
+	                timePickerSeconds: true,
 	                "locale": {
 	                    format: 'YYYY-MM-DD HH:mm:ss',
-	                    applyLabel: "应用",
+	                    applyLabel: "确定",
 	                    cancelLabel: "取消",
 	                    daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ], 
 	                    monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',  
