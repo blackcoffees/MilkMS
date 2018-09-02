@@ -137,3 +137,11 @@ span.red{
 .printTable td,th{
 	padding: 5px;
 }
+
+@media (min-width: 992px)
+.page-sidebar {
+    width: 189px;
+    float: left;
+    position: relative;
+    margin-right: -100%;
+}
