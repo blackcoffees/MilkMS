@@ -3,7 +3,7 @@
 <html lang="en">
     <head>
 		<meta charset="utf-8" />
-        <title></title>
+        <title>重庆派派食品有限公司</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta content="" name="author" />
@@ -27,7 +27,7 @@
                     <!-- BEGIN LOGO -->
                     <div class="page-logo">
                         <a href="index.jsp">
-                        	<label class="logo-default">xxxx</label>
+                        	<label class="logo-default">重庆派派食品有限公司</label>
 						</a>
                         <div class="menu-toggler sidebar-toggler">
                             <span></span>
